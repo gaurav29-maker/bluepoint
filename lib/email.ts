@@ -54,6 +54,23 @@ export async function sendOnce(
   }
 }
 
+/**
+ * Sends without the once-only claim row.
+ *
+ * `notifications` is keyed to a booking, and a pass has none. Safe here
+ * because the webhook already de-duplicates on Razorpay's event id, so a
+ * redelivered capture never reaches this twice.
+ */
+export async function sendRaw(message: { to: string; subject: string; html: string }) {
+  await resend().emails.send({
+    from: process.env.EMAIL_FROM ?? "Bluepoint <onboarding@resend.dev>",
+    replyTo: process.env.EMAIL_REPLY_TO,
+    to: message.to,
+    subject: message.subject,
+    html: message.html,
+  });
+}
+
 const DISCLAIMER = `
   <p style="color:#6B6B6B;font-size:12px;line-height:1.6;margin-top:28px;
             border-top:1px solid #E4E8EF;padding-top:16px">
@@ -87,7 +104,7 @@ export function customerConfirmation(args: {
          <strong>${args.expertName}</strong> is confirmed.</p>
       <p style="background:#EAF2FC;padding:14px 16px;border-radius:8px;margin:20px 0">
         <strong>${istDateTime(args.startsAt)} IST</strong><br>
-        ${args.amountPaise > 0 ? `Paid ${rupees(args.amountPaise)}` : "Covered by your 3-call bundle"}
+        ${args.amountPaise > 0 ? `Paid ${rupees(args.amountPaise)}` : "Included in your plan"}
         ${args.meetingUrl ? `<br><a href="${args.meetingUrl}">Join link</a>` : ""}
       </p>
       <p><strong>One thing before the call.</strong> Fill in the short intake form so
@@ -175,6 +192,42 @@ export function bundleSlotLost(args: {
          ${args.creditsLeft} calls unspent — no money has been refunded because
          none of it has been used.</p>
       <p>Just pick another time with ${args.expertName} whenever suits you.</p>`),
+  };
+}
+
+export function memberSignInLink(args: { customerName: string; url: string }) {
+  return {
+    subject: "Your Bluepoint sign-in link",
+    html: shell(`
+      <p>Hi ${args.customerName}, here is your link into the Bluepoint console.
+         It works once and expires in 30 minutes.</p>
+      <p><a href="${args.url}"
+            style="display:inline-block;background:#387ED1;color:#fff;padding:11px 20px;
+                   border-radius:8px;text-decoration:none">Open my console</a></p>
+      <p style="font-size:13px;color:#6B6B6B">If you did not ask for this, ignore it —
+         nobody can get in without the link.</p>`),
+  };
+}
+
+export function membershipWelcome(args: {
+  customerName: string;
+  tierLabel: string;
+  endsAt: Date;
+  consoleUrl: string;
+}) {
+  return {
+    subject: `Your ${args.tierLabel} is active`,
+    html: shell(`
+      <h2 style="font-size:20px;margin:0 0 16px">You're in.</h2>
+      <p>Hi ${args.customerName}, your <strong>${args.tierLabel}</strong> is active
+         until <strong>${istDateTime(args.endsAt)} IST</strong>.</p>
+      <p>Sessions are unlimited for that whole period, with any expert on the
+         platform. Book them from your console:</p>
+      <p><a href="${args.consoleUrl}"
+            style="display:inline-block;background:#387ED1;color:#fff;padding:11px 20px;
+                   border-radius:8px;text-decoration:none">Open your console</a></p>
+      <p style="font-size:13px;color:#6B6B6B">The link signs you in — no password.
+         It is tied to this email address, so keep it to yourself.</p>`),
   };
 }
 

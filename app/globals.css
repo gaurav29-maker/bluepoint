@@ -980,3 +980,111 @@
     .ops-tiles { grid-template-columns: repeat(2, 1fr); }
     .ops-cols { grid-template-columns: 1fr; }
   }
+
+  /* ================= MEMBER CONSOLE ================= */
+
+  .member { max-width: 720px; }
+  .member-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+  .member-top .bp-page-logo { margin-bottom: 0; }
+
+  .member-pass {
+    background: var(--blue-tint);
+    border: 1px solid #CFE0F5;
+    border-radius: 14px;
+    padding: 22px 24px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 34px;
+  }
+  .member-pass-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--blue-deep);
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .member-pass-main {
+    font-size: 23px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--ink-dark);
+    margin: 0;
+  }
+  .member-pass-sub { font-size: 13px; color: var(--blue-deep); margin: 5px 0 0; }
+
+  .member-section { margin-bottom: 38px; }
+  .member-h2 { font-size: 15px; letter-spacing: -0.01em; margin: 0 0 12px; }
+
+  .member-list { list-style: none; padding: 0; margin: 0; }
+  .member-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 13px 0;
+    border-top: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .member-list li:last-child { border-bottom: 1px solid var(--line); }
+  .member-list-right { display: flex; gap: 16px; white-space: nowrap; }
+
+  .member-book { border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .member-experts { display: grid; gap: 9px; margin-bottom: 18px; }
+  .member-expert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    padding: 11px 13px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--white);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink-dark);
+  }
+  .member-expert:hover { border-color: var(--blue-light); }
+  .member-expert.is-active { border-color: var(--blue); background: var(--blue-tint); }
+  .member-expert-av {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex: none;
+  }
+  .member-slots { border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* ---- pricing grid grows to four ---- */
+  .pricing-grid.is-four { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .pricing-grid.is-four .price-card { padding: 24px 20px; }
+  .pricing-grid.is-four .price-amount { font-size: 26px; }
+  .price-sub {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 6px 0 0;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1000px) {
+    .pricing-grid.is-four { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .pricing-grid.is-four { grid-template-columns: 1fr; }
+    .member-pass { flex-direction: column; }
+  }

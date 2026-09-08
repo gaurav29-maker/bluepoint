@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { experts as expertsTable } from "@/lib/db/schema";
 import Link from "next/link";
 import ExpertGrid, { type ExpertCard } from "@/components/ExpertGrid";
+import PassPurchase from "@/components/PassPurchase";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,9 @@ export default async function Home() {
             <a href="#faq">FAQs</a>
           </div>
           <div className="nav-right">
+            <Link className="nav-login" href="/member/login">
+              Your console
+            </Link>
             <a className="nav-cta" href="#experts">
               Book a call
             </a>
@@ -195,13 +199,13 @@ export default async function Home() {
             <h2>Simple, transparent pricing</h2>
             <p>Pay per call, or bundle for ongoing F&O guidance.</p>
           </div>
-          <div className="pricing-grid">
+          <div className="pricing-grid is-four">
             <div className="price-card">
-              <h3>Single Audit</h3>
+              <h3>Single call</h3>
               <p className="price-amount">
-                ₹1,500 <span>/ call</span>
+                ₹5,499 <span>/ call</span>
               </p>
-              <p className="price-note">One 45-min portfolio review</p>
+              <p className="price-note">One 45-min session</p>
               <ul className="price-features">
                 <li>45-minute video call</li>
                 <li>Written summary after</li>
@@ -211,13 +215,13 @@ export default async function Home() {
                 Book now
               </a>
             </div>
-            <div className="price-card popular">
-              <span className="price-badge">Most popular</span>
-              <h3>3-Call Bundle</h3>
+
+            <div className="price-card">
+              <h3>3-call bundle</h3>
               <p className="price-amount">
-                ₹1,200 <span>/ call</span>
+                ₹9,999 <span>/ 3 calls</span>
               </p>
-              <p className="price-note">Total ₹3,600 · valid 60 days</p>
+              <p className="price-note">₹3,333 a call · valid 60 days</p>
               <ul className="price-features">
                 <li>3 x 45-minute calls</li>
                 <li>Same expert every time</li>
@@ -227,20 +231,44 @@ export default async function Home() {
                 Get bundle
               </a>
             </div>
-            <div className="price-card">
-              <h3>F&O Systematic</h3>
+
+            <div className="price-card popular">
+              <span className="price-badge">Most popular</span>
+              <h3>Quarterly pass</h3>
               <p className="price-amount">
-                ₹2,200 <span>/ call</span>
+                ₹45,000 <span>/ 90 days</span>
               </p>
-              <p className="price-note">Ongoing monthly guidance</p>
+              <p className="price-note">Unlimited sessions</p>
               <ul className="price-features">
-                <li>Weekly check-in call</li>
-                <li>Position sizing framework</li>
-                <li>Risk review each session</li>
+                <li>As many calls as you want</li>
+                <li>Any expert on the platform</li>
+                <li>Your own console</li>
               </ul>
-              <a className="price-cta" href="#experts">
-                Talk to an expert
-              </a>
+              <PassPurchase
+                tier="quarterly"
+                label="Quarterly pass"
+                priceLabel="₹45,000"
+                cta="Get quarterly"
+              />
+            </div>
+
+            <div className="price-card">
+              <h3>Annual pass</h3>
+              <p className="price-amount">
+                ₹2,45,000 <span>/ year</span>
+              </p>
+              <p className="price-note">Unlimited sessions, all year</p>
+              <ul className="price-features">
+                <li>As many calls as you want</li>
+                <li>Any expert on the platform</li>
+                <li>Your own console</li>
+              </ul>
+              <PassPurchase
+                tier="annual"
+                label="Annual pass"
+                priceLabel="₹2,45,000"
+                cta="Get annual"
+              />
             </div>
           </div>
         </section>
@@ -309,6 +337,7 @@ export default async function Home() {
               <a href="#how">How it works</a>
               <a href="#pricing">Pricing</a>
               <a href="#faq">FAQs</a>
+              <Link href="/member/login">Your console</Link>
             </div>
             <div className="footer-col">
               <h4>Get in touch</h4>

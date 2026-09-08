@@ -1,15 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { bookings, bundles, customers, experts, payments, webhookEvents } from "@/lib/db/schema";
+import {
+  bookings,
+  bundles,
+  customers,
+  experts,
+  memberships,
+  payments,
+  webhookEvents,
+} from "@/lib/db/schema";
 import { refundPayment, verifyWebhookSignature } from "@/lib/razorpay";
 import {
   bundleSlotLost,
   customerConfirmation,
   expertNotification,
+  membershipWelcome,
   refundApology,
   sendOnce,
+  sendRaw,
 } from "@/lib/email";
+import { memberConsoleUrl } from "@/lib/member-auth";
+import { MEMBERSHIP_TIERS } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -78,6 +90,52 @@ async function markProcessed(eventId: string, error: string | null) {
     .where(and(eq(webhookEvents.provider, "razorpay"), eq(webhookEvents.eventId, eventId)));
 }
 
+async function activateMembership(
+  payment: typeof payments.$inferSelect,
+  paymentId: string,
+  amount: number,
+  entity: Record<string, unknown>,
+) {
+  const [row] = await db
+    .select({ membership: memberships, customer: customers })
+    .from(memberships)
+    .innerJoin(customers, eq(memberships.customerId, customers.id))
+    .where(eq(memberships.id, payment.membershipId!))
+    .limit(1);
+
+  if (!row) throw new Error(`no membership for payment ${paymentId}`);
+  const { membership, customer } = row;
+
+  if (amount !== membership.amountPaise) {
+    throw new Error(`amount mismatch: charged ${amount}, expected ${membership.amountPaise}`);
+  }
+
+  await db
+    .update(payments)
+    .set({ razorpayPaymentId: paymentId, status: "captured", raw: entity })
+    .where(eq(payments.id, payment.id));
+
+  if (membership.status === "active") return; // redelivery
+
+  // The window starts when the money lands, not when the form was submitted.
+  const days = MEMBERSHIP_TIERS[membership.tier].days;
+  const startsAt = new Date();
+  const endsAt = new Date(startsAt.getTime() + days * 24 * 60 * 60 * 1000);
+
+  await db
+    .update(memberships)
+    .set({ status: "active", startsAt, endsAt })
+    .where(eq(memberships.id, membership.id));
+
+  const msg = membershipWelcome({
+    customerName: customer.name,
+    tierLabel: MEMBERSHIP_TIERS[membership.tier].label,
+    endsAt,
+    consoleUrl: await memberConsoleUrl(customer.id),
+  });
+  await sendRaw({ to: customer.email, ...msg });
+}
+
 async function handleCapture(entity: Record<string, unknown>) {
   const paymentId = String(entity.id ?? "");
   const orderId = String(entity.order_id ?? "");
@@ -90,9 +148,15 @@ async function handleCapture(entity: Record<string, unknown>) {
     .where(eq(payments.razorpayOrderId, orderId))
     .limit(1);
 
-  if (!payment || !payment.bookingId) {
-    throw new Error(`no payment row for order ${orderId}`);
+  if (!payment) throw new Error(`no payment row for order ${orderId}`);
+
+  // A pass has no booking attached — it buys a window of time, not a slot.
+  if (payment.membershipId) {
+    await activateMembership(payment, paymentId, amount, entity);
+    return;
   }
+
+  if (!payment.bookingId) throw new Error(`payment ${paymentId} has nothing attached`);
 
   const [row] = await db
     .select({ booking: bookings, expert: experts, customer: customers })

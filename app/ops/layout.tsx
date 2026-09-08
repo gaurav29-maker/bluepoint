@@ -18,6 +18,7 @@ export default function OpsLayout({ children }: { children: React.ReactNode }) {
           <nav className="ops-nav">
             <Link href="/ops">Overview</Link>
             <Link href="/ops/bookings">Bookings</Link>
+            <Link href="/ops/members">Members</Link>
             <Link href="/ops/experts">Experts</Link>
             <Link href="/">Site</Link>
           </nav>

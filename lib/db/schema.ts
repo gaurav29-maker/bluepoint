@@ -31,7 +31,20 @@ export const bookingStatus = pgEnum("booking_status", [
   "refunded",
   "expired",
 ]);
-export const productType = pgEnum("product_type", ["single", "bundle_call", "monthly"]);
+export const productType = pgEnum("product_type", [
+  "single",
+  "bundle_call",
+  "monthly",
+  "membership_call",
+]);
+export const membershipTier = pgEnum("membership_tier", ["quarterly", "annual"]);
+export const membershipStatus = pgEnum("membership_status", [
+  "pending",
+  "active",
+  "expired",
+  "refunded",
+  "cancelled",
+]);
 export const paymentStatus = pgEnum("payment_status", [
   "created",
   "captured",
@@ -129,9 +142,9 @@ export const bundles = pgTable("bundles", {
   customerId: uuid("customer_id")
     .notNull()
     .references(() => customers.id),
-  expertId: uuid("expert_id")
-    .notNull()
-    .references(() => experts.id),
+  // Nullable since memberships arrived: a bundle is tied to one expert,
+  // a pass is not tied to anyone.
+  expertId: uuid("expert_id").references(() => experts.id),
   creditsTotal: smallint("credits_total").notNull().default(3),
   creditsUsed: smallint("credits_used").notNull().default(0),
   amountPaise: integer("amount_paise").notNull(),
@@ -139,6 +152,36 @@ export const bundles = pgTable("bundles", {
   status: bundleStatus("status").notNull().default("active"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * A pass is a WINDOW OF TIME, not a pot of credits.
+ *
+ * There is deliberately no credits_total or credits_used here. Passes are
+ * unlimited, so a counter would be a column that is always meaningless, and
+ * bending `bundles` to carry both shapes would leave half its columns null on
+ * every row. Booking under a pass asks one question: is there an active
+ * membership covering this date?
+ */
+export const memberships = pgTable(
+  "memberships",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    customerId: uuid("customer_id")
+      .notNull()
+      .references(() => customers.id),
+    tier: membershipTier("tier").notNull(),
+    startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
+    endsAt: timestamp("ends_at", { withTimezone: true }).notNull(),
+    amountPaise: integer("amount_paise").notNull(),
+    status: membershipStatus("status").notNull().default("pending"),
+    cancelledReason: text("cancelled_reason"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("memberships_customer_idx").on(t.customerId),
+    index("memberships_window_idx").on(t.status, t.endsAt),
+  ],
+);
 
 export const bookings = pgTable(
   "bookings",
@@ -156,6 +199,7 @@ export const bookings = pgTable(
     holdExpiresAt: timestamp("hold_expires_at", { withTimezone: true }),
     product: productType("product").notNull().default("single"),
     bundleId: uuid("bundle_id").references(() => bundles.id),
+    membershipId: uuid("membership_id").references(() => memberships.id),
     amountPaise: integer("amount_paise").notNull(),
     meetingUrl: text("meeting_url"),
     cancelledReason: text("cancelled_reason"),
@@ -187,6 +231,7 @@ export const payments = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     bookingId: uuid("booking_id").references(() => bookings.id),
     bundleId: uuid("bundle_id").references(() => bundles.id),
+    membershipId: uuid("membership_id").references(() => memberships.id),
     razorpayOrderId: text("razorpay_order_id").notNull(),
     razorpayPaymentId: text("razorpay_payment_id"),
     amountPaise: integer("amount_paise").notNull(),
@@ -265,5 +310,6 @@ export const notifications = pgTable(
 );
 
 export type Expert = typeof experts.$inferSelect;
+export type Membership = typeof memberships.$inferSelect;
 export type Booking = typeof bookings.$inferSelect;
 export type Customer = typeof customers.$inferSelect;
