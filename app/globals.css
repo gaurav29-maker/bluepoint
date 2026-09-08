@@ -1267,7 +1267,14 @@
   }
   .site-dark .price-amount { color: var(--ink-dark); letter-spacing: -0.03em; }
   .site-dark .price-features li { color: var(--ink); }
-  .site-dark .price-cta {
+  /*
+     Specificity note: the base sheet carries
+     `.price-card:not(.popular) .price-cta` at 0,3,0, which sets the
+     background. Matching it here at 0,4,0 rather than at 0,2,0 — at the
+     lower weight the background came from that rule and the text colour
+     from this one, and both resolved to near-white in dark. White on white.
+  */
+  .site-dark .price-card:not(.popular) .price-cta {
     background: transparent;
     border: 1px solid var(--line);
     color: var(--ink-dark);
