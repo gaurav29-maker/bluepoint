@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Bluepoint — Get your portfolio reviewed, not sold to",
+  title: "Bluepoint — A different kind of portfolio review",
   description:
-    "Book a call with a vetted market expert. A plain review of your holdings, or a systematic way to think about your F&O trades.",
+    "From an expert who is paid to look, not to sell. One call. Your holdings, read honestly. Nothing to buy at the end of it.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
