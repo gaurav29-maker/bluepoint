@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { bookings, customers, experts, payments, webhookEvents } from "@/lib/db/schema";
+import { bookings, bundles, customers, experts, payments, webhookEvents } from "@/lib/db/schema";
 import { refundPayment, verifyWebhookSignature } from "@/lib/razorpay";
-import { customerConfirmation, expertNotification, refundApology, sendOnce } from "@/lib/email";
+import {
+  bundleSlotLost,
+  customerConfirmation,
+  expertNotification,
+  refundApology,
+  sendOnce,
+} from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -99,10 +105,18 @@ async function handleCapture(entity: Record<string, unknown>) {
   if (!row) throw new Error(`no booking for payment ${paymentId}`);
   const { booking, expert, customer } = row;
 
+  // A bundle is charged once at the bundle price, not at the per-call price.
+  let bundle: typeof bundles.$inferSelect | null = null;
+  if (payment.bundleId) {
+    const [b] = await db.select().from(bundles).where(eq(bundles.id, payment.bundleId)).limit(1);
+    bundle = b ?? null;
+  }
+
   // Re-check the amount against what we recorded. A mismatch means something
   // is wrong upstream; confirm nothing.
-  if (amount !== booking.amountPaise) {
-    throw new Error(`amount mismatch: charged ${amount}, expected ${booking.amountPaise}`);
+  const expected = bundle ? bundle.amountPaise : booking.amountPaise;
+  if (amount !== expected) {
+    throw new Error(`amount mismatch: charged ${amount}, expected ${expected}`);
   }
 
   await db
@@ -134,6 +148,14 @@ async function handleCapture(entity: Record<string, unknown>) {
   }
 
   if (confirmed) {
+    // The first of the three calls is now spent.
+    if (bundle) {
+      await db
+        .update(bundles)
+        .set({ creditsUsed: 1 })
+        .where(eq(bundles.id, bundle.id));
+    }
+
     const conf = customerConfirmation({
       customerName: customer.name,
       expertName: expert.displayName,
@@ -151,6 +173,24 @@ async function handleCapture(entity: Record<string, unknown>) {
       bookingId: booking.id,
     });
     await sendOnce(booking.id, "booking_confirmed_expert", { to: expert.contactEmail, ...note });
+    return;
+  }
+
+  // A bundle buyer who lost the first slot has not lost anything: the money
+  // bought three calls, none of which are spent yet. Refunding here would be
+  // worse for them than keeping the credits.
+  if (bundle) {
+    await db
+      .update(bookings)
+      .set({ status: "cancelled", cancelledReason: "slot taken before payment landed" })
+      .where(eq(bookings.id, booking.id));
+    const msg = bundleSlotLost({
+      customerName: customer.name,
+      expertName: expert.displayName,
+      startsAt: booking.startsAt,
+      creditsLeft: bundle.creditsTotal - bundle.creditsUsed,
+    });
+    await sendOnce(booking.id, "refund_apology", { to: customer.email, ...msg });
     return;
   }
 

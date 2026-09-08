@@ -5,6 +5,11 @@ import type { ExpertCard } from "./ExpertGrid";
 
 type Slot = { startsAt: string; endsAt: string };
 type Step = "picking" | "details" | "paying" | "done";
+type Product = "single" | "bundle";
+
+/** Display only — the server reads the real price from the database. */
+const BUNDLE_PRICE_PAISE = 360000;
+const BUNDLE_CREDITS = 3;
 
 declare global {
   interface Window {
@@ -59,6 +64,7 @@ export default function BookingDialog({
   const [activeDay, setActiveDay] = useState<string | null>(null);
   const [chosen, setChosen] = useState<Slot | null>(null);
   const [step, setStep] = useState<Step>("picking");
+  const [product, setProduct] = useState<Product>("single");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -110,7 +116,8 @@ export default function BookingDialog({
     setSubmitError(null);
 
     try {
-      const holdRes = await fetch("/api/bookings/hold", {
+      const endpoint = product === "bundle" ? "/api/bundles/hold" : "/api/bookings/hold";
+      const holdRes = await fetch(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -144,7 +151,7 @@ export default function BookingDialog({
         amount: order.amountPaise,
         currency: "INR",
         name: "Bluepoint",
-        description: `45-min session with ${expert.displayName}`,
+        description: order.description,
         prefill: order.prefill,
         theme: { color: "#387ED1" },
         // The webhook confirms the booking. This only moves the browser on.
@@ -239,6 +246,33 @@ export default function BookingDialog({
 
         {step === "details" || step === "paying" ? (
           <div className="bp-body">
+            <div className="bp-product" role="radiogroup" aria-label="What you are buying">
+              <button
+                type="button"
+                role="radio"
+                aria-checked={product === "single"}
+                className={`bp-product-opt${product === "single" ? " is-active" : ""}`}
+                onClick={() => setProduct("single")}
+              >
+                <span className="bp-product-name">One call</span>
+                <span className="bp-product-price">{rupees(expert.pricePaise)}</span>
+                <span className="bp-product-note">A single 45-minute session</span>
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={product === "bundle"}
+                className={`bp-product-opt${product === "bundle" ? " is-active" : ""}`}
+                onClick={() => setProduct("bundle")}
+              >
+                <span className="bp-product-name">{BUNDLE_CREDITS} calls</span>
+                <span className="bp-product-price">{rupees(BUNDLE_PRICE_PAISE)}</span>
+                <span className="bp-product-note">
+                  Book the other two later · valid 60 days
+                </span>
+              </button>
+            </div>
+
             <p className="bp-chosen">
               {chosen ? `${dayLabel(chosen.startsAt)} at ${timeLabel(chosen.startsAt)} IST` : ""}
               <button className="bp-change" onClick={() => setStep("picking")}>
@@ -281,7 +315,9 @@ export default function BookingDialog({
             {submitError ? <p className="bp-error">{submitError}</p> : null}
 
             <button className="btn-primary bp-full" disabled={!canConfirm} onClick={confirm}>
-              {busy ? "Working…" : `Pay ${rupees(expert.pricePaise)}`}
+              {busy
+                ? "Working…"
+                : `Pay ${rupees(product === "bundle" ? BUNDLE_PRICE_PAISE : expert.pricePaise)}`}
             </button>
             <p className="bp-fineprint">
               You will never be asked for a demat or broker login — not here, and not on the call.

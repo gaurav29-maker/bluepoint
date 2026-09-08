@@ -87,7 +87,7 @@ export function customerConfirmation(args: {
          <strong>${args.expertName}</strong> is confirmed.</p>
       <p style="background:#EAF2FC;padding:14px 16px;border-radius:8px;margin:20px 0">
         <strong>${istDateTime(args.startsAt)} IST</strong><br>
-        Paid ${rupees(args.amountPaise)}
+        ${args.amountPaise > 0 ? `Paid ${rupees(args.amountPaise)}` : "Covered by your 3-call bundle"}
         ${args.meetingUrl ? `<br><a href="${args.meetingUrl}">Join link</a>` : ""}
       </p>
       <p><strong>One thing before the call.</strong> Fill in the short intake form so
@@ -156,6 +156,25 @@ export function reminder(args: {
                          border-radius:8px;text-decoration:none">Join the call</a></p>`
           : "<p>Your expert will send the join link shortly.</p>"
       }`),
+  };
+}
+
+export function bundleSlotLost(args: {
+  customerName: string;
+  expertName: string;
+  startsAt: Date;
+  creditsLeft: number;
+}) {
+  return {
+    subject: "That slot went — your three calls are safe",
+    html: shell(`
+      <p>Hi ${args.customerName}, your payment for the
+         ${istDateTime(args.startsAt)} IST slot arrived just after someone else
+         had taken it.</p>
+      <p><strong>Nothing has been lost.</strong> Your bundle is active with all
+         ${args.creditsLeft} calls unspent — no money has been refunded because
+         none of it has been used.</p>
+      <p>Just pick another time with ${args.expertName} whenever suits you.</p>`),
   };
 }
 

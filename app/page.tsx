@@ -1,6 +1,7 @@
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { experts as expertsTable } from "@/lib/db/schema";
+import Link from "next/link";
 import ExpertGrid, { type ExpertCard } from "@/components/ExpertGrid";
 
 export const dynamic = "force-dynamic";
@@ -317,9 +318,9 @@ export default async function Home() {
             </div>
             <div className="footer-col">
               <h4>Useful links</h4>
-              <a href="#">Terms & Conditions</a>
-              <a href="#">Privacy Policy</a>
-              <a href="#">Refund Policy</a>
+              <Link href="/legal/terms">Terms &amp; Conditions</Link>
+              <Link href="/legal/privacy">Privacy Policy</Link>
+              <Link href="/legal/refunds">Refund Policy</Link>
             </div>
             <div className="footer-col">
               <div className="footer-recruit">
