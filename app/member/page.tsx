@@ -8,6 +8,7 @@ import { MEMBER_COOKIE, verifySession } from "@/lib/member-auth";
 import { MEMBERSHIP_TIERS } from "@/lib/constants";
 import { istDateTime } from "@/lib/format";
 import MemberBooking, { type BookableExpert } from "@/components/member/MemberBooking";
+import ManageBooking from "@/components/member/ManageBooking";
 
 export const metadata: Metadata = { title: "Your console — Bluepoint", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -40,7 +41,9 @@ export default async function MemberConsole() {
         startsAt: bookings.startsAt,
         status: bookings.status,
         meetingUrl: bookings.meetingUrl,
+        rescheduleCount: bookings.rescheduleCount,
         expertName: experts.displayName,
+        expertSlug: experts.slug,
       })
       .from(bookings)
       .innerJoin(experts, eq(bookings.expertId, experts.id))
@@ -138,21 +141,29 @@ export default async function MemberConsole() {
           <h2 className="member-h2">Coming up</h2>
           <ul className="member-list">
             {upcoming.map((b) => (
-              <li key={b.id}>
-                <div>
-                  <b>{istDateTime(b.startsAt)} IST</b>
-                  <span className="ops-sub">{b.expertName}</span>
-                </div>
-                <span className="member-list-right">
-                  {b.meetingUrl ? (
-                    <a className="ops-link" href={b.meetingUrl}>
-                      Join
+              <li key={b.id} className="member-upcoming">
+                <div className="member-upcoming-top">
+                  <div>
+                    <b>{istDateTime(b.startsAt)} IST</b>
+                    <span className="ops-sub">{b.expertName}</span>
+                  </div>
+                  <span className="member-list-right">
+                    {b.meetingUrl ? (
+                      <a className="ops-link" href={b.meetingUrl}>
+                        Join
+                      </a>
+                    ) : null}
+                    <a className="ops-link" href={`/booking/${b.id}`}>
+                      Details
                     </a>
-                  ) : null}
-                  <a className="ops-link" href={`/booking/${b.id}`}>
-                    Details
-                  </a>
-                </span>
+                  </span>
+                </div>
+                <ManageBooking
+                  bookingId={b.id}
+                  startsAt={b.startsAt.toISOString()}
+                  expertSlug={b.expertSlug}
+                  rescheduleCount={b.rescheduleCount}
+                />
               </li>
             ))}
           </ul>

@@ -203,6 +203,8 @@ export const bookings = pgTable(
     amountPaise: integer("amount_paise").notNull(),
     meetingUrl: text("meeting_url"),
     cancelledReason: text("cancelled_reason"),
+    /** The refund policy allows one free move; this is what enforces "one". */
+    rescheduleCount: smallint("reschedule_count").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [

@@ -1393,3 +1393,50 @@
   .site-dark .stat-value { color: var(--ink-dark); }
   .site-dark .trust-avatars .label { color: var(--ink-soft); }
   .site-dark .price-note { color: var(--ink-soft); }
+
+  /* ---------- member: managing a booking ---------- */
+
+  .member-list li.member-upcoming {
+    display: block;
+    padding: 15px 0;
+  }
+  .member-upcoming-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .member-manage { margin-top: 11px; }
+  .member-manage-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .member-manage-row .bp-muted { font-size: 12.5px; }
+
+  .member-confirm {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: var(--surface);
+  }
+  .member-confirm > p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .member-confirm .bp-slot-grid { margin: 0 0 12px; }
+  .member-confirm .bp-slot { line-height: 1.35; padding: 9px 4px; font-size: 12px; }
+
+  .member-done {
+    background: var(--blue-tint);
+    color: var(--blue-deep);
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 13px;
+    line-height: 1.55;
+    margin: 11px 0 0;
+  }
