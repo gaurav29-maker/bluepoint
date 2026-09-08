@@ -155,7 +155,7 @@ export default async function Home() {
               <p>Fill a short intake form before your call.</p>
             </div>
           </div>
-          <a className="btn-primary" href="#experts">
+          <a className="btn-ghost" href="#experts">
             Book now
           </a>
         </section>
@@ -364,7 +364,7 @@ export default async function Home() {
               <div className="footer-recruit">
                 <h4>Are you an expert?</h4>
                 <p>Join the platform and help traders make sense of their portfolios.</p>
-                <a className="expert-book" href="#">
+                <a className="footer-apply" href="#">
                   Apply now
                 </a>
               </div>
