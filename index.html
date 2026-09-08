@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #FFFFFF;
+    --canvas: #FFFFFF;
+    --surface: #F7F9FC;
+    --line: #E4E8EF;
+    --ink: #424242;
+    --ink-dark: #1A1A1A;
+    --ink-soft: #6B6B6B;
+    --blue: #387ED1;
+    --blue-light: #8EC1FF;
+    --blue-tint: #EAF2FC;
+    --blue-deep: #2E68AB;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--canvas);
+    color: var(--ink-dark);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+  a { text-decoration: none; color: inherit; }
+
+  /* ================= NAV ================= */
+  nav {
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    z-index: 50;
+  }
+  .nav-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo { font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
+  .logo span { color: var(--blue); }
+  .nav-links {
+    display: flex;
+    gap: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .nav-right { display: flex; align-items: center; gap: 14px; }
+  .nav-login { font-size: 14px; font-weight: 500; color: var(--ink-soft); }
+  .nav-cta {
+    background: var(--blue);
+    color: var(--white);
+    padding: 9px 20px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  /* ================= HERO ================= */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px;
+    align-items: end;
+    padding: 72px 0 40px;
+  }
+  .eyebrow-pill {
+    display: inline-block;
+    background: var(--blue-tint);
+    color: var(--blue-deep);
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 48px;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px;
+    max-width: 11ch;
+    color: var(--ink-dark);
+  }
+  .hero p.sub {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0 0 28px;
+  }
+  .cta-row { display: flex; gap: 12px; align-items: center; margin-bottom: 28px; }
+  .btn-primary {
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    padding: 13px 28px;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .btn-primary:hover { background: var(--blue-deep); }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-dark);
+    padding: 12px 26px;
+    border-radius: 999px;
+    font-size: 14.5px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .trust-avatars { display: flex; align-items: center; gap: 10px; }
+  .avatar-stack { display: flex; }
+  .avatar-stack .av {
+    width: 32px; height: 32px;
+    border-radius: 30% / 30%;
+    background: var(--blue);
+    color: var(--white);
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--white);
+    margin-left: -8px;
+  }
+  .avatar-stack .av:first-child { margin-left: 0; }
+  .trust-avatars .label { font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+
+  .hero-stat-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px 22px;
+  }
+  .hero-stat-card + .hero-stat-card { margin-top: 10px; }
+  .stat-label { font-size: 12.5px; color: var(--ink-soft); margin: 0 0 4px; }
+  .stat-value { font-weight: 700; font-size: 22px; margin: 0; font-variant-numeric: tabular-nums; }
+
+  /* ================= LOGO STRIP ================= */
+  .logo-strip {
+    padding: 32px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .logo-strip .tag { font-size: 12.5px; color: var(--ink-soft); font-weight: 600; white-space: nowrap; }
+  .logo-chips { display: flex; gap: 28px; flex-wrap: wrap; }
+  .logo-chip { font-size: 14px; font-weight: 700; color: #C7CDD8; letter-spacing: -0.01em; }
+
+  /* ================= SECTION HEAD ================= */
+  .section-eyebrow { font-size: 12.5px; font-weight: 700; color: var(--blue); text-transform: none; margin: 0 0 8px; }
+  .section-head { margin-bottom: 36px; }
+  .section-head h2 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    color: var(--ink-dark);
+    max-width: 20ch;
+  }
+  .section-head p { font-size: 14.5px; color: var(--ink-soft); margin: 0; max-width: 50ch; }
+  section { padding: 72px 0; }
+  section.tight { padding: 56px 0; }
+
+  /* ================= EXPERT CARDS ================= */
+  .expert-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .expert-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .expert-card:hover { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .expert-photo {
+    width: 40px; height: 40px;
+    border-radius: 30% / 30%;
+    background: var(--blue);
+    color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .expert-name { font-size: 16px; font-weight: 700; margin: 0 0 3px; }
+  .expert-tag { font-size: 13px; color: var(--ink-soft); margin: 0 0 16px; }
+  .expert-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid var(--line); }
+  .expert-rate { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .expert-rate span { font-size: 12px; font-weight: 400; color: var(--ink-soft); }
+  .expert-book {
+    font-size: 13px; font-weight: 600; color: var(--blue);
+    background: var(--blue-tint); padding: 8px 16px; border-radius: 999px;
+    border: none; cursor: pointer;
+  }
+  .expert-book:hover { background: var(--blue); color: var(--white); }
+
+  /* ================= PROCESS ================= */
+  .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
+  .process-step { border: 1px solid var(--line); border-radius: 10px; padding: 24px 20px; }
+  .process-num {
+    width: 30px; height: 30px;
+    border-radius: 30% / 30%;
+    background: var(--blue-tint);
+    color: var(--blue-deep);
+    font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .process-step h3 { font-size: 15.5px; font-weight: 700; margin: 0 0 6px; }
+  .process-step p { font-size: 13.5px; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+
+  /* ================= FEATURES GRID ================= */
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 24px; }
+  .feature-item .f-glyph {
+    width: 22px; height: 22px;
+    border: 1.5px solid var(--blue);
+    border-radius: 30% / 30%;
+    margin-bottom: 14px;
+  }
+  .feature-item h3 { font-size: 15px; font-weight: 700; margin: 0 0 6px; }
+  .feature-item p { font-size: 13.5px; color: var(--ink-soft); margin: 0; line-height: 1.55; }
+
+  /* ================= PRICING ================= */
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .price-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 26px 24px;
+    position: relative;
+    background: var(--white);
+  }
+  .price-card.popular { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+  .price-badge {
+    position: absolute; top: -12px; right: 20px;
+    background: var(--blue); color: var(--white);
+    font-size: 11.5px; font-weight: 700;
+    padding: 4px 12px; border-radius: 999px;
+  }
+  .price-card h3 { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
+  .price-amount { font-size: 30px; font-weight: 800; margin: 12px 0 2px; letter-spacing: -0.01em; }
+  .price-amount span { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+  .price-note { font-size: 12.5px; color: var(--ink-soft); margin: 0 0 20px; }
+  .price-features { list-style: none; padding: 0; margin: 0 0 24px; }
+  .price-features li {
+    font-size: 13.5px; color: var(--ink);
+    padding: 8px 0 8px 22px;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .price-features li:first-child { border-top: none; }
+  .price-features li::before {
+    content: ''; position: absolute; left: 0; top: 13px;
+    width: 8px; height: 8px; background: var(--blue-light); border-radius: 30% / 30%;
+  }
+  .price-cta {
+    display: block; text-align: center;
+    background: var(--blue); color: var(--white);
+    padding: 11px; border-radius: 999px;
+    font-size: 14px; font-weight: 600; cursor: pointer; border: none; width: 100%;
+  }
+  .price-card:not(.popular) .price-cta { background: var(--ink-dark); }
+
+  /* ================= TESTIMONIALS ================= */
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .testi-card { border: 1px solid var(--line); border-radius: 10px; padding: 22px; background: var(--surface); }
+  .testi-card p.quote { font-size: 14px; line-height: 1.6; color: var(--ink); margin: 0 0 16px; }
+  .testi-name { font-size: 13.5px; font-weight: 700; margin: 0; }
+  .testi-role { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+
+  /* ================= STATS ================= */
+  .stats-bar {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: 40px 0;
+  }
+  .stat-block { text-align: center; }
+  .stat-block .num { font-size: 34px; font-weight: 800; color: var(--blue-deep); letter-spacing: -0.01em; }
+  .stat-block .lbl { font-size: 13.5px; color: var(--ink-soft); margin-top: 4px; }
+
+  /* ================= FAQ ================= */
+  .faq-list { max-width: 720px; }
+  .faq-item { border-bottom: 1px solid var(--line); padding: 18px 0; }
+  .faq-item summary {
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    list-style: none; display: flex; justify-content: space-between; align-items: center;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after { content: '+'; color: var(--blue); font-size: 18px; font-weight: 400; }
+  .faq-item[open] summary::after { content: '–'; }
+  .faq-item p { font-size: 13.5px; color: var(--ink-soft); margin: 12px 0 0; line-height: 1.6; }
+
+  /* ================= FINAL CTA ================= */
+  .final-cta {
+    background: var(--blue);
+    border-radius: 16px;
+    padding: 52px 48px;
+    text-align: left;
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  }
+  .final-cta h2 { color: var(--white); font-size: 26px; font-weight: 800; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .final-cta p { color: var(--blue-tint); font-size: 14px; margin: 0; }
+  .final-cta .cta-row { margin: 0; }
+  .final-cta .btn-primary { background: var(--white); color: var(--blue-deep); }
+  .final-cta .btn-primary:hover { background: var(--blue-tint); }
+  .final-cta .btn-ghost { border-color: rgba(255,255,255,0.4); color: var(--white); }
+
+  /* ================= FOOTER ================= */
+  footer { border-top: 1px solid var(--line); padding: 56px 0 32px; }
+  .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 32px; margin-bottom: 40px; }
+  .footer-col h4 { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); margin: 0 0 14px; }
+  .footer-col a, .footer-col p { display: block; font-size: 13.5px; color: var(--ink); margin-bottom: 10px; }
+  .footer-recruit { background: var(--surface); border-radius: 10px; padding: 18px; }
+  .footer-recruit h4 { color: var(--ink-dark); font-size: 13.5px; margin-bottom: 6px; }
+  .footer-recruit p { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 12px; }
+  .footer-bottom { border-top: 1px solid var(--line); padding-top: 20px; font-size: 12.5px; color: var(--ink-soft); }
+
+  @media (max-width: 860px) {
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .expert-grid, .process-steps, .features-grid, .pricing-grid, .testi-grid { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: 1fr; gap: 24px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .final-cta { flex-direction: column; align-items: flex-start; }
+    h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">blue<span>point</span></div>
+    <div class="nav-links">
+      <a href="#experts">Experts</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQs</a>
+    </div>
+    <div class="nav-right">
+      <a class="nav-login" href="#">Login</a>
+      <a class="nav-cta" href="#experts">Book a call</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div>
+      <span class="eyebrow-pill">1,200+ audits completed</span>
+      <h1>Get your portfolio reviewed, by a real person.</h1>
+      <p class="sub">Book a call with a market expert. A plain review of your holdings, or a systematic way to think about your F&O trades. No pitch at the end of the call.</p>
+      <div class="cta-row">
+        <button class="btn-primary">Browse experts</button>
+        <button class="btn-ghost">How it works</button>
+      </div>
+      <div class="trust-avatars">
+        <div class="avatar-stack">
+          <div class="av">RK</div>
+          <div class="av">AM</div>
+          <div class="av">GK</div>
+        </div>
+        <span class="label">Trusted by 500+ investors</span>
+      </div>
+    </div>
+    <div>
+      <div class="hero-stat-card">
+        <p class="stat-label">Audits completed</p>
+        <p class="stat-value">1,204</p>
+      </div>
+      <div class="hero-stat-card">
+        <p class="stat-label">Avg. call rating</p>
+        <p class="stat-value">4.8 / 5</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logo strip -->
+  <div class="logo-strip">
+    <span class="tag">Trusted by traders working at</span>
+    <div class="logo-chips">
+      <span class="logo-chip">NSE Member Firms</span>
+      <span class="logo-chip">HDFC Sec.</span>
+      <span class="logo-chip">ICICI Direct</span>
+      <span class="logo-chip">Groww</span>
+      <span class="logo-chip">Angel One</span>
+    </div>
+  </div>
+
+  <!-- Experts -->
+  <section id="experts">
+    <div class="section-head">
+      <p class="section-eyebrow">Our Experts</p>
+      <h2>Pick an expert who fits your portfolio</h2>
+      <p>Vetted for track record before they're ever listed here. 6 available this week.</p>
+    </div>
+    <div class="expert-grid">
+      <div class="expert-card">
+        <div class="expert-photo">RK</div>
+        <p class="expert-name">Rhea Kulkarni</p>
+        <p class="expert-tag">Portfolio audits · 9 yrs</p>
+        <div class="expert-meta">
+          <p class="expert-rate">₹1,500 <span>/ 45 min</span></p>
+          <button class="expert-book">Book</button>
+        </div>
+      </div>
+      <div class="expert-card">
+        <div class="expert-photo">AM</div>
+        <p class="expert-name">Arjun Mehta</p>
+        <p class="expert-tag">F&O systematic trading · 12 yrs</p>
+        <div class="expert-meta">
+          <p class="expert-rate">₹2,200 <span>/ 45 min</span></p>
+          <button class="expert-book">Book</button>
+        </div>
+      </div>
+      <div class="expert-card">
+        <div class="expert-photo">GK</div>
+        <p class="expert-name">Gaurav Khona</p>
+        <p class="expert-tag">Portfolio audits · F&O · 10 yrs</p>
+        <div class="expert-meta">
+          <p class="expert-rate">₹1,800 <span>/ 45 min</span></p>
+          <button class="expert-book">Book</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section id="how" class="tight">
+    <div class="section-head">
+      <p class="section-eyebrow">Process</p>
+      <h2>Your review, effortlessly.</h2>
+      <p>Begin in four simple steps — no back-and-forth scheduling emails.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-num">01</div>
+        <h3>Choose expert</h3>
+        <p>Pick based on specialty, rate, and experience.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">02</div>
+        <h3>Pick a slot</h3>
+        <p>See real-time availability, book instantly.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">03</div>
+        <h3>Pay & confirm</h3>
+        <p>Secure payment via Razorpay, instant confirmation.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">04</div>
+        <h3>Share your portfolio</h3>
+        <p>Fill a short intake form before your call.</p>
+      </div>
+    </div>
+    <button class="btn-primary">Book now</button>
+  </section>
+
+  <!-- Features -->
+  <section>
+    <div class="section-head">
+      <p class="section-eyebrow">Why us</p>
+      <h2>Reasons traders choose us</h2>
+      <p>No gimmicks, no gamification — just a clear, honest review of where you stand.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="f-glyph"></div>
+        <h3>Vetted experts only</h3>
+        <p>Every expert is reviewed for track record before they're listed here.</p>
+      </div>
+      <div class="feature-item">
+        <div class="f-glyph"></div>
+        <h3>No spam, no upsell</h3>
+        <p>The call is the product. No follow-up pitches after.</p>
+      </div>
+      <div class="feature-item">
+        <div class="f-glyph"></div>
+        <h3>Your data, your call</h3>
+        <p>Portfolio details are shared only with the expert you book.</p>
+      </div>
+      <div class="feature-item">
+        <div class="f-glyph"></div>
+        <h3>Systematic F&O guidance</h3>
+        <p>A structured way to think about position sizing and risk, not tips.</p>
+      </div>
+      <div class="feature-item">
+        <div class="f-glyph"></div>
+        <h3>Instant booking</h3>
+        <p>Real-time slots. No emails back and forth to find a time.</p>
+      </div>
+      <div class="feature-item">
+        <div class="f-glyph"></div>
+        <h3>Clear, flat pricing</h3>
+        <p>You see the price before you book. No hidden fees.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing">
+    <div class="section-head">
+      <p class="section-eyebrow">Pricing</p>
+      <h2>Simple, transparent pricing</h2>
+      <p>Pay per call, or bundle for ongoing F&O guidance.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Single Audit</h3>
+        <p class="price-amount">₹1,500 <span>/ call</span></p>
+        <p class="price-note">One 45-min portfolio review</p>
+        <ul class="price-features">
+          <li>45-minute video call</li>
+          <li>Written summary after</li>
+          <li>Book with any expert</li>
+        </ul>
+        <button class="price-cta">Book now</button>
+      </div>
+      <div class="price-card popular">
+        <span class="price-badge">Most popular</span>
+        <h3>3-Call Bundle</h3>
+        <p class="price-amount">₹1,200 <span>/ call</span></p>
+        <p class="price-note">Total ₹3,600 · valid 60 days</p>
+        <ul class="price-features">
+          <li>3 x 45-minute calls</li>
+          <li>Same expert every time</li>
+          <li>Progress tracked across calls</li>
+        </ul>
+        <button class="price-cta">Get bundle</button>
+      </div>
+      <div class="price-card">
+        <h3>F&O Systematic</h3>
+        <p class="price-amount">₹2,200 <span>/ call</span></p>
+        <p class="price-note">Ongoing monthly guidance</p>
+        <ul class="price-features">
+          <li>Weekly check-in call</li>
+          <li>Position sizing framework</li>
+          <li>Risk review each session</li>
+        </ul>
+        <button class="price-cta">Talk to an expert</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="tight">
+    <div class="section-head">
+      <p class="section-eyebrow">Testimonials</p>
+      <h2>What traders are saying</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <p class="quote">"The audit made me realise I was way overexposed to one sector. Blunt, useful, no sales pitch."</p>
+        <p class="testi-name">Karan Shah</p>
+        <p class="testi-role">Retail investor, Mumbai</p>
+      </div>
+      <div class="testi-card">
+        <p class="quote">"First time F&O made sense as a system rather than a gamble. Worth every rupee."</p>
+        <p class="testi-name">Neha Iyer</p>
+        <p class="testi-role">F&O trader, Bangalore</p>
+      </div>
+      <div class="testi-card">
+        <p class="quote">"Booking took two minutes and the expert had actually looked at my holdings beforehand."</p>
+        <p class="testi-name">Rohit Bhatia</p>
+        <p class="testi-role">Retail investor, Pune</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-block">
+      <div class="num">1,204</div>
+      <div class="lbl">Audits completed</div>
+    </div>
+    <div class="stat-block">
+      <div class="num">96%</div>
+      <div class="lbl">Client satisfaction</div>
+    </div>
+    <div class="stat-block">
+      <div class="num">20+</div>
+      <div class="lbl">Vetted experts</div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="section-head">
+      <p class="section-eyebrow">Frequently asked questions</p>
+      <h2>Still curious?</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Do I need to share my demat login?</summary>
+        <p>No. You only share a summary of your holdings during intake — never login credentials.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What if I'm not satisfied with the call?</summary>
+        <p>Reach out within 24 hours and we'll arrange a follow-up or refund, case by case.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Do experts give stock tips?</summary>
+        <p>No. Experts review your existing portfolio and F&O approach — they don't recommend specific trades.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I book the same expert again?</summary>
+        <p>Yes — the 3-call bundle keeps you with the same expert across sessions.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section>
+    <div class="final-cta">
+      <div>
+        <h2>Get your portfolio reviewed this week.</h2>
+        <p>No pitch, no pressure — just a clear read on where you stand.</p>
+      </div>
+      <div class="cta-row">
+        <button class="btn-primary">Browse experts</button>
+        <button class="btn-ghost">See pricing</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <a href="#experts">Experts</a>
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQs</a>
+      </div>
+      <div class="footer-col">
+        <h4>Get in touch</h4>
+        <a href="#">Email</a>
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+      </div>
+      <div class="footer-col">
+        <h4>Useful links</h4>
+        <a href="#">Terms & Conditions</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Refund Policy</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-recruit">
+          <h4>Are you an expert?</h4>
+          <p>Join the platform and help traders make sense of their portfolios.</p>
+          <button class="expert-book">Apply now</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Bluepoint. All rights reserved.</div>
+  </div>
+</footer>
+
+</body>
+</html>
