@@ -1682,3 +1682,19 @@
   .site-dark .final-cta .btn-primary { background: var(--blue); color: var(--on-accent); }
   .site-dark .final-cta .btn-primary:hover { background: var(--blue-deep); }
   .site-dark .final-cta .btn-ghost { border-color: var(--hair-strong); color: var(--ink-dark); }
+
+  /*
+     Centring a layout is not just text-align.
+     The base sheet constrains measure on headings — h1 at 11ch,
+     .section-head h2 at 20ch — and every one of those was written for a
+     LEFT-aligned hero, so it pairs the max-width with margin-left: 0. Inside
+     a centred container that pins the element to the left edge while its own
+     text centres within it, which looks like a half-broken layout.
+
+     text-align centres the lines; auto side margins centre the box.
+  */
+  .site-dark h1,
+  .site-dark .section-head h2 {
+    margin-left: auto;
+    margin-right: auto;
+  }
