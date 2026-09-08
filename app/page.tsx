@@ -212,9 +212,9 @@ export default async function Home() {
               <p className="price-amount">
                 ₹5,499 <span>/ call</span>
               </p>
-              <p className="price-note">One 45-min session</p>
+              <p className="price-note">One session with an expert</p>
               <ul className="price-features">
-                <li>45-minute video call</li>
+                <li>Video call with an expert</li>
                 <li>Written summary after</li>
                 <li>Book with any expert</li>
               </ul>
@@ -230,7 +230,7 @@ export default async function Home() {
               </p>
               <p className="price-note">₹3,333 a call · valid 60 days</p>
               <ul className="price-features">
-                <li>3 x 45-minute calls</li>
+                <li>Three sessions</li>
                 <li>Same expert every time</li>
                 <li>Progress tracked across calls</li>
               </ul>
