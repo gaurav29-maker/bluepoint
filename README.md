@@ -66,9 +66,12 @@ app/
     bookings/hold                reserves a slot for 10 minutes
     payments/order               creates the Razorpay order
     webhooks/razorpay            THE ONLY PLACE A BOOKING IS CONFIRMED
-    cron/expire-holds            every 5 min — releases lapsed holds
-    cron/reminders               hourly — 24h and 1h reminders, intake nudge
+    bundles/hold                 buys three calls, holds the first slot
+    bookings/redeem              spends a bundle credit, no payment
+    cron/expire-holds            daily housekeeping; expiry itself is lazy
+    cron/reminders               hourly via GitHub Actions, not Vercel
     cron/purge-intake            daily — deletes intake 90 days after the call
+  ops/                           the operations console, password-guarded
 lib/
   db/schema.ts                   eleven tables
   slots.ts                       availability arithmetic, no stored slots
@@ -114,8 +117,9 @@ replace it with a check in application code; that loses the race.
   to regulated investment advice. See the design doc.
 - Live Razorpay keys need a registered entity with completed KYC.
 - Real experts, real SEBI registration numbers, and pricing they have agreed to.
-- Terms, Privacy and Refund pages — currently `#` stubs in the footer, and
-  Razorpay asks for them during onboarding.
+- The policy pages at `/legal/*` are drafts that no lawyer has read, and every
+  bracketed item in them still needs a real answer. Razorpay asks for them
+  during onboarding.
 
 ## Deploying
 
