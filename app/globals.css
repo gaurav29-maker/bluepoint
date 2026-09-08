@@ -1810,3 +1810,18 @@
     width: 100%;
     padding: 11px 18px;
   }
+
+  /*
+     The hero buttons were sized like the page was shouting. Brought down to
+     a size that invites rather than insists: smaller padding, smaller label,
+     medium weight instead of semibold, and less air between them so they read
+     as one pair of options rather than two competing demands.
+  */
+  .site-dark .btn-primary,
+  .site-dark .btn-ghost {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .site-dark .hero .cta-row { gap: 10px; margin-top: 26px; }
+  .site-dark .trust-avatars { margin-top: 22px; }
