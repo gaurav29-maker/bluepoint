@@ -280,7 +280,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="faq">
+        <section id="faq" className="serif-head">
           <div className="section-head">
             <p className="section-eyebrow">Frequently asked questions</p>
             <h2>Still curious?</h2>

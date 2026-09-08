@@ -1557,3 +1557,128 @@
   }
 
   .member-top-right { display: flex; align-items: baseline; gap: 16px; }
+
+  /* ========== SECOND PASS FROM EDIT LOBBY ==========
+     Measured off their page rather than eyeballed:
+
+       section h2   centred, weight 500, letter-spacing -0.05em
+       cards        radius 20px, ground-minus rather than ground-plus
+       hairlines    rgba(255,255,255,0.06), translucent not solid
+       serif        used for a WHOLE heading once, not only inline
+
+     Two of these reverse what the first pass did: cards were lighter than
+     the page and headings were left-aligned and heavier.
+  */
+
+  .site-dark {
+    /* A translucent hairline sits correctly on any surface underneath it;
+       a solid grey only works on the one shade it was picked against. */
+    --hair: rgba(255, 255, 255, 0.06);
+    --hair-strong: rgba(255, 255, 255, 0.11);
+  }
+
+  /* ---- weight and tracking ---- */
+
+  .site-dark h1 { font-weight: 500; letter-spacing: -0.05em; }
+  .site-dark h2 { font-weight: 500; letter-spacing: -0.05em; }
+  .site-dark h3 { font-weight: 600; letter-spacing: -0.02em; }
+
+  /* ---- centred hero ---- */
+
+  .site-dark .hero {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 88px 0 64px;
+  }
+  .site-dark .hero .sub { margin-left: auto; margin-right: auto; }
+  .site-dark .hero .cta-row { justify-content: center; }
+  .site-dark .trust-avatars { justify-content: center; }
+
+  /* ---- centred section heads ---- */
+
+  .site-dark .section-head {
+    text-align: center;
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .site-dark .section-head p { margin-left: auto; margin-right: auto; }
+
+  /* The process section ends in a button that should sit under the middle. */
+  .site-dark #how { text-align: center; }
+  .site-dark #how .process-steps { text-align: left; }
+
+  /* ---- surfaces: recessed, not raised ---- */
+
+  .site-dark .expert-card,
+  .site-dark .price-card,
+  .site-dark .feature-item,
+  .site-dark .process-step,
+  .site-dark .faq-item,
+  .site-dark .final-cta,
+  .site-dark .footer-recruit {
+    background: rgba(8, 8, 10, 0.93);
+    border: 1px solid var(--hair);
+    border-radius: 20px;
+  }
+  .site-dark .price-card.popular {
+    border-color: rgba(29, 155, 240, 0.4);
+    background: linear-gradient(180deg, rgba(29, 155, 240, 0.08), rgba(8, 8, 10, 0.93) 55%);
+  }
+
+  .site-dark .logo-strip,
+  .site-dark footer,
+  .site-dark .footer-bottom,
+  .site-dark .stats-bar { border-color: var(--hair); }
+
+  .site-dark .btn-ghost { border-color: var(--hair-strong); }
+  .site-dark .btn-ghost:hover { border-color: rgba(255, 255, 255, 0.24); }
+  .site-dark .price-card:not(.popular) .price-cta { border-color: var(--hair-strong); }
+  .site-dark .nav-inner { border-color: var(--hair-strong); }
+
+  /* ---- the serif carries one whole heading ---- */
+  /*
+     Used once, on the quietest moment on the page. Everywhere else the serif
+     stays a single inline word — a display face used twice is a system, used
+     everywhere it is wallpaper.
+  */
+  .site-dark .serif-head h2 {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    font-size: clamp(30px, 4.2vw, 46px);
+    color: var(--ink-dark);
+  }
+
+  @media (max-width: 640px) {
+    .site-dark .hero { padding: 60px 0 48px; }
+  }
+
+  /*
+     Specificity again: `.site-dark .footer-col a` (0,2,1) was winning the
+     colour while `.site-dark .expert-book` (0,2,0) won the background, so the
+     button came out grey-on-blue at about 2:1. Same failure as the price CTA —
+     when a rule sets a background, the matching colour must be able to reach
+     it, so this one is scoped to beat the footer link rule.
+  */
+  .site-dark .footer-col a.expert-book,
+  .site-dark .footer-col a.expert-book:hover {
+    color: var(--on-accent);
+  }
+
+  /*
+     The final CTA was authored as a BLUE panel: white heading, pale-blue body,
+     white button. Those rules pick tokens for a visual role rather than a
+     semantic one, so when the panel became near-black the body text stayed
+     --blue-tint, which is dark navy in this theme. 1.23:1.
+
+     Every child is therefore restated explicitly rather than left to inherit
+     from a set of assumptions that no longer hold.
+  */
+  .site-dark .final-cta h2 { color: var(--ink-dark); }
+  .site-dark .final-cta p { color: var(--ink-soft); }
+  .site-dark .final-cta .btn-primary { background: var(--blue); color: var(--on-accent); }
+  .site-dark .final-cta .btn-primary:hover { background: var(--blue-deep); }
+  .site-dark .final-cta .btn-ghost { border-color: var(--hair-strong); color: var(--ink-dark); }
