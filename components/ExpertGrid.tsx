@@ -29,7 +29,9 @@ export default function ExpertGrid({
   if (experts.length === 0) {
     return (
       <div className="bp-empty">
-        {dbReady ? (
+        {dbReady || process.env.NODE_ENV === "production" ? (
+          // Setup instructions are for whoever is running this locally, never
+          // for a visitor on the live site.
           <p>No experts are listed yet. Check back shortly.</p>
         ) : (
           <p>
