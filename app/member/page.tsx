@@ -112,6 +112,9 @@ export default async function MemberConsole() {
           <a className="ops-link" href="/member/receipts">
             Receipts
           </a>
+          <a className="ops-link" href="/member/profile">
+            Your details
+          </a>
           <span className="bp-muted">{customer.name}</span>
         </span>
       </div>

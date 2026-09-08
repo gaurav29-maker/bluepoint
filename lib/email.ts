@@ -209,6 +209,20 @@ export function memberSignInLink(args: { customerName: string; url: string }) {
   };
 }
 
+export function emailChangeConfirm(args: { customerName: string; url: string }) {
+  return {
+    subject: "Confirm your new Bluepoint email",
+    html: shell(`
+      <p>Hi ${args.customerName}, someone asked to use this address for a Bluepoint
+         account. Confirm it and it becomes the address you sign in with.</p>
+      <p><a href="${args.url}"
+            style="display:inline-block;background:#387ED1;color:#fff;padding:11px 20px;
+                   border-radius:8px;text-decoration:none">Confirm this address</a></p>
+      <p style="font-size:13px;color:#6B6B6B">The link expires in 30 minutes. If this
+         was not you, ignore it — nothing changes unless the link is followed.</p>`),
+  };
+}
+
 export function membershipWelcome(args: {
   customerName: string;
   tierLabel: string;

@@ -90,6 +90,50 @@ export function verifySession(token: string | undefined | null) {
   return verify(token, "session");
 }
 
+/**
+ * An email change is signed over the NEW address as well as the customer, so
+ * a token minted for one address cannot be replayed to claim another. Email is
+ * the login identity here — a change has to prove the new address is reachable
+ * before it takes effect, or someone could lock themselves out of a pass they
+ * paid two lakh for.
+ */
+export async function mintEmailChange(customerId: string, newEmail: string): Promise<string> {
+  const expiresAt = Date.now() + LINK_MINUTES * 60_000;
+  const email = newEmail.trim().toLowerCase();
+  const payload = `email:${customerId}:${email}:${expiresAt}`;
+  const sig = toHex(await crypto.subtle.sign("HMAC", await key(), encoder.encode(payload)));
+  const packed = Buffer.from(email, "utf8").toString("base64url");
+  return `${customerId}.${expiresAt}.${packed}.${sig}`;
+}
+
+export async function verifyEmailChange(
+  token: string | undefined | null,
+): Promise<{ customerId: string; email: string } | null> {
+  if (!token) return null;
+  const parts = token.split(".");
+  if (parts.length !== 4) return null;
+
+  const [customerId, expRaw, packed, sig] = parts;
+  const expiresAt = Number(expRaw);
+  if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) return null;
+
+  let email: string;
+  try {
+    email = Buffer.from(packed, "base64url").toString("utf8");
+  } catch {
+    return null;
+  }
+
+  let expected: string;
+  try {
+    const payload = `email:${customerId}:${email}:${expiresAt}`;
+    expected = toHex(await crypto.subtle.sign("HMAC", await key(), encoder.encode(payload)));
+  } catch {
+    return null;
+  }
+  return constantTimeEqual(expected, sig) ? { customerId, email } : null;
+}
+
 export async function memberConsoleUrl(customerId: string): Promise<string> {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   return `${base}/api/member/session?t=${await mintLink(customerId)}`;
