@@ -1,0 +1,31 @@
+# Reminder emails need to run hourly, and Vercel's Hobby plan will not run a
+# cron more than once a day. GitHub Actions does it for free.
+#
+# Needs two repository secrets (Settings > Secrets and variables > Actions):
+#   SITE_URL     e.g. https://bluepoint.vercel.app  (no trailing slash)
+#   CRON_SECRET  the same value as the CRON_SECRET env var on Vercel
+#
+# Move this back into vercel.json if the project ever goes to a Pro plan.
+name: Hourly reminders
+
+on:
+  schedule:
+    - cron: "5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger reminder emails
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$SITE_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "SITE_URL or CRON_SECRET is not set; skipping."
+            exit 0
+          fi
+          curl --fail --silent --show-error --max-time 60 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$SITE_URL/api/cron/reminders"

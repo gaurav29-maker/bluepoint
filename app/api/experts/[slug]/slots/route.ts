@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { availabilityExceptions, availabilityRules, bookings, experts } from "@/lib/db/schema";
-import { and, eq, gte, inArray, lte } from "drizzle-orm";
+import { and, eq, gte, lte } from "drizzle-orm";
 import { computeSlots, DEFAULT_HORIZON_DAYS } from "@/lib/slots";
+import { occupiesSlot } from "@/lib/bookings";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,7 @@ export async function GET(
       .where(
         and(
           eq(bookings.expertId, expert.id),
-          inArray(bookings.status, ["held", "confirmed", "completed"]),
+          occupiesSlot(),
           gte(bookings.startsAt, from),
           lte(bookings.startsAt, to),
         ),

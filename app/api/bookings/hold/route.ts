@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { and, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   availabilityExceptions,
@@ -12,6 +12,7 @@ import {
 } from "@/lib/db/schema";
 import { computeSlots, SLOT_MINUTES } from "@/lib/slots";
 import { DISCLAIMER_VERSION, HOLD_MINUTES } from "@/lib/constants";
+import { occupiesSlot, releaseStaleHold } from "@/lib/bookings";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
       .where(
         and(
           eq(bookings.expertId, expert.id),
-          inArray(bookings.status, ["held", "confirmed", "completed"]),
+          occupiesSlot(),
           gte(bookings.startsAt, new Date()),
           lte(bookings.startsAt, horizonEnd),
         ),
@@ -102,6 +103,10 @@ export async function POST(req: NextRequest) {
         .limit(1);
     }
   }
+
+  // Clear a lapsed hold on this exact slot before inserting; the unique index
+  // would otherwise refuse a slot nobody actually occupies.
+  await releaseStaleHold(expert.id, startsAt);
 
   try {
     const [booking] = await db
