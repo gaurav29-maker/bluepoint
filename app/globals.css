@@ -1088,3 +1088,301 @@
     .pricing-grid.is-four { grid-template-columns: 1fr; }
     .member-pass { flex-direction: column; }
   }
+
+  /* ================= MARKETING SITE — DARK ================= */
+  /*
+     Scoped to .site-dark rather than :root on purpose. The ops and member
+     consoles are working tools and stay light; only the marketing surface
+     takes this treatment, and the token names keep their meaning by role
+     (--white is "the raised surface", not the literal colour).
+
+     Palette follows X's verification blue, which is apt for a product whose
+     pitch is vetted experts. Black sits on the accent, not white: white on
+     #1D9BF0 is about 2.7:1 and fails, black is roughly 8:1.
+  */
+
+  .site-dark {
+    --canvas:     #0A0C10;
+    --white:      #12161D;
+    --surface:    #0F1319;
+    --line:       #1F2630;
+    --ink-dark:   #F3F6F9;
+    --ink:        #C2CBD7;
+    --ink-soft:   #798497;
+    --blue:       #1D9BF0;
+    --blue-light: #8FCBFA;
+    --blue-tint:  #0D2233;
+    --blue-deep:  #6FC1FF;
+
+    --on-accent:  #05080C;
+    --display:    "Instrument Serif", Georgia, serif;
+
+    background: var(--canvas);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ---------- floating pill nav ---------- */
+
+  .site-dark nav {
+    position: sticky;
+    top: 14px;
+    z-index: 60;
+    background: transparent;
+    border-bottom: none;
+    backdrop-filter: none;
+    padding: 0 20px;
+  }
+  .site-dark .nav-inner {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 9px 10px 9px 22px;
+    border-radius: 999px;
+    background: rgba(18, 22, 29, 0.82);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(14px);
+    gap: 28px;
+  }
+  .site-dark .nav-links { gap: 26px; font-size: 13.5px; }
+  .site-dark .nav-links a { color: var(--ink); }
+  .site-dark .nav-links a:hover { color: var(--ink-dark); }
+  .site-dark .nav-right { display: flex; align-items: center; gap: 14px; }
+  .site-dark .nav-login { color: var(--ink-soft); font-size: 13.5px; }
+  .site-dark .nav-login:hover { color: var(--ink-dark); }
+  .site-dark .nav-cta {
+    background: var(--blue);
+    color: var(--on-accent);
+    border-radius: 999px;
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .site-dark .nav-cta:hover { background: var(--blue-deep); }
+  .site-dark .logo { color: var(--ink-dark); }
+
+  /* ---------- display type ---------- */
+  /*
+     The one move borrowed wholesale: a serif italic set inside a tight sans
+     headline. It carries the personality, so it appears on exactly one word
+     per heading — used on more it stops being an accent.
+  */
+
+  .site-dark h1 {
+    font-size: clamp(40px, 6.4vw, 76px);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+    font-weight: 600;
+    color: var(--ink-dark);
+    text-wrap: balance;
+  }
+  .site-dark h2 {
+    font-size: clamp(26px, 3.4vw, 40px);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+    color: var(--ink-dark);
+    text-wrap: balance;
+  }
+  .site-dark h3 { color: var(--ink-dark); letter-spacing: -0.015em; }
+
+  .site-dark .said {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--blue-deep);
+    padding-right: 0.04em;
+  }
+
+  /* Single column now the stat cards are gone — the headline carries it. */
+  .site-dark .hero {
+    grid-template-columns: 1fr;
+    align-items: start;
+    padding: 78px 0 60px;
+    max-width: 820px;
+  }
+  .site-dark .sub { color: var(--ink); font-size: 16.5px; max-width: 46ch; }
+
+  .site-dark .eyebrow-pill {
+    background: var(--blue-tint);
+    color: var(--blue-deep);
+    border: 1px solid rgba(29, 155, 240, 0.28);
+    border-radius: 999px;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 13px;
+  }
+
+  /* ---------- pill buttons ---------- */
+
+  .site-dark .btn-primary,
+  .site-dark .nav-cta,
+  .site-dark .price-cta,
+  .site-dark .expert-book {
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .site-dark .btn-primary {
+    background: var(--blue);
+    color: var(--on-accent);
+    border: none;
+    padding: 15px 30px;
+    font-size: 14px;
+  }
+  .site-dark .btn-primary:hover { background: var(--blue-deep); }
+  .site-dark .btn-ghost {
+    background: transparent;
+    color: var(--ink-dark);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 15px 30px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .site-dark .btn-ghost:hover { border-color: var(--ink-soft); }
+
+  /* ---------- surfaces ---------- */
+
+  .site-dark .expert-card,
+  .site-dark .price-card,
+  .site-dark .feature-item,
+  .site-dark .process-step,
+  .site-dark .hero-stat-card,
+  .site-dark .faq-item,
+  .site-dark .final-cta {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+  }
+  .site-dark .price-card.popular {
+    border-color: rgba(29, 155, 240, 0.45);
+    background: linear-gradient(180deg, rgba(29,155,240,0.07), var(--white) 60%);
+  }
+  .site-dark .price-badge {
+    background: var(--blue);
+    color: var(--on-accent);
+    border-radius: 999px;
+  }
+  .site-dark .price-amount { color: var(--ink-dark); letter-spacing: -0.03em; }
+  .site-dark .price-features li { color: var(--ink); }
+  .site-dark .price-cta {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-dark);
+    padding: 13px 22px;
+  }
+  .site-dark .price-card.popular .price-cta {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: var(--on-accent);
+  }
+  .site-dark .price-cta:hover { border-color: var(--blue); color: var(--blue-deep); }
+  .site-dark .price-card.popular .price-cta:hover { background: var(--blue-deep); color: var(--on-accent); }
+
+  .site-dark .expert-photo { background: var(--blue); color: var(--on-accent); }
+  .site-dark .expert-name { color: var(--ink-dark); }
+  .site-dark .expert-rate { color: var(--ink-dark); }
+  .site-dark .expert-book {
+    background: var(--blue);
+    color: var(--on-accent);
+    border: none;
+    padding: 9px 18px;
+  }
+  .site-dark .expert-book:hover { background: var(--blue-deep); }
+
+  .site-dark .av { background: var(--blue); color: var(--on-accent); border-color: var(--canvas); }
+  .site-dark .process-num { color: var(--blue-deep); }
+  .site-dark .f-glyph { background: var(--blue-tint); border: 1px solid rgba(29,155,240,0.3); }
+  .site-dark .section-eyebrow { color: var(--blue-deep); }
+  .site-dark summary { color: var(--ink-dark); }
+  .site-dark footer { border-top: 1px solid var(--line); background: transparent; }
+  .site-dark .footer-col h4 { color: var(--ink-dark); }
+  .site-dark .footer-col a { color: var(--ink-soft); }
+  .site-dark .footer-col a:hover { color: var(--blue-deep); }
+  .site-dark .footer-recruit { background: var(--white); border: 1px solid var(--line); border-radius: 14px; }
+
+  /* ---------- vetted badge ---------- */
+  /*
+     Bluepoint's own mark: a plain disc and tick. Deliberately NOT the
+     scalloped badge X uses — the colour is a reference, the shape is not.
+  */
+  .site-dark .vetted {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    color: var(--blue-deep);
+    margin-top: 7px;
+  }
+  .site-dark .vetted svg { width: 13px; height: 13px; flex: none; }
+
+  /* ---------- logo marquee ---------- */
+
+  .site-dark .logo-strip {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 22px 0;
+    display: block;
+    overflow: hidden;
+  }
+  .site-dark .logo-strip .tag {
+    display: block;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .marquee { overflow: hidden; position: relative; }
+  .marquee::before,
+  .marquee::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 90px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .marquee::before { left: 0; background: linear-gradient(90deg, var(--canvas), transparent); }
+  .marquee::after { right: 0; background: linear-gradient(270deg, var(--canvas), transparent); }
+  .marquee-track {
+    display: flex;
+    gap: 46px;
+    width: max-content;
+    animation: bp-marquee 34s linear infinite;
+  }
+  .marquee-track span {
+    color: var(--ink-soft);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    opacity: 0.62;
+  }
+  @keyframes bp-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
+  }
+
+  /* ---------- misc dark fixes ---------- */
+
+  .site-dark .stats-bar { border-color: var(--line); }
+  .site-dark .testi-card { background: var(--white); border-color: var(--line); }
+  .site-dark .bp-empty { background: var(--white); border-color: var(--line); color: var(--ink-soft); }
+  .site-dark .expert-sebi { color: var(--ink-soft); }
+  .site-dark .footer-bottom { color: var(--ink-soft); border-top-color: var(--line); }
+  .site-dark .footer-disclaimer { color: var(--ink-soft); }
+  .site-dark .faq-item p { color: var(--ink); }
+  .site-dark .section-head p { color: var(--ink-soft); }
+  .site-dark .feature-item p, .site-dark .process-step p { color: var(--ink-soft); }
+  .site-dark .stat-label { color: var(--ink-soft); }
+  .site-dark .stat-value { color: var(--ink-dark); }
+  .site-dark .trust-avatars .label { color: var(--ink-soft); }
+  .site-dark .price-note { color: var(--ink-soft); }

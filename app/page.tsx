@@ -7,6 +7,17 @@ import PassPurchase from "@/components/PassPurchase";
 
 export const dynamic = "force-dynamic";
 
+const BROKERS = [
+  "Zerodha",
+  "HDFC Sec.",
+  "ICICI Direct",
+  "Groww",
+  "Angel One",
+  "Upstox",
+  "Kotak Neo",
+  "5paisa",
+];
+
 async function loadExperts(): Promise<{ experts: ExpertCard[]; dbReady: boolean }> {
   try {
     const rows = await db
@@ -33,7 +44,7 @@ export default async function Home() {
   const { experts, dbReady } = await loadExperts();
 
   return (
-    <>
+    <div className="site-dark">
       <nav>
         <div className="nav-inner">
           <div className="logo">
@@ -60,7 +71,9 @@ export default async function Home() {
         <div className="hero">
           <div>
             <span className="eyebrow-pill">45-minute calls with vetted experts</span>
-            <h1>Get your portfolio reviewed, by a real person.</h1>
+            <h1>
+              Get your portfolio <span className="said">reviewed</span>, by a real person.
+            </h1>
             <p className="sub">
               Book a call with a market expert. A plain review of your holdings, or a systematic way
               to think about your F&O trades. No pitch at the end of the call.
@@ -88,33 +101,25 @@ export default async function Home() {
               </span>
             </div>
           </div>
-          <div>
-            <div className="hero-stat-card">
-              <p className="stat-label">Call length</p>
-              <p className="stat-value">45 min</p>
-            </div>
-            <div className="hero-stat-card">
-              <p className="stat-label">Booking to confirmed</p>
-              <p className="stat-value">2 min</p>
-            </div>
-          </div>
         </div>
 
         <div className="logo-strip">
           <span className="tag">Built for traders using</span>
-          <div className="logo-chips">
-            <span className="logo-chip">Zerodha</span>
-            <span className="logo-chip">HDFC Sec.</span>
-            <span className="logo-chip">ICICI Direct</span>
-            <span className="logo-chip">Groww</span>
-            <span className="logo-chip">Angel One</span>
+          <div className="marquee">
+            <div className="marquee-track">
+              {[...BROKERS, ...BROKERS].map((b, i) => (
+                <span key={`${b}-${i}`}>{b}</span>
+              ))}
+            </div>
           </div>
         </div>
 
         <section id="experts">
           <div className="section-head">
             <p className="section-eyebrow">Our Experts</p>
-            <h2>Pick an expert who fits your portfolio</h2>
+            <h2>
+              Pick an expert who <span className="said">fits</span> your portfolio
+            </h2>
             <p>Vetted for track record before they are ever listed here.</p>
           </div>
           <ExpertGrid experts={experts} dbReady={dbReady} />
@@ -123,7 +128,9 @@ export default async function Home() {
         <section id="how" className="tight">
           <div className="section-head">
             <p className="section-eyebrow">Process</p>
-            <h2>Your review, effortlessly.</h2>
+            <h2>
+              Your review, <span className="said">effortlessly</span>.
+            </h2>
             <p>Begin in four simple steps — no back-and-forth scheduling emails.</p>
           </div>
           <div className="process-steps">
@@ -313,7 +320,9 @@ export default async function Home() {
         <section>
           <div className="final-cta">
             <div>
-              <h2>Get your portfolio reviewed this week.</h2>
+              <h2>
+                Get your portfolio reviewed <span className="said">this week</span>.
+              </h2>
               <p>No pitch, no pressure — just a clear read on where you stand.</p>
             </div>
             <div className="cta-row">
@@ -369,6 +378,6 @@ export default async function Home() {
           <div className="footer-bottom">© 2026 Bluepoint. All rights reserved.</div>
         </div>
       </footer>
-    </>
+    </div>
   );
 }

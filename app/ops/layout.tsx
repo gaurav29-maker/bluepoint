@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { OPS_COOKIE, sessionValid } from "@/lib/ops-auth";
 import { signOut } from "./actions";
 
 export const metadata: Metadata = {
@@ -7,7 +9,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function OpsLayout({ children }: { children: React.ReactNode }) {
+export default async function OpsLayout({ children }: { children: React.ReactNode }) {
+  // The login page lives under /ops too, so the chrome is gated on the session
+  // rather than on the path — otherwise a signed-out visitor is shown a nav bar
+  // and a "Sign out" button on the very page asking them to sign in.
+  const signedIn = await sessionValid((await cookies()).get(OPS_COOKIE)?.value);
+
+  if (!signedIn) return <>{children}</>;
+
   return (
     <div className="ops">
       <header className="ops-bar">
