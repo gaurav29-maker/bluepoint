@@ -75,8 +75,8 @@ export default async function Home() {
               Get your portfolio <span className="said">reviewed</span>, by a real person.
             </h1>
             <p className="sub">
-              Book a call with a market expert. A plain review of your holdings, or a systematic way
-              to think about your F&O trades. No pitch at the end of the call.
+              Book a call with a market expert. A straight read on what you hold, or a system for
+              sizing your F&O trades instead of guessing. No pitch at the end of the call.
             </p>
             <div className="cta-row">
               <a className="btn-primary" href="#experts">

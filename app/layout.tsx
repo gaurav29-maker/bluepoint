@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Bluepoint — Get your portfolio reviewed, by a real person",
   description:
-    "Book a call with a vetted market expert. A plain review of your holdings, or a systematic way to think about your F&O trades.",
+    "Book a call with a vetted market expert. A straight read on what you hold, or a system for sizing your F&O trades instead of guessing.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
