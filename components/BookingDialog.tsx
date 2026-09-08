@@ -190,7 +190,7 @@ export default function BookingDialog({
           <div>
             <p className="bp-dialog-title">{expert.displayName}</p>
             <p className="bp-dialog-sub">
-              45 minutes · {rupees(expert.pricePaise)} · times shown in IST
+              {rupees(expert.pricePaise)} · times shown in IST
             </p>
           </div>
           <button className="bp-close" onClick={onClose} aria-label="Close">
@@ -256,7 +256,7 @@ export default function BookingDialog({
               >
                 <span className="bp-product-name">One call</span>
                 <span className="bp-product-price">{rupees(expert.pricePaise)}</span>
-                <span className="bp-product-note">A single 45-minute session</span>
+                <span className="bp-product-note">A single session</span>
               </button>
               <button
                 type="button"

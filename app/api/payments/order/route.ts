@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   const amountPaise = bundle ? bundle.amountPaise : booking.amountPaise;
   const description = bundle
     ? `3-call bundle with ${expert.displayName}`
-    : `45-min session with ${expert.displayName}`;
+    : `Session with ${expert.displayName}`;
 
   // Reuse the order if one already exists — a customer who refreshes checkout
   // should not generate a second order against the same booking.

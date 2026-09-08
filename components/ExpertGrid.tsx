@@ -59,7 +59,7 @@ export default function ExpertGrid({
             ) : null}
             <div className="expert-meta">
               <p className="expert-rate">
-                {rupees(e.pricePaise)} <span>/ 45 min</span>
+                {rupees(e.pricePaise)} <span>/ call</span>
               </p>
               <button className="expert-book" onClick={() => setBooking(e)}>
                 Book

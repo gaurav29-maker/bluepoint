@@ -70,7 +70,7 @@ export default async function Home() {
       <div className="wrap">
         <div className="hero">
           <div>
-            <span className="eyebrow-pill">45-minute calls with vetted experts</span>
+            <span className="eyebrow-pill">One-to-one calls with vetted experts</span>
             <h1>
               Get your portfolio <span className="said">reviewed</span>, by a real person.
             </h1>

@@ -32,7 +32,7 @@ export default function Terms() {
       <h2>2. What Bluepoint is</h2>
       <p>
         Bluepoint is a marketplace. We introduce you to independent experts and handle scheduling
-        and payment for a 45-minute session. The session itself is between you and that expert.
+        and payment for the session. The session itself is between you and that expert.
       </p>
       <p>
         <strong>What happens on a call is a review and a discussion.</strong> An expert may look at

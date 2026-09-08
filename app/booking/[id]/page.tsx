@@ -90,7 +90,7 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
         <div className="bp-panel">
           <h1>You are booked in.</h1>
           <p className="bp-lead">
-            45 minutes with <strong>{data.expertName}</strong>
+            Your session with <strong>{data.expertName}</strong>
             <br />
             {istDateTime(data.startsAt)} IST
           </p>

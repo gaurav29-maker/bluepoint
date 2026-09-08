@@ -100,7 +100,7 @@ export function customerConfirmation(args: {
     subject: `Your Bluepoint call with ${args.expertName} is confirmed`,
     html: shell(`
       <h2 style="font-size:20px;margin:0 0 16px">You're booked in.</h2>
-      <p>Hi ${args.customerName}, your 45-minute session with
+      <p>Hi ${args.customerName}, your session with
          <strong>${args.expertName}</strong> is confirmed.</p>
       <p style="background:#EAF2FC;padding:14px 16px;border-radius:8px;margin:20px 0">
         <strong>${istDateTime(args.startsAt)} IST</strong><br>
@@ -128,7 +128,7 @@ export function expertNotification(args: {
     html: shell(`
       <h2 style="font-size:20px;margin:0 0 16px">New booking</h2>
       <p>Hi ${args.expertName}, <strong>${args.customerName}</strong> has booked a
-         45-minute session.</p>
+         session.</p>
       <p style="background:#EAF2FC;padding:14px 16px;border-radius:8px;margin:20px 0">
         <strong>${istDateTime(args.startsAt)} IST</strong>
       </p>
