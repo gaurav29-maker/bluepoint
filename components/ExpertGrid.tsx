@@ -52,19 +52,38 @@ export default function ExpertGrid({
             <div className="expert-photo">{e.initials}</div>
             <p className="expert-name">{e.displayName}</p>
             <p className="expert-tag">{e.headline}</p>
-            {e.sebiRegType !== "none" && e.sebiRegNumber ? (
-              <p className="expert-sebi">
-                SEBI {e.sebiRegType.toUpperCase()} · {e.sebiRegNumber}
-              </p>
-            ) : null}
-            <div className="expert-meta">
-              <p className="expert-rate">
-                {rupees(e.pricePaise)} <span>/ call</span>
-              </p>
-              <button className="expert-book" onClick={() => setBooking(e)}>
-                Book
-              </button>
-            </div>
+
+            {/*
+              Laid out as a record rather than a paragraph: label on the left,
+              value on the right, figures in a mono so rates line up down the
+              column of cards. The SEBI row is always present — an expert with
+              no registration shows "Not registered" rather than the row simply
+              vanishing, which is what the terms already commit to.
+            */}
+            <dl className="expert-fields">
+              <div>
+                <dt>Rate</dt>
+                <dd className="expert-rate">
+                  {rupees(e.pricePaise)} <span>/ call</span>
+                </dd>
+              </div>
+              <div>
+                <dt>SEBI</dt>
+                <dd>
+                  {e.sebiRegType !== "none" && e.sebiRegNumber ? (
+                    <>
+                      {e.sebiRegType.toUpperCase()} · {e.sebiRegNumber}
+                    </>
+                  ) : (
+                    <span className="expert-none">Not registered</span>
+                  )}
+                </dd>
+              </div>
+            </dl>
+
+            <button className="expert-book" onClick={() => setBooking(e)}>
+              Book a call
+            </button>
           </div>
         ))}
       </div>

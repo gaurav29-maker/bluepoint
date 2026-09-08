@@ -1698,3 +1698,115 @@
     margin-left: auto;
     margin-right: auto;
   }
+
+  /* ========== BLOOMBERG TERMINAL, WITHOUT THE COLOUR ==========
+     Figures in a mono with tabular numerals so prices align down a column,
+     field labels in wide uppercase, and the marquee read as a data strip.
+
+     What is deliberately NOT taken: the green/red. On a terminal those carry
+     direction on live data. Bluepoint has no market data, so coloured deltas
+     here would be decoration imitating information.
+  */
+
+  /*
+     The amber was tried and rejected: the palette stays on the verification
+     blue. What is kept from the terminal is everything that is not colour —
+     mono tabular figures, wide uppercase field labels, and data presented as
+     labelled records. Those carry the reference further than a hue does.
+  */
+  .site-dark {
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  /* ---------- figures set like a terminal ---------- */
+  /*
+     Tabular numerals are the point: at these sizes a proportional 1 is much
+     narrower than a 4, so a column of prices sits ragged. Mono plus
+     tabular-nums makes 45,000 and 2,45,000 line up on the comma.
+  */
+  .site-dark .price-amount,
+  .site-dark .expert-rate {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.02em;
+  }
+  .site-dark .price-amount span,
+  .site-dark .expert-rate span {
+    font-family: "Inter", sans-serif;
+    letter-spacing: 0;
+  }
+
+  /* ---------- terminal micro-labels ---------- */
+  .site-dark .section-eyebrow,
+  .site-dark .logo-strip .tag,
+  .site-dark .price-badge {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    font-size: 10.5px;
+    font-weight: 500;
+  }
+  .site-dark .eyebrow-pill {
+    font-family: var(--mono);
+    letter-spacing: 0.11em;
+  }
+  .site-dark .price-badge { letter-spacing: 0.1em; padding: 4px 10px; }
+
+  /* Broker names in the marquee read as a data strip rather than logos. */
+  .site-dark .marquee-track span {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ---------- expert card as a terminal record ---------- */
+
+  .site-dark .expert-fields {
+    margin: 16px 0 18px;
+    padding: 14px 0 2px;
+    border-top: 1px solid var(--hair);
+    display: grid;
+    gap: 9px;
+  }
+  .site-dark .expert-fields > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .site-dark .expert-fields dt {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .site-dark .expert-fields dd {
+    margin: 0;
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12.5px;
+    color: var(--ink-dark);
+    text-align: right;
+    word-break: break-all;
+  }
+  .site-dark .expert-fields .expert-rate {
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .site-dark .expert-fields .expert-rate span {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .site-dark .expert-none { color: var(--ink-soft); }
+
+  .site-dark .expert-card .expert-book {
+    display: block;
+    width: 100%;
+    padding: 11px 18px;
+  }
