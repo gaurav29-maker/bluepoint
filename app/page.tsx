@@ -72,11 +72,11 @@ export default async function Home() {
           <div>
             <span className="eyebrow-pill">One-to-one calls with vetted experts</span>
             <h1>
-              A <span className="said">different</span> kind of portfolio review.
+              Get your portfolio <span className="said">reviewed</span>, by a real person.
             </h1>
             <p className="sub">
-              From an expert who is paid to look, not to sell. One call. Your holdings, read
-              honestly. Nothing to buy at the end of it.
+              Book a call with a market expert. A plain review of your holdings, or a systematic way
+              to think about your F&O trades. No pitch at the end of the call.
             </p>
             <div className="cta-row">
               <a className="btn-primary" href="#experts">
