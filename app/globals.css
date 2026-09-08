@@ -1,13 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Design Preview</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
   :root {
     --white: #FFFFFF;
     --canvas: #FFFFFF;
@@ -347,343 +337,256 @@
     .final-cta { flex-direction: column; align-items: flex-start; }
     h1 { font-size: 36px; }
   }
-</style>
-</head>
-<body>
 
-<nav>
-  <div class="nav-inner">
-    <div class="logo">blue<span>point</span></div>
-    <div class="nav-links">
-      <a href="#experts">Experts</a>
-      <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQs</a>
-    </div>
-    <div class="nav-right">
-      <a class="nav-login" href="#">Login</a>
-      <a class="nav-cta" href="#experts">Book a call</a>
-    </div>
-  </div>
-</nav>
+  /* ================= BOOKING UI ================= */
+  /* Added for the backend; everything above is the original page as authored. */
 
-<div class="wrap">
+  a.btn-primary, a.btn-ghost, a.price-cta, a.expert-book {
+    display: inline-block;
+    text-align: center;
+  }
 
-  <!-- Hero -->
-  <div class="hero">
-    <div>
-      <span class="eyebrow-pill">1,200+ audits completed</span>
-      <h1>Get your portfolio reviewed, by a real person.</h1>
-      <p class="sub">Book a call with a market expert. A plain review of your holdings, or a systematic way to think about your F&O trades. No pitch at the end of the call.</p>
-      <div class="cta-row">
-        <button class="btn-primary">Browse experts</button>
-        <button class="btn-ghost">How it works</button>
-      </div>
-      <div class="trust-avatars">
-        <div class="avatar-stack">
-          <div class="av">RK</div>
-          <div class="av">AM</div>
-          <div class="av">GK</div>
-        </div>
-        <span class="label">Trusted by 500+ investors</span>
-      </div>
-    </div>
-    <div>
-      <div class="hero-stat-card">
-        <p class="stat-label">Audits completed</p>
-        <p class="stat-value">1,204</p>
-      </div>
-      <div class="hero-stat-card">
-        <p class="stat-label">Avg. call rating</p>
-        <p class="stat-value">4.8 / 5</p>
-      </div>
-    </div>
-  </div>
+  .expert-sebi {
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+    margin: 6px 0 0;
+  }
 
-  <!-- Logo strip -->
-  <div class="logo-strip">
-    <span class="tag">Trusted by traders working at</span>
-    <div class="logo-chips">
-      <span class="logo-chip">NSE Member Firms</span>
-      <span class="logo-chip">HDFC Sec.</span>
-      <span class="logo-chip">ICICI Direct</span>
-      <span class="logo-chip">Groww</span>
-      <span class="logo-chip">Angel One</span>
-    </div>
-  </div>
+  .bp-empty {
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 14px;
+    background: var(--surface);
+  }
+  .bp-empty code {
+    background: var(--blue-tint);
+    color: var(--blue-deep);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
 
-  <!-- Experts -->
-  <section id="experts">
-    <div class="section-head">
-      <p class="section-eyebrow">Our Experts</p>
-      <h2>Pick an expert who fits your portfolio</h2>
-      <p>Vetted for track record before they're ever listed here. 6 available this week.</p>
-    </div>
-    <div class="expert-grid">
-      <div class="expert-card">
-        <div class="expert-photo">RK</div>
-        <p class="expert-name">Rhea Kulkarni</p>
-        <p class="expert-tag">Portfolio audits · 9 yrs</p>
-        <div class="expert-meta">
-          <p class="expert-rate">₹1,500 <span>/ 45 min</span></p>
-          <button class="expert-book">Book</button>
-        </div>
-      </div>
-      <div class="expert-card">
-        <div class="expert-photo">AM</div>
-        <p class="expert-name">Arjun Mehta</p>
-        <p class="expert-tag">F&O systematic trading · 12 yrs</p>
-        <div class="expert-meta">
-          <p class="expert-rate">₹2,200 <span>/ 45 min</span></p>
-          <button class="expert-book">Book</button>
-        </div>
-      </div>
-      <div class="expert-card">
-        <div class="expert-photo">GK</div>
-        <p class="expert-name">Gaurav Khona</p>
-        <p class="expert-tag">Portfolio audits · F&O · 10 yrs</p>
-        <div class="expert-meta">
-          <p class="expert-rate">₹1,800 <span>/ 45 min</span></p>
-          <button class="expert-book">Book</button>
-        </div>
-      </div>
-    </div>
-  </section>
+  .bp-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.45);
+    backdrop-filter: blur(3px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+  }
 
-  <!-- Process -->
-  <section id="how" class="tight">
-    <div class="section-head">
-      <p class="section-eyebrow">Process</p>
-      <h2>Your review, effortlessly.</h2>
-      <p>Begin in four simple steps — no back-and-forth scheduling emails.</p>
-    </div>
-    <div class="process-steps">
-      <div class="process-step">
-        <div class="process-num">01</div>
-        <h3>Choose expert</h3>
-        <p>Pick based on specialty, rate, and experience.</p>
-      </div>
-      <div class="process-step">
-        <div class="process-num">02</div>
-        <h3>Pick a slot</h3>
-        <p>See real-time availability, book instantly.</p>
-      </div>
-      <div class="process-step">
-        <div class="process-num">03</div>
-        <h3>Pay & confirm</h3>
-        <p>Secure payment via Razorpay, instant confirmation.</p>
-      </div>
-      <div class="process-step">
-        <div class="process-num">04</div>
-        <h3>Share your portfolio</h3>
-        <p>Fill a short intake form before your call.</p>
-      </div>
-    </div>
-    <button class="btn-primary">Book now</button>
-  </section>
+  .bp-dialog {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 24px 60px rgba(26, 26, 26, 0.18);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-  <!-- Features -->
-  <section>
-    <div class="section-head">
-      <p class="section-eyebrow">Why us</p>
-      <h2>Reasons traders choose us</h2>
-      <p>No gimmicks, no gamification — just a clear, honest review of where you stand.</p>
-    </div>
-    <div class="features-grid">
-      <div class="feature-item">
-        <div class="f-glyph"></div>
-        <h3>Vetted experts only</h3>
-        <p>Every expert is reviewed for track record before they're listed here.</p>
-      </div>
-      <div class="feature-item">
-        <div class="f-glyph"></div>
-        <h3>No spam, no upsell</h3>
-        <p>The call is the product. No follow-up pitches after.</p>
-      </div>
-      <div class="feature-item">
-        <div class="f-glyph"></div>
-        <h3>Your data, your call</h3>
-        <p>Portfolio details are shared only with the expert you book.</p>
-      </div>
-      <div class="feature-item">
-        <div class="f-glyph"></div>
-        <h3>Systematic F&O guidance</h3>
-        <p>A structured way to think about position sizing and risk, not tips.</p>
-      </div>
-      <div class="feature-item">
-        <div class="f-glyph"></div>
-        <h3>Instant booking</h3>
-        <p>Real-time slots. No emails back and forth to find a time.</p>
-      </div>
-      <div class="feature-item">
-        <div class="f-glyph"></div>
-        <h3>Clear, flat pricing</h3>
-        <p>You see the price before you book. No hidden fees.</p>
-      </div>
-    </div>
-  </section>
+  .bp-dialog-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .bp-dialog-title { font-weight: 700; font-size: 16px; margin: 0; }
+  .bp-dialog-sub { font-size: 13px; color: var(--ink-soft); margin: 4px 0 0; }
+  .bp-close {
+    background: none;
+    border: none;
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .bp-close:hover { color: var(--ink-dark); }
 
-  <!-- Pricing -->
-  <section id="pricing">
-    <div class="section-head">
-      <p class="section-eyebrow">Pricing</p>
-      <h2>Simple, transparent pricing</h2>
-      <p>Pay per call, or bundle for ongoing F&O guidance.</p>
-    </div>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <h3>Single Audit</h3>
-        <p class="price-amount">₹1,500 <span>/ call</span></p>
-        <p class="price-note">One 45-min portfolio review</p>
-        <ul class="price-features">
-          <li>45-minute video call</li>
-          <li>Written summary after</li>
-          <li>Book with any expert</li>
-        </ul>
-        <button class="price-cta">Book now</button>
-      </div>
-      <div class="price-card popular">
-        <span class="price-badge">Most popular</span>
-        <h3>3-Call Bundle</h3>
-        <p class="price-amount">₹1,200 <span>/ call</span></p>
-        <p class="price-note">Total ₹3,600 · valid 60 days</p>
-        <ul class="price-features">
-          <li>3 x 45-minute calls</li>
-          <li>Same expert every time</li>
-          <li>Progress tracked across calls</li>
-        </ul>
-        <button class="price-cta">Get bundle</button>
-      </div>
-      <div class="price-card">
-        <h3>F&O Systematic</h3>
-        <p class="price-amount">₹2,200 <span>/ call</span></p>
-        <p class="price-note">Ongoing monthly guidance</p>
-        <ul class="price-features">
-          <li>Weekly check-in call</li>
-          <li>Position sizing framework</li>
-          <li>Risk review each session</li>
-        </ul>
-        <button class="price-cta">Talk to an expert</button>
-      </div>
-    </div>
-  </section>
+  .bp-body { padding: 20px 22px 24px; overflow-y: auto; }
 
-  <!-- Testimonials -->
-  <section class="tight">
-    <div class="section-head">
-      <p class="section-eyebrow">Testimonials</p>
-      <h2>What traders are saying</h2>
-    </div>
-    <div class="testi-grid">
-      <div class="testi-card">
-        <p class="quote">"The audit made me realise I was way overexposed to one sector. Blunt, useful, no sales pitch."</p>
-        <p class="testi-name">Karan Shah</p>
-        <p class="testi-role">Retail investor, Mumbai</p>
-      </div>
-      <div class="testi-card">
-        <p class="quote">"First time F&O made sense as a system rather than a gamble. Worth every rupee."</p>
-        <p class="testi-name">Neha Iyer</p>
-        <p class="testi-role">F&O trader, Bangalore</p>
-      </div>
-      <div class="testi-card">
-        <p class="quote">"Booking took two minutes and the expert had actually looked at my holdings beforehand."</p>
-        <p class="testi-name">Rohit Bhatia</p>
-        <p class="testi-role">Retail investor, Pune</p>
-      </div>
-    </div>
-  </section>
+  .bp-day-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+  }
+  .bp-day {
+    flex: 0 0 auto;
+    padding: 8px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .bp-day.is-active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: var(--white);
+  }
 
-  <!-- Stats -->
-  <div class="stats-bar">
-    <div class="stat-block">
-      <div class="num">1,204</div>
-      <div class="lbl">Audits completed</div>
-    </div>
-    <div class="stat-block">
-      <div class="num">96%</div>
-      <div class="lbl">Client satisfaction</div>
-    </div>
-    <div class="stat-block">
-      <div class="num">20+</div>
-      <div class="lbl">Vetted experts</div>
-    </div>
-  </div>
+  .bp-slot-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 14px 0 20px;
+  }
+  .bp-slot {
+    padding: 11px 6px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-dark);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .bp-slot:hover { border-color: var(--blue-light); }
+  .bp-slot.is-active {
+    background: var(--blue-tint);
+    border-color: var(--blue);
+    color: var(--blue-deep);
+    font-weight: 600;
+  }
 
-  <!-- FAQ -->
-  <section id="faq">
-    <div class="section-head">
-      <p class="section-eyebrow">Frequently asked questions</p>
-      <h2>Still curious?</h2>
-    </div>
-    <div class="faq-list">
-      <details class="faq-item">
-        <summary>Do I need to share my demat login?</summary>
-        <p>No. You only share a summary of your holdings during intake — never login credentials.</p>
-      </details>
-      <details class="faq-item">
-        <summary>What if I'm not satisfied with the call?</summary>
-        <p>Reach out within 24 hours and we'll arrange a follow-up or refund, case by case.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Do experts give stock tips?</summary>
-        <p>No. Experts review your existing portfolio and F&O approach — they don't recommend specific trades.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Can I book the same expert again?</summary>
-        <p>Yes — the 3-call bundle keeps you with the same expert across sessions.</p>
-      </details>
-    </div>
-  </section>
+  .bp-full { width: 100%; }
+  button.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
 
-  <!-- Final CTA -->
-  <section>
-    <div class="final-cta">
-      <div>
-        <h2>Get your portfolio reviewed this week.</h2>
-        <p>No pitch, no pressure — just a clear read on where you stand.</p>
-      </div>
-      <div class="cta-row">
-        <button class="btn-primary">Browse experts</button>
-        <button class="btn-ghost">See pricing</button>
-      </div>
-    </div>
-  </section>
+  .bp-chosen {
+    background: var(--blue-tint);
+    color: var(--blue-deep);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0 0 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .bp-change {
+    background: none;
+    border: none;
+    color: var(--blue-deep);
+    text-decoration: underline;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
 
-</div>
+  .bp-field { display: block; margin-bottom: 14px; }
+  .bp-field > span {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--ink-dark);
+  }
+  .bp-field em { font-style: normal; color: var(--ink-soft); font-weight: 400; }
+  .bp-field input,
+  .bp-field textarea,
+  .bp-field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink-dark);
+    background: var(--white);
+  }
+  .bp-field textarea { resize: vertical; line-height: 1.55; }
+  .bp-field input:focus,
+  .bp-field textarea:focus,
+  .bp-field select:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-tint);
+  }
 
-<footer>
-  <div class="wrap">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h4>Navigate</h4>
-        <a href="#experts">Experts</a>
-        <a href="#how">How it works</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#faq">FAQs</a>
-      </div>
-      <div class="footer-col">
-        <h4>Get in touch</h4>
-        <a href="#">Email</a>
-        <a href="#">Instagram</a>
-        <a href="#">LinkedIn</a>
-      </div>
-      <div class="footer-col">
-        <h4>Useful links</h4>
-        <a href="#">Terms & Conditions</a>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Refund Policy</a>
-      </div>
-      <div class="footer-col">
-        <div class="footer-recruit">
-          <h4>Are you an expert?</h4>
-          <p>Join the platform and help traders make sense of their portfolios.</p>
-          <button class="expert-book">Apply now</button>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">© 2026 Bluepoint. All rights reserved.</div>
-  </div>
-</footer>
+  .bp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-</body>
-</html>
+  .bp-check {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.5;
+    margin: 4px 0 18px;
+    cursor: pointer;
+  }
+  .bp-check input { margin-top: 2px; flex: 0 0 auto; }
+
+  .bp-error {
+    background: #FDECEC;
+    color: #A62B2B;
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    margin: 0 0 14px;
+  }
+  .bp-warn {
+    background: var(--blue-tint);
+    color: var(--blue-deep);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.55;
+    margin: 0 0 20px;
+  }
+  .bp-muted { color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
+  .bp-spaced { margin-top: 20px; }
+  .bp-fineprint {
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin: 12px 0 0;
+    line-height: 1.5;
+  }
+
+  .bp-page { padding-top: 40px; padding-bottom: 80px; max-width: 620px; }
+  .bp-page-logo { font-size: 17px; margin-bottom: 28px; }
+  .bp-panel {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 32px;
+    background: var(--white);
+  }
+  .bp-panel h1 { font-size: 24px; letter-spacing: -0.02em; margin: 0 0 12px; }
+  .bp-lead { font-size: 15px; line-height: 1.65; color: var(--ink); margin: 0 0 20px; }
+
+  .footer-disclaimer {
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 720px;
+    margin: 32px 0 0;
+  }
+
+  @media (max-width: 640px) {
+    .bp-slot-grid { grid-template-columns: repeat(2, 1fr); }
+    .bp-row { grid-template-columns: 1fr; }
+    .bp-panel { padding: 24px 20px; }
+  }
