@@ -72,7 +72,7 @@ export default async function Home() {
           <div>
             <span className="eyebrow-pill">One-to-one calls with vetted experts</span>
             <h1>
-              Get your portfolio <span className="said">reviewed</span>, by a real person.
+              Get your portfolio <span className="said">reviewed</span>, not sold to.
             </h1>
             <p className="sub">
               Book a call with a market expert. A plain review of your holdings, or a systematic way
