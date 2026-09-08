@@ -108,7 +108,12 @@ export default async function MemberConsole() {
         <a href="/" className="logo bp-page-logo">
           blue<span>point</span>
         </a>
-        <span className="bp-muted">{customer.name}</span>
+        <span className="member-top-right">
+          <a className="ops-link" href="/member/receipts">
+            Receipts
+          </a>
+          <span className="bp-muted">{customer.name}</span>
+        </span>
       </div>
 
       {membership ? (
