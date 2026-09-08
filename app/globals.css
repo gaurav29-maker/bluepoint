@@ -6,10 +6,19 @@
     --ink: #424242;
     --ink-dark: #1A1A1A;
     --ink-soft: #6B6B6B;
-    --blue: #387ED1;
-    --blue-light: #8EC1FF;
-    --blue-tint: #EAF2FC;
-    --blue-deep: #2E68AB;
+    /*
+       One brand blue across the whole site: X's verification blue.
+       Two supporting values exist for contrast, not for variety:
+         --on-accent  text sitting ON the blue. White on #1D9BF0 is 3.0:1
+                      and fails AA; near-black is 7.0:1.
+         --blue-deep  the same hue darkened, for blue TEXT on light grounds,
+                      where #1D9BF0 itself is only 3.0:1. 5.3:1.
+    */
+    --blue: #1D9BF0;
+    --blue-light: #8FCBFA;
+    --blue-tint: #E8F5FE;
+    --blue-deep: #0F6FB5;
+    --on-accent: #05080C;
   }
 
   * { box-sizing: border-box; }
@@ -56,7 +65,7 @@
   .nav-login { font-size: 14px; font-weight: 500; color: var(--ink-soft); }
   .nav-cta {
     background: var(--blue);
-    color: var(--white);
+    color: var(--on-accent);
     padding: 9px 20px;
     border-radius: 999px;
     font-size: 13.5px;
@@ -101,7 +110,7 @@
   .cta-row { display: flex; gap: 12px; align-items: center; margin-bottom: 28px; }
   .btn-primary {
     background: var(--blue);
-    color: var(--white);
+    color: var(--on-accent);
     border: none;
     padding: 13px 28px;
     border-radius: 999px;
@@ -128,7 +137,7 @@
     width: 32px; height: 32px;
     border-radius: 30% / 30%;
     background: var(--blue);
-    color: var(--white);
+    color: var(--on-accent);
     font-size: 11px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
     border: 2px solid var(--white);
@@ -162,7 +171,7 @@
   .logo-chip { font-size: 14px; font-weight: 700; color: #C7CDD8; letter-spacing: -0.01em; }
 
   /* ================= SECTION HEAD ================= */
-  .section-eyebrow { font-size: 12.5px; font-weight: 700; color: var(--blue); text-transform: none; margin: 0 0 8px; }
+  .section-eyebrow { font-size: 12.5px; font-weight: 700; color: var(--blue-deep); text-transform: none; margin: 0 0 8px; }
   .section-head { margin-bottom: 36px; }
   .section-head h2 {
     font-family: 'Inter', sans-serif;
@@ -191,7 +200,7 @@
     width: 40px; height: 40px;
     border-radius: 30% / 30%;
     background: var(--blue);
-    color: var(--white);
+    color: var(--on-accent);
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 700;
     margin-bottom: 14px;
@@ -202,11 +211,11 @@
   .expert-rate { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .expert-rate span { font-size: 12px; font-weight: 400; color: var(--ink-soft); }
   .expert-book {
-    font-size: 13px; font-weight: 600; color: var(--blue);
+    font-size: 13px; font-weight: 600; color: var(--blue-deep);
     background: var(--blue-tint); padding: 8px 16px; border-radius: 999px;
     border: none; cursor: pointer;
   }
-  .expert-book:hover { background: var(--blue); color: var(--white); }
+  .expert-book:hover { background: var(--blue); color: var(--on-accent); }
 
   /* ================= PROCESS ================= */
   .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px; }
@@ -246,7 +255,7 @@
   .price-card.popular { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
   .price-badge {
     position: absolute; top: -12px; right: 20px;
-    background: var(--blue); color: var(--white);
+    background: var(--blue); color: var(--on-accent);
     font-size: 11.5px; font-weight: 700;
     padding: 4px 12px; border-radius: 999px;
   }
@@ -268,7 +277,7 @@
   }
   .price-cta {
     display: block; text-align: center;
-    background: var(--blue); color: var(--white);
+    background: var(--blue); color: var(--on-accent);
     padding: 11px; border-radius: 999px;
     font-size: 14px; font-weight: 600; cursor: pointer; border: none; width: 100%;
   }
@@ -619,7 +628,7 @@
   .legal ul { padding-left: 20px; margin: 10px 0; }
   .legal li { margin-bottom: 7px; }
   .legal strong { font-weight: 600; }
-  .legal a { color: var(--blue); }
+  .legal a { color: var(--blue-deep); }
 
   .legal-draft {
     background: #FFF6E5;
@@ -758,7 +767,7 @@
   .ops-lede { margin-bottom: 20px; max-width: 68ch; }
   .ops-foot { margin-top: 12px; font-size: 12px; }
   .ops-crumb { margin: 0 0 14px; font-size: 13px; }
-  .ops-link { color: var(--blue); font-weight: 500; font-size: 13px; }
+  .ops-link { color: var(--blue-deep); font-weight: 500; font-size: 13px; }
   .ops-sub { display: block; font-size: 11.5px; color: var(--ink-soft); }
 
   /* --- tiles --- */

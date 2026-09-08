@@ -153,7 +153,7 @@ export default function BookingDialog({
         name: "Bluepoint",
         description: order.description,
         prefill: order.prefill,
-        theme: { color: "#387ED1" },
+        theme: { color: "#1D9BF0" },
         // The webhook confirms the booking. This only moves the browser on.
         handler: () => {
           window.location.href = `/booking/${hold.bookingId}`;

@@ -102,7 +102,7 @@ export function customerConfirmation(args: {
       <h2 style="font-size:20px;margin:0 0 16px">You're booked in.</h2>
       <p>Hi ${args.customerName}, your session with
          <strong>${args.expertName}</strong> is confirmed.</p>
-      <p style="background:#EAF2FC;padding:14px 16px;border-radius:8px;margin:20px 0">
+      <p style="background:#E8F5FE;padding:14px 16px;border-radius:8px;margin:20px 0">
         <strong>${istDateTime(args.startsAt)} IST</strong><br>
         ${args.amountPaise > 0 ? `Paid ${rupees(args.amountPaise)}` : "Included in your plan"}
         ${args.meetingUrl ? `<br><a href="${args.meetingUrl}">Join link</a>` : ""}
@@ -110,7 +110,7 @@ export function customerConfirmation(args: {
       <p><strong>One thing before the call.</strong> Fill in the short intake form so
          your expert arrives having already looked at your holdings:</p>
       <p><a href="${intakeUrl(args.bookingId)}"
-            style="display:inline-block;background:#387ED1;color:#fff;padding:11px 20px;
+            style="display:inline-block;background:#1D9BF0;color:#05080C;padding:11px 20px;
                    border-radius:8px;text-decoration:none">Fill the intake form</a></p>
       <p style="font-size:13px;color:#6B6B6B">It asks for a summary of your holdings —
          never a login.</p>`),
@@ -129,7 +129,7 @@ export function expertNotification(args: {
       <h2 style="font-size:20px;margin:0 0 16px">New booking</h2>
       <p>Hi ${args.expertName}, <strong>${args.customerName}</strong> has booked a
          session.</p>
-      <p style="background:#EAF2FC;padding:14px 16px;border-radius:8px;margin:20px 0">
+      <p style="background:#E8F5FE;padding:14px 16px;border-radius:8px;margin:20px 0">
         <strong>${istDateTime(args.startsAt)} IST</strong>
       </p>
       <p>Their intake form will follow once they've filled it in.</p>`),
@@ -146,7 +146,7 @@ export function intakeNudge(args: { customerName: string; startsAt: Date; bookin
       <p>Filling it in is what makes the session useful — otherwise the first fifteen
          minutes go on describing your portfolio out loud.</p>
       <p><a href="${intakeUrl(args.bookingId)}"
-            style="display:inline-block;background:#387ED1;color:#fff;padding:11px 20px;
+            style="display:inline-block;background:#1D9BF0;color:#05080C;padding:11px 20px;
                    border-radius:8px;text-decoration:none">Fill it in now</a></p>`),
   };
 }
@@ -169,7 +169,7 @@ export function reminder(args: {
       ${
         args.meetingUrl
           ? `<p><a href="${args.meetingUrl}"
-                  style="display:inline-block;background:#387ED1;color:#fff;padding:11px 20px;
+                  style="display:inline-block;background:#1D9BF0;color:#05080C;padding:11px 20px;
                          border-radius:8px;text-decoration:none">Join the call</a></p>`
           : "<p>Your expert will send the join link shortly.</p>"
       }`),
@@ -202,7 +202,7 @@ export function memberSignInLink(args: { customerName: string; url: string }) {
       <p>Hi ${args.customerName}, here is your link into the Bluepoint console.
          It works once and expires in 30 minutes.</p>
       <p><a href="${args.url}"
-            style="display:inline-block;background:#387ED1;color:#fff;padding:11px 20px;
+            style="display:inline-block;background:#1D9BF0;color:#05080C;padding:11px 20px;
                    border-radius:8px;text-decoration:none">Open my console</a></p>
       <p style="font-size:13px;color:#6B6B6B">If you did not ask for this, ignore it —
          nobody can get in without the link.</p>`),
@@ -216,7 +216,7 @@ export function emailChangeConfirm(args: { customerName: string; url: string }) 
       <p>Hi ${args.customerName}, someone asked to use this address for a Bluepoint
          account. Confirm it and it becomes the address you sign in with.</p>
       <p><a href="${args.url}"
-            style="display:inline-block;background:#387ED1;color:#fff;padding:11px 20px;
+            style="display:inline-block;background:#1D9BF0;color:#05080C;padding:11px 20px;
                    border-radius:8px;text-decoration:none">Confirm this address</a></p>
       <p style="font-size:13px;color:#6B6B6B">The link expires in 30 minutes. If this
          was not you, ignore it — nothing changes unless the link is followed.</p>`),
@@ -238,7 +238,7 @@ export function membershipWelcome(args: {
       <p>Sessions are unlimited for that whole period, with any expert on the
          platform. Book them from your console:</p>
       <p><a href="${args.consoleUrl}"
-            style="display:inline-block;background:#387ED1;color:#fff;padding:11px 20px;
+            style="display:inline-block;background:#1D9BF0;color:#05080C;padding:11px 20px;
                    border-radius:8px;text-decoration:none">Open your console</a></p>
       <p style="font-size:13px;color:#6B6B6B">The link signs you in — no password.
          It is tied to this email address, so keep it to yourself.</p>`),
