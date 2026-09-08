@@ -704,3 +704,279 @@
   @media (max-width: 640px) {
     .bp-product { grid-template-columns: 1fr; }
   }
+
+  /* ================= OPS CONSOLE ================= */
+  /* Scanned and operated, not read. Denser than the marketing site. */
+
+  .ops { background: var(--surface); min-height: 100vh; }
+
+  .ops-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  .ops-bar-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 26px;
+  }
+  .ops-logo { font-size: 15px; }
+  .ops-logo em {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    margin-left: 3px;
+  }
+  .ops-nav { display: flex; gap: 20px; flex: 1; font-size: 13.5px; }
+  .ops-nav a { color: var(--ink); font-weight: 500; }
+  .ops-nav a:hover { color: var(--blue); }
+  .ops-signout {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-size: 12.5px;
+    font-family: inherit;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .ops-signout:hover { border-color: var(--ink-soft); color: var(--ink-dark); }
+
+  .ops-main { max-width: 1180px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  .ops-h1 { font-size: 22px; letter-spacing: -0.02em; margin: 0 0 4px; }
+  .ops-h2 { font-size: 14px; letter-spacing: -0.005em; margin: 0 0 10px; }
+  .ops-muted { color: var(--ink-soft); font-size: 13px; line-height: 1.6; margin: 0; }
+  .ops-lede { margin-bottom: 20px; max-width: 68ch; }
+  .ops-foot { margin-top: 12px; font-size: 12px; }
+  .ops-crumb { margin: 0 0 14px; font-size: 13px; }
+  .ops-link { color: var(--blue); font-weight: 500; font-size: 13px; }
+  .ops-sub { display: block; font-size: 11.5px; color: var(--ink-soft); }
+
+  /* --- tiles --- */
+  .ops-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 20px 0 34px;
+  }
+  .ops-tile {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .ops-tile.is-warn { border-color: #E8C88A; background: #FFFBF3; }
+  .ops-tile-n {
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .ops-tile-l { font-size: 12px; color: var(--ink-soft); margin: 2px 0 0; }
+
+  /* --- tables --- */
+  .ops-table-wrap {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow-x: auto;
+  }
+  .ops-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .ops-table th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-soft);
+    font-weight: 500;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .ops-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--surface);
+    vertical-align: top;
+  }
+  .ops-table tr:last-child td { border-bottom: none; }
+  .ops-table tbody tr:hover { background: var(--surface); }
+  .ops-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ops-table .nowrap { white-space: nowrap; }
+
+  /* --- status pills --- */
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    background: #EEF1F5;
+    color: #5B6672;
+  }
+  .pill.big { font-size: 12.5px; padding: 5px 13px; }
+  .pill.ok, .pill.s-confirmed, .pill.s-live { background: #E4F4EC; color: #1F6B4A; }
+  .pill.s-completed { background: #E8EEF9; color: #33538C; }
+  .pill.warn, .pill.s-held, .pill.s-draft { background: #FDF1DC; color: #8A5C10; }
+  .pill.s-cancelled, .pill.s-expired, .pill.s-paused { background: #EEF1F5; color: #5B6672; }
+  .pill.s-refunded { background: #FBE7E7; color: #9C3030; }
+  .pill.muted { background: transparent; color: var(--ink-soft); }
+
+  /* --- filters --- */
+  .ops-filters { display: flex; flex-wrap: wrap; gap: 7px; margin: 16px 0 18px; }
+  .ops-filter {
+    font-size: 12.5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--white);
+    color: var(--ink);
+    text-transform: capitalize;
+  }
+  .ops-filter.is-active { background: var(--blue); border-color: var(--blue); color: var(--white); }
+
+  /* --- panels --- */
+  .ops-panel {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .ops-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .ops-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+
+  .ops-dl { margin: 0; display: grid; grid-template-columns: 132px 1fr; gap: 8px 14px; font-size: 13px; }
+  .ops-dl dt { color: var(--ink-soft); font-size: 12px; padding-top: 1px; }
+  .ops-dl dd { margin: 0; color: var(--ink-dark); }
+  .ops-dl dd.pre { white-space: pre-wrap; line-height: 1.6; }
+  .ops-payline { display: block; font-size: 12px; }
+  .ops-panel code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px;
+    background: var(--surface);
+    padding: 1px 5px;
+    border-radius: 4px;
+    word-break: break-all;
+  }
+
+  /* --- actions --- */
+  .ops-actions { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+  .ops-inline { display: flex; gap: 7px; align-items: center; }
+  .ops-btn {
+    border: 1px solid var(--line);
+    background: var(--white);
+    border-radius: 7px;
+    padding: 7px 13px;
+    font-size: 12.5px;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--ink-dark);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .ops-btn:hover { border-color: var(--blue); color: var(--blue-deep); }
+  .ops-btn.danger { border-color: #E4B4B4; color: #9C3030; }
+  .ops-btn.danger:hover { background: #FBE7E7; border-color: #C97676; }
+  .ops-input {
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 7px 10px;
+    font-size: 12.5px;
+    font-family: inherit;
+    width: 170px;
+  }
+  .ops-input.narrow { width: 84px; }
+  .ops-input:focus { outline: none; border-color: var(--blue); }
+  .ops-mini { font-size: 13px; color: var(--ink-soft); display: flex; align-items: center; gap: 4px; }
+
+  /* --- experts --- */
+  .ops-expert-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .ops-expert-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-start; }
+  .ops-avail {
+    border-top: 1px solid var(--surface);
+    padding-top: 12px;
+    margin-bottom: 12px;
+  }
+  .ops-avail-label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-soft);
+    margin-bottom: 7px;
+  }
+  .ops-avail-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 12.5px;
+  }
+  .ops-avail-list li {
+    background: var(--surface);
+    border-radius: 5px;
+    padding: 3px 9px;
+  }
+  .ops-avail-list b { font-weight: 600; color: var(--ink-soft); margin-right: 3px; }
+
+  /* --- empty + login --- */
+  .ops-empty {
+    background: var(--white);
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+  }
+  .ops-empty h2 { font-size: 17px; margin: 0 0 8px; }
+  .ops-empty p { color: var(--ink-soft); font-size: 13.5px; max-width: 46ch; margin: 0 auto; }
+  .ops-empty code { background: var(--blue-tint); color: var(--blue-deep); padding: 1px 5px; border-radius: 4px; }
+
+  .ops-login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: var(--surface);
+  }
+  .ops-login-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 32px;
+    width: 100%;
+    max-width: 360px;
+  }
+  .ops-login-card h1 { font-size: 20px; margin: 20px 0 4px; }
+  .ops-login-sub { font-size: 13px; color: var(--ink-soft); margin: 0 0 22px; }
+
+  @media (max-width: 900px) {
+    .ops-tiles { grid-template-columns: repeat(2, 1fr); }
+    .ops-cols { grid-template-columns: 1fr; }
+  }

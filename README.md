@@ -39,6 +39,7 @@ npm run dev
 | `RESEND_API_KEY` | Resend dashboard. Point `EMAIL_FROM` at your own inbox in phase 1. |
 | `TOKEN_SECRET` | `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
 | `CRON_SECRET` | Any long random string. Guards the Cron endpoints. |
+| `OPS_PASSWORD` | Your own choice. The single password for `/ops`. |
 
 ### Testing payment locally
 
@@ -74,6 +75,25 @@ lib/
   razorpay.ts                    client and signature verification
   email.ts                       Resend, send-at-most-once
 ```
+
+## The ops console
+
+`/ops` is the tool for running phase 2 by hand: every booking with its intake
+form and payments, mark-complete, cancel and refund, and pausing or repricing
+an expert.
+
+One shared password in `OPS_PASSWORD`, no user accounts — there is one
+operator and nothing to federate. A signed, httpOnly cookie holds the session
+for seven days. `middleware.ts` guards every `/ops` route in front of the
+pages, and each server action re-checks, because a server action is a POST
+endpoint in its own right.
+
+If `OPS_PASSWORD` is unset the console refuses everyone. That is deliberate:
+the failure mode of a missing password should be a locked door, not an open
+one.
+
+Editing availability is not in the console yet — change `availability_rules`
+directly or re-run the seed.
 
 ## Three things not to break
 
