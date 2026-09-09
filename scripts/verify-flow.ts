@@ -6,7 +6,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { and, eq, gt, gte, inArray, sql } from "drizzle-orm";
 import { db } from "../lib/db";
-import { bookings, bundles, customers, expertApplications, experts, memberships } from "../lib/db/schema";
+import {
+  bookings,
+  bundles,
+  customers,
+  expertApplications,
+  experts,
+  intakeSubmissions,
+  memberships,
+} from "../lib/db/schema";
 import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
 
 /**
@@ -445,6 +453,117 @@ async function main() {
     "the source is a salted hash",
   );
   await db.delete(expertApplications).where(eq(expertApplications.ipHash, burstSource));
+
+
+  /*
+   * ---- the intake form, which had never once been exercised ----
+   *
+   * It is the product's whole premise: the expert arrives having already read
+   * what you hold. It is also the only place a customer types their portfolio
+   * into Bluepoint, and it is guarded by a signed link rather than a login,
+   * so the boundary deserves testing rather than reading.
+   */
+  const [intakeBooking] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() + 3 * 86_400_000),
+      endsAt: new Date(Date.now() + 3 * 86_400_000 + 45 * 60_000),
+      status: "confirmed",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+
+  const [otherBooking] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() + 4 * 86_400_000),
+      endsAt: new Date(Date.now() + 4 * 86_400_000 + 45 * 60_000),
+      status: "confirmed",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+
+  const sign = (bookingId: string) =>
+    crypto.createHmac("sha256", process.env.TOKEN_SECRET!).update(bookingId).digest("hex");
+
+  const intakeBody = {
+    holdings: [
+      { label: "IT largecaps", pct: 45 },
+      { label: "Cash", pct: 15 },
+    ],
+    holdingsSummary: "Kept adding on every dip since 2019.",
+    goals: "Am I too concentrated?",
+    tradesFno: true,
+  };
+
+  const good = await post(`/api/bookings/${intakeBooking.id}/intake`, {
+    ...intakeBody,
+    token: sign(intakeBooking.id),
+  });
+  check("a signed intake link accepts a submission", good.status === 200, `status ${good.status}`);
+
+  const [saved] = await db
+    .select({ payload: intakeSubmissions.payload })
+    .from(intakeSubmissions)
+    .where(eq(intakeSubmissions.bookingId, intakeBooking.id))
+    .limit(1);
+  const savedHoldings = (saved?.payload as { holdings?: unknown[] })?.holdings ?? [];
+  check(
+    "what the customer typed is what the expert will read",
+    savedHoldings.length === 2,
+    `${savedHoldings.length} holdings stored`,
+  );
+
+  const forged = await post(`/api/bookings/${intakeBooking.id}/intake`, {
+    ...intakeBody,
+    token: sign(intakeBooking.id).replace(/.$/, "0"),
+  });
+  check("a tampered intake token is refused", forged.status === 403, `status ${forged.status}`);
+
+  // The token is an HMAC of one booking id, so it must not travel.
+  const crossed = await post(`/api/bookings/${otherBooking.id}/intake`, {
+    ...intakeBody,
+    token: sign(intakeBooking.id),
+  });
+  check(
+    "one booking's intake link cannot fill in another's",
+    crossed.status === 403,
+    `status ${crossed.status}`,
+  );
+
+  const noToken = await post(`/api/bookings/${intakeBooking.id}/intake`, intakeBody);
+  check("intake without a token is refused", noToken.status === 400, `status ${noToken.status}`);
+
+  // Past sessions close the form, which is what stops a forwarded link
+  // resurrecting portfolio detail the 90-day purge has deleted.
+  const [pastBooking] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() - 5 * 86_400_000),
+      endsAt: new Date(Date.now() - 5 * 86_400_000 + 45 * 60_000),
+      status: "confirmed",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+
+  const late = await post(`/api/bookings/${pastBooking.id}/intake`, {
+    ...intakeBody,
+    token: sign(pastBooking.id),
+  });
+  check(
+    "intake closes once the session has happened",
+    late.status === 409,
+    `status ${late.status}`,
+  );
 
 
   // ---- 10. one open application per address ----

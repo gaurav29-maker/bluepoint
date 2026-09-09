@@ -50,8 +50,39 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   const [booking] = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
   if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-  if (booking.status !== "confirmed" && booking.status !== "completed") {
+  if (booking.status !== "confirmed") {
     return NextResponse.json({ error: "This booking is not active" }, { status: 409 });
+  }
+
+  /*
+   * The link has no expiry of its own — it is an HMAC of the booking id, and
+   * phases 1-2 have no customer accounts to check instead. The booking is
+   * what expires it.
+   *
+   * Without this a forwarded email stayed live forever, and the damage was
+   * not merely a pointless late submission: the 90-day purge blanks the
+   * payload and stamps purged_at, and an upsert afterwards wrote a fresh
+   * payload while purged_at stayed set. The row then held portfolio detail
+   * that retention had deleted, and the expert console — which treats
+   * purged_at as authoritative — reported it as gone. Deleted data,
+   * resurrected and invisible.
+   */
+  if (booking.endsAt.getTime() < Date.now()) {
+    return NextResponse.json(
+      { error: "This session has already happened, so the form is closed." },
+      { status: 409 },
+    );
+  }
+
+  const [existing] = await db
+    .select({ purgedAt: intakeSubmissions.purgedAt })
+    .from(intakeSubmissions)
+    .where(eq(intakeSubmissions.bookingId, id))
+    .limit(1);
+
+  // Belt and braces: never write over a row retention has already cleared.
+  if (existing?.purgedAt) {
+    return NextResponse.json({ error: "This form is no longer open." }, { status: 409 });
   }
 
   await db
