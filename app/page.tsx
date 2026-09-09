@@ -72,7 +72,7 @@ export default async function Home() {
           <div>
             <span className="eyebrow-pill">One-to-one calls with vetted experts</span>
             <h1>
-              Get your portfolio <span className="said">reviewed</span>, before the market does.
+              Get a <span className="said">fix</span> on your position, before the market does.
             </h1>
             <p className="sub">
               Book a call with a market expert. A straight read on what you hold, or a system for
@@ -165,7 +165,8 @@ export default async function Home() {
             <p className="section-eyebrow">Why us</p>
             <h2>Reasons traders choose us</h2>
             <p>
-              Most advice starts with what to buy. Bluepoint starts with what you already hold.
+              Most advice starts with what to buy. Bluepoint starts with what you already hold,
+              and how far it has drifted from what you meant to hold.
             </p>
           </div>
           <div className="features-grid">
@@ -339,9 +340,9 @@ export default async function Home() {
           <div className="final-cta">
             <div>
               <h2>
-                Get your portfolio reviewed <span className="said">this week</span>.
+                Find out exactly where you <span className="said">stand</span>.
               </h2>
-              <p>No pitch, no pressure — just a clear read on where you stand.</p>
+              <p>One call. No pitch at the end of it, and nothing to buy.</p>
             </div>
             <div className="cta-row">
               <a className="btn-primary" href="#experts">

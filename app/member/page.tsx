@@ -286,7 +286,7 @@ export default async function MemberConsole() {
       */}
       {record.movements.length > 0 ? (
         <section className="member-section">
-          <h2 className="member-h2">What has moved</h2>
+          <h2 className="member-h2">Your position, then and now</h2>
           <p className="bp-muted" style={{ marginBottom: 14 }}>
             What you told us you held, first session against most recent. Your own figures.
           </p>
