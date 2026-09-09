@@ -2843,3 +2843,6 @@
     .xp-pause { align-items: flex-start; }
     .xp-price-field { max-width: none; }
   }
+
+  /* The dialog takes focus programmatically; the ring would be noise. */
+  .bp-dialog:focus { outline: none; }

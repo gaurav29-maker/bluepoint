@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ExpertCard } from "./ExpertGrid";
 import { BUNDLE_CREDITS, BUNDLE_DAYS, BUNDLE_PRICE_PAISE } from "@/lib/constants";
 
@@ -86,15 +86,76 @@ export default function BookingDialog({
     };
   }, [expert.slug]);
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  const focusable = useCallback(() => {
+    const node = dialogRef.current;
+    if (!node) return [] as HTMLElement[];
+    return [
+      ...node.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    ].filter((el) => el.offsetParent !== null);
+  }, []);
+
+  /*
+   * A modal that does not hold focus is a modal only for people using a
+   * mouse. Opened, this dialog left focus on the button behind it and Tab
+   * walked straight out into the twenty-one focusable elements on the page
+   * underneath — which are covered by the backdrop and cannot be seen.
+   *
+   * So: focus moves into the dialog on open, Tab cycles within it, and focus
+   * returns to whatever opened it on close.
+   */
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    dialogRef.current?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const items = focusable();
+      if (items.length === 0) return;
+
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+
+      if (!dialogRef.current?.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      // Returning focus is the half people forget; without it a keyboard user
+      // lands back at the top of the document.
+      previouslyFocused?.focus?.();
     };
-  }, [onClose]);
+  }, [onClose, focusable]);
+
+  /*
+   * Each step replaces the dialog's contents, so the element that had focus
+   * is unmounted and focus falls back to <body> — outside the trap, which
+   * then has nothing to cycle. Pull it back to the dialog on every step.
+   */
+  useEffect(() => {
+    if (!dialogRef.current?.contains(document.activeElement)) dialogRef.current?.focus();
+  }, [step]);
 
   const byDay = useMemo(() => {
     const map = new Map<string, Slot[]>();
@@ -177,6 +238,8 @@ export default function BookingDialog({
   return (
     <div className="bp-backdrop" onClick={onClose} role="presentation">
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         className="bp-dialog"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
