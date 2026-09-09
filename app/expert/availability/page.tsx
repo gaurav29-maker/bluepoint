@@ -6,6 +6,7 @@ import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { availabilityRules, experts } from "@/lib/db/schema";
 import { EXPERT_COOKIE, verifyExpertSession } from "@/lib/expert-auth";
+import { rethrowIfNavigation } from "@/lib/nav";
 import { addAvailability, removeAvailability } from "../actions";
 
 export const metadata: Metadata = { title: "Availability — Bluepoint", robots: { index: false } };
@@ -35,7 +36,8 @@ export default async function Availability() {
       .from(availabilityRules)
       .where(eq(availabilityRules.expertId, expertId))
       .orderBy(asc(availabilityRules.weekday), asc(availabilityRules.startMinute));
-  } catch {
+  } catch (err) {
+    rethrowIfNavigation(err);
     return (
       <div className="wrap bp-page member">
         <div className="bp-panel">

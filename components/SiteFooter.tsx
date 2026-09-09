@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CONTACT_EMAIL } from "@/lib/constants";
 
 export default function SiteFooter({ onLanding = false }: { onLanding?: boolean }) {
   const to = (hash: string) => (onLanding ? hash : `/${hash}`);
@@ -15,11 +16,14 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
             <a href={to("#faq")}>FAQs</a>
             <Link href="/member/login">Bluepoint OS</Link>
           </div>
+          {/*
+            One real destination beats three that go nowhere. Instagram and
+            LinkedIn come back when those accounts exist — an empty profile
+            behind a footer link is worse than no link.
+          */}
           <div className="footer-col">
             <h4>Get in touch</h4>
-            <a href="#">Email</a>
-            <a href="#">Instagram</a>
-            <a href="#">LinkedIn</a>
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </div>
           <div className="footer-col">
             <h4>Useful links</h4>

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { experts as expertsTable } from "@/lib/db/schema";
 import ExpertGrid, { type ExpertCard } from "@/components/ExpertGrid";
 import PassPurchase from "@/components/PassPurchase";
+import { CONTACT_EMAIL } from "@/lib/constants";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
 
@@ -301,7 +302,10 @@ export default async function Home() {
             </details>
             <details className="faq-item">
               <summary>What if I am not satisfied with the call?</summary>
-              <p>Reach out within 24 hours and we will arrange a follow-up or refund, case by case.</p>
+              <p>
+                Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> within 24 hours and we
+                will arrange a follow-up or a refund, case by case.
+              </p>
             </details>
             <details className="faq-item">
               <summary>Do experts give stock tips?</summary>
@@ -315,9 +319,18 @@ export default async function Home() {
               <p>Yes — the 3-call bundle keeps you with the same expert across sessions.</p>
             </details>
             <details className="faq-item">
+              <summary>Do I get anything in writing?</summary>
+              <p>
+                Your expert writes up what the session covered, and it sits in your console beside
+                what you sent them. It is a record of what was discussed — not a recommendation,
+                and not something to act on by itself.
+              </p>
+            </details>
+            <details className="faq-item">
               <summary>What happens to my portfolio details afterwards?</summary>
               <p>
-                They go only to the expert you booked, and are deleted 90 days after the call.
+                They go only to the expert you booked, and are deleted 90 days after the call —
+                along with whatever your expert wrote up afterwards.
               </p>
             </details>
           </div>

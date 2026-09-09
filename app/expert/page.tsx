@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { bookings, customers, experts, intakeSubmissions } from "@/lib/db/schema";
 import { EXPERT_COOKIE, verifyExpertSession } from "@/lib/expert-auth";
 import { istDateTime } from "@/lib/format";
+import { rethrowIfNavigation } from "@/lib/nav";
 import {
   markCompleted,
   markNoShow,
@@ -65,7 +66,8 @@ export default async function ExpertSchedule() {
         .sort((a, b) => b.booking.startsAt.getTime() - a.booking.startsAt.getTime())
         .slice(0, 12),
     };
-  } catch {
+  } catch (err) {
+    rethrowIfNavigation(err);
     return (
       <div className="wrap bp-page member">
         <div className="bp-panel">

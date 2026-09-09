@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { customers } from "@/lib/db/schema";
 import { MEMBER_COOKIE, mintEmailChange, verifySession } from "@/lib/member-auth";
 import { emailChangeConfirm, sendRaw } from "@/lib/email";
+import { rethrowIfNavigation } from "@/lib/nav";
 
 export const metadata: Metadata = { title: "Your details — Bluepoint", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -25,7 +26,8 @@ export default async function Profile({
   try {
     [customer] = await db.select().from(customers).where(eq(customers.id, customerId)).limit(1);
     if (!customer) redirect("/member/login");
-  } catch {
+  } catch (err) {
+    rethrowIfNavigation(err);
     return (
       <div className="wrap bp-page member">
         <div className="bp-panel">

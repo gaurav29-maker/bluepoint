@@ -9,6 +9,7 @@ import { MEMBERSHIP_TIERS, RENEWAL_WINDOW_DAYS } from "@/lib/constants";
 import { istDateTime, rupees } from "@/lib/format";
 import MemberBooking, { type BookableExpert } from "@/components/member/MemberBooking";
 import { liveBundlesForCustomer, recordForCustomer } from "@/lib/record";
+import { rethrowIfNavigation } from "@/lib/nav";
 import PassPurchase from "@/components/PassPurchase";
 import ManageBooking from "@/components/member/ManageBooking";
 
@@ -91,7 +92,8 @@ export default async function MemberConsole() {
     ]);
 
     data = { customer, membership, upcoming, past, bookable, liveBundles, record };
-  } catch {
+  } catch (err) {
+    rethrowIfNavigation(err);
     return (
       <div className="wrap bp-page">
         <div className="logo bp-page-logo">

@@ -61,3 +61,10 @@ export const SIGN_IN_THROTTLE_SECONDS = 60;
 
 /** Intake payloads are deleted this long after the call. */
 export const INTAKE_RETENTION_DAYS = 90;
+
+/**
+ * The address on the site. Placeholder until the domain has mail on it —
+ * change it here and the footer, and anywhere else that grows a contact
+ * link, follows.
+ */
+export const CONTACT_EMAIL = "hello@bluepoint.in";

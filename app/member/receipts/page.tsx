@@ -8,6 +8,7 @@ import { customers } from "@/lib/db/schema";
 import { MEMBER_COOKIE, verifySession } from "@/lib/member-auth";
 import { receiptsForCustomer } from "@/lib/receipts";
 import { istDateTime, rupees } from "@/lib/format";
+import { rethrowIfNavigation } from "@/lib/nav";
 
 export const metadata: Metadata = { title: "Receipts — Bluepoint", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -23,7 +24,8 @@ export default async function Receipts() {
     if (!customer) redirect("/member/login");
     name = customer.name;
     rows = await receiptsForCustomer(customerId);
-  } catch {
+  } catch (err) {
+    rethrowIfNavigation(err);
     return (
       <div className="wrap bp-page member">
         <div className="bp-panel">

@@ -90,7 +90,17 @@
     border-radius: 999px;
     margin-bottom: 18px;
   }
-  h1 {
+  /*
+     The hero's styling belongs to the hero.
+     Bound to bare `h1` and to `.site-dark h1`, this reached all 33 headings in
+     the app when exactly one of them — the line on the home page — is a hero.
+     Every other page then had to win a specificity fight to look like a
+     document, and five of them lost one at some point: a sign-in card at
+     76px, a console title shoved off its own column by the centring margins,
+     "No active pass" filling a panel, "You are booked in." broken across two
+     lines by an 11ch measure.
+  */
+  .hero h1 {
     font-family: 'Inter', sans-serif;
     font-weight: 800;
     font-size: 48px;
@@ -98,6 +108,17 @@
     letter-spacing: -0.02em;
     margin: 0 0 20px;
     max-width: 11ch;
+    color: var(--ink-dark);
+  }
+
+  /* What every other heading gets: a page title, not a billboard. */
+  h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
     color: var(--ink-dark);
   }
   .hero p.sub {
@@ -344,7 +365,7 @@
     .stats-bar { grid-template-columns: 1fr; gap: 24px; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .final-cta { flex-direction: column; align-items: flex-start; }
-    h1 { font-size: 36px; }
+    .hero h1 { font-size: 36px; }
   }
 
   /* ================= BOOKING UI ================= */
@@ -1184,7 +1205,7 @@
      per heading — used on more it stops being an accent.
   */
 
-  .site-dark h1 {
+  .site-dark .hero h1 {
     font-size: clamp(40px, 6.4vw, 76px);
     line-height: 1.02;
     letter-spacing: -0.045em;
@@ -1710,7 +1731,7 @@
 
      text-align centres the lines; auto side margins centre the box.
   */
-  .site-dark h1,
+  .site-dark .hero h1,
   .site-dark .section-head h2 {
     margin-left: auto;
     margin-right: auto;

@@ -5,6 +5,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { experts as expertsTable } from "@/lib/db/schema";
 import { openSlotsFor } from "@/lib/availability";
+import { rethrowIfNavigation } from "@/lib/nav";
 import { SLOT_MINUTES } from "@/lib/slots";
 import { istDayLabel, istTime, rupees } from "@/lib/format";
 import SiteNav from "@/components/SiteNav";
@@ -63,9 +64,7 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
     const from = new Date();
     slots = await openSlotsFor(expert, from, new Date(from.getTime() + PREVIEW_DAYS * 86_400_000));
   } catch (err) {
-    // notFound() signals by throwing. Let it through rather than reporting a
-    // missing expert as an outage.
-    if (err && typeof err === "object" && "digest" in err) throw err;
+    rethrowIfNavigation(err);
     return (
       <div className="site-dark">
         <SiteNav />
