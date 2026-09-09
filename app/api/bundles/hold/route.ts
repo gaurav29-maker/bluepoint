@@ -145,8 +145,7 @@ export async function POST(req: NextRequest) {
           product: "bundle_call",
           bundleId: bundle.id,
           amountPaise: BUNDLE_PER_CALL_PAISE,
-          meetingUrl: expert.meetingUrl,
-        })
+          })
         .returning();
 
       await tx.insert(consents).values({

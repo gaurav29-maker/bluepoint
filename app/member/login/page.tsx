@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { customers } from "@/lib/db/schema";
 import { mintLink } from "@/lib/member-auth";
+import { SIGN_IN_THROTTLE_SECONDS } from "@/lib/constants";
 import { memberSignInLink, sendRaw } from "@/lib/email";
 
 export const metadata: Metadata = { title: "Sign in — Bluepoint", robots: { index: false } };
@@ -28,13 +29,23 @@ export default async function MemberLogin({
           .where(sql`lower(${customers.email}) = ${email.toLowerCase()}`)
           .limit(1);
 
-        if (customer) {
+        // One link per minute per address. Without this, anyone who knows a
+        // member's email can have Bluepoint mail them on demand, forever.
+        const recent =
+          customer?.lastLinkSentAt &&
+          Date.now() - customer.lastLinkSentAt.getTime() < SIGN_IN_THROTTLE_SECONDS * 1000;
+
+        if (customer && !recent) {
           const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
           const url = `${base}/api/member/session?t=${await mintLink(customer.id)}`;
           await sendRaw({
             to: customer.email,
             ...memberSignInLink({ customerName: customer.name, url }),
           });
+          await db
+            .update(customers)
+            .set({ lastLinkSentAt: new Date() })
+            .where(eq(customers.id, customer.id));
         }
       } catch (err) {
         console.error("[member] sign-in link failed", err);

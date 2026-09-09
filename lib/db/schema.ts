@@ -27,6 +27,7 @@ export const bookingStatus = pgEnum("booking_status", [
   "held",
   "confirmed",
   "completed",
+  "no_show",
   "cancelled",
   "refunded",
   "expired",
@@ -85,11 +86,16 @@ export const experts = pgTable(
     sebiRegType: sebiRegType("sebi_reg_type").notNull().default("none"),
     sebiRegNumber: text("sebi_reg_number"),
 
-    // Phases 1-2: the expert's own static meeting room. Phase 3 generates these.
+    /**
+     * NOT copied onto bookings any more. A single room shared across every
+     * session means one customer can walk into another's call — see the note
+     * on bookings.meetingUrl. Kept only as a default an expert may paste.
+     */
     meetingUrl: text("meeting_url"),
     contactEmail: text("contact_email").notNull(),
 
     status: expertStatus("status").notNull().default("draft"),
+    lastLinkSentAt: timestamp("last_link_sent_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -132,6 +138,8 @@ export const customers = pgTable(
     email: text("email").notNull(),
     name: text("name").notNull(),
     phone: text("phone"),
+    /** When a sign-in link was last emailed, so it cannot be used to spam. */
+    lastLinkSentAt: timestamp("last_link_sent_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [uniqueIndex("customers_email_idx").on(sql`lower(${t.email})`)],
@@ -201,6 +209,13 @@ export const bookings = pgTable(
     bundleId: uuid("bundle_id").references(() => bundles.id),
     membershipId: uuid("membership_id").references(() => memberships.id),
     amountPaise: integer("amount_paise").notNull(),
+    /**
+     * Set per session by the expert, and deliberately NOT inherited from
+     * experts.meeting_url. Copying one room onto every booking gave four
+     * customers the same link, which is a privacy breach dressed as a
+     * convenience: any of them could join another's portfolio review.
+     * Null until the expert supplies one; the UI already says so.
+     */
     meetingUrl: text("meeting_url"),
     cancelledReason: text("cancelled_reason"),
     /** The refund policy allows one free move; this is what enforces "one". */

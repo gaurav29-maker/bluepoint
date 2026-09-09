@@ -52,5 +52,12 @@ export const EXPERT_PAYOUT_PAISE = Number(process.env.EXPERT_PAYOUT_PAISE ?? 220
  */
 export const RENEWAL_WINDOW_DAYS = 30;
 
+/**
+ * Minimum gap between sign-in emails to one address. The response to the form
+ * is identical either way, so a throttled request is indistinguishable from a
+ * sent one and reveals nothing.
+ */
+export const SIGN_IN_THROTTLE_SECONDS = 60;
+
 /** Intake payloads are deleted this long after the call. */
 export const INTAKE_RETENTION_DAYS = 90;

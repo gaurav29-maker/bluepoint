@@ -120,7 +120,6 @@ export async function POST(req: NextRequest) {
         holdExpiresAt: new Date(Date.now() + HOLD_MINUTES * 60_000),
         product: "single",
         amountPaise: expert.pricePaise, // server-side price, always
-        meetingUrl: expert.meetingUrl,
       })
       .returning();
 

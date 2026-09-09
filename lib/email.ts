@@ -223,6 +223,19 @@ export function emailChangeConfirm(args: { customerName: string; url: string }) 
   };
 }
 
+export function expertSignInLink(args: { expertName: string; url: string }) {
+  return {
+    subject: "Your Bluepoint sign-in link",
+    html: shell(`
+      <p>Hi ${args.expertName}, here is your link into your Bluepoint schedule.
+         It works once and expires in 30 minutes.</p>
+      <p><a href="${args.url}"
+            style="display:inline-block;background:#1D9BF0;color:#05080C;padding:11px 20px;
+                   border-radius:8px;text-decoration:none">Open my schedule</a></p>
+      <p style="font-size:13px;color:#6B6B6B">If you did not ask for this, ignore it.</p>`),
+  };
+}
+
 export function membershipWelcome(args: {
   customerName: string;
   tierLabel: string;
