@@ -166,8 +166,8 @@ export default async function Home() {
 
         <section>
           <div className="section-head">
-            <p className="section-eyebrow">Why us</p>
-            <h2>Reasons traders choose us</h2>
+            <p className="section-eyebrow">How it is built</p>
+            <h2>Built so the incentives cannot drift.</h2>
             <p>
               Most advice starts with what to buy. Bluepoint starts with what you already hold,
               and how far it has drifted from what you meant to hold.
@@ -226,8 +226,10 @@ export default async function Home() {
         <section id="pricing">
           <div className="section-head">
             <p className="section-eyebrow">Pricing</p>
-            <h2>Simple, transparent pricing</h2>
-            <p>Pay per call, or bundle for ongoing F&O guidance.</p>
+            <h2>Pay per call, or stop counting.</h2>
+            <p>
+              The passes are genuinely unlimited. No fair-use clause, no monthly cap, no queue.
+            </p>
           </div>
           <div className="pricing-grid is-four">
             <div className="price-card">
