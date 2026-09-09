@@ -23,10 +23,21 @@ You need a Postgres database and a Razorpay test account. Both are free.
 ```bash
 cp .env.example .env.local     # then fill it in — see below
 npm install
+npm run db:local               # a local Postgres, in its own terminal
 npm run db:push                # create the tables
 npm run db:seed                # three demo experts, weekdays 10-1 and 3-7 IST
 npm run dev
 ```
+
+`db:local` needs no account and nothing installed: it runs Postgres compiled
+to WebAssembly behind the ordinary wire protocol, so Drizzle and postgres.js
+cannot tell the difference. Data lives in the OS temp directory, deliberately
+**outside** this repo — the project sits inside OneDrive, whose syncing has
+corrupted `.next` more than once, and a database directory being synced
+mid-write is a worse version of the same problem.
+
+Development only. There is no backup and no durability guarantee; production
+still needs a real Postgres.
 
 ### Filling in `.env.local`
 
