@@ -2492,3 +2492,193 @@
     .site-dark .nav-os { font-size: 11px; padding: 7px 11px; letter-spacing: 0.06em; }
     .site-dark .nav-cta { font-size: 12.5px; padding: 8px 14px; }
   }
+
+  /* status pills for the application queue */
+  .pill.s-new { background: #FDF1DC; color: #8A5C10; }
+  .pill.s-approved { background: #E4F4EC; color: #1F6B4A; }
+  .pill.s-rejected { background: #EEF1F5; color: #5B6672; }
+  .os .pill.s-new { background: #2A1F10; color: #D6A45A; }
+  .os .pill.s-approved { background: #10261A; color: #6FD39B; }
+  .os .pill.s-rejected { background: #1B2028; color: #8A94A3; }
+
+  .ops-btn.primary {
+    border-color: var(--blue);
+    background: var(--blue);
+    color: var(--on-accent);
+  }
+  .ops-btn.primary:hover { background: var(--blue-deep); border-color: var(--blue-deep); color: var(--on-accent); }
+
+  .ops-application .ops-app-sebi { margin: 12px 0 0; font-size: 12.5px; }
+  .ops-application .ops-app-bio {
+    margin: 12px 0 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    max-width: 68ch;
+    white-space: pre-wrap;
+  }
+  .ops-application .ops-app-meta { margin: 8px 0 0; font-size: 12.5px; max-width: 68ch; }
+  .ops-app-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 16px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--hair, rgba(255,255,255,0.06));
+  }
+  .ops-app-actions .ops-input { width: 240px; }
+  .ops-decided-h { margin-top: 34px; }
+
+  /* ==================== APPLY ====================
+     A form someone spends twenty minutes on. Wider measure than the
+     profile page, fields large enough to write real sentences in, and
+     the terms stated above it rather than after.
+
+     `section` and `h1`/`h2` are answered here for the same reason as
+     the profile page: the base rules are the landing page's.
+  */
+  .apply { max-width: 680px; margin: 0 auto; padding: 44px 0 24px; }
+
+  .site-dark .apply-h1 {
+    font-size: 34px;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    font-weight: 500;
+    max-width: none;
+    margin: 0 0 14px;
+    color: var(--ink-dark);
+  }
+  .site-dark .apply-lede {
+    font-size: 16px;
+    line-height: 1.62;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .apply-section { padding: 0; margin: 38px 0 0; }
+  .site-dark .apply-h2 {
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 400;
+    color: var(--ink-soft);
+    max-width: none;
+    margin: 0 0 16px;
+  }
+
+  .site-dark .apply-terms {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 13px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .site-dark .apply-terms li { padding-left: 18px; position: relative; }
+  .site-dark .apply-terms li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--ink-soft);
+  }
+  .site-dark .apply-terms b { color: var(--ink-dark); font-weight: 500; }
+
+  .apply-form { display: grid; gap: 18px; }
+  .apply-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .apply-field { display: grid; gap: 6px; }
+  .site-dark .apply-field > span {
+    font-size: 13px;
+    color: var(--ink-dark);
+    font-weight: 500;
+  }
+  .site-dark .apply-field > span em {
+    font-style: normal;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+  .site-dark .apply-field input,
+  .site-dark .apply-field select,
+  .site-dark .apply-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--hair-strong);
+    border-radius: 8px;
+    padding: 11px 13px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink-dark);
+    line-height: 1.5;
+  }
+  .site-dark .apply-field textarea { resize: vertical; }
+  .site-dark .apply-field input:focus,
+  .site-dark .apply-field select:focus,
+  .site-dark .apply-field textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+  .site-dark .apply-field input::placeholder,
+  .site-dark .apply-field textarea::placeholder { color: #5B6675; }
+
+  .site-dark .apply-err {
+    font-style: normal;
+    font-size: 12.5px;
+    color: #E88A8A;
+  }
+
+  .apply-fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .site-dark .apply-fieldset legend {
+    font-size: 13px;
+    color: var(--ink-dark);
+    font-weight: 500;
+    padding: 0;
+    margin-bottom: 4px;
+  }
+  .apply-checks { display: flex; gap: 18px; flex-wrap: wrap; }
+  .site-dark .apply-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink-dark);
+  }
+  .site-dark .apply-check input { accent-color: var(--blue); width: 16px; height: 16px; }
+  .site-dark .apply-hint { font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); margin: 2px 0 0; }
+
+  .apply-submit { justify-self: start; margin-top: 4px; }
+  .site-dark .apply-fine {
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 58ch;
+  }
+
+  .apply-done { padding: 8px 0 0; max-width: 56ch; }
+  .site-dark .apply-done-h {
+    font-size: 22px;
+    letter-spacing: -0.025em;
+    font-weight: 500;
+    color: var(--ink-dark);
+    margin: 0 0 12px;
+  }
+  .site-dark .apply-done p { font-size: 15px; line-height: 1.62; color: var(--ink-dark); margin: 0 0 12px; }
+  .site-dark .apply-done p.bp-muted { color: var(--ink-soft); font-size: 13.5px; }
+
+  @media (max-width: 640px) {
+    .apply-row { grid-template-columns: 1fr; }
+    .site-dark .apply-h1 { font-size: 27px; }
+    .ops-app-actions .ops-input { width: 100%; }
+  }
+  .ops-application .ops-app-quote {
+    margin: 6px 0 4px;
+    font-size: 13.5px;
+    color: var(--ink-dark);
+    font-style: italic;
+  }

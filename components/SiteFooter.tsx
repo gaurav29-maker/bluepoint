@@ -31,9 +31,9 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
             <div className="footer-recruit">
               <h4>Are you an expert?</h4>
               <p>Join the platform and help traders make sense of their portfolios.</p>
-              <a className="footer-apply" href="#">
+              <Link className="footer-apply" href="/apply">
                 Apply now
-              </a>
+              </Link>
             </div>
           </div>
         </div>

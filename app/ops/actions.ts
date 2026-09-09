@@ -5,9 +5,13 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { bookings, bundles, experts, payments } from "@/lib/db/schema";
+import { bookings, bundles, expertApplications, experts, payments } from "@/lib/db/schema";
 import { OPS_COOKIE, sessionValid } from "@/lib/ops-auth";
 import { refundPayment } from "@/lib/razorpay";
+import { uniqueSlug } from "@/lib/slug";
+import { SINGLE_CALL_PAISE } from "@/lib/constants";
+import { expertSignInLink, sendRaw } from "@/lib/email";
+import { mintExpertLink } from "@/lib/expert-auth";
 
 /**
  * Server actions are POST endpoints in their own right, so the middleware guard
@@ -123,4 +127,105 @@ export async function setExpertPrice(formData: FormData) {
 
   revalidatePath("/ops/experts");
   revalidatePath("/");
+}
+
+/**
+ * Approve an application: the moment an applicant becomes an expert.
+ *
+ * Deliberately conservative about what it creates. The new expert is `draft`,
+ * not `live` — they have no availability yet, so publishing them immediately
+ * would put a profile on the site whose every slot is empty. They go live from
+ * the ops experts page once they have set their hours.
+ *
+ * The price is the standard rate rather than anything they asked for. What
+ * someone puts in a form is a request; what a session costs is a decision,
+ * and they can change it themselves afterwards.
+ */
+export async function approveApplication(formData: FormData) {
+  await requireOps();
+  const id = String(formData.get("applicationId"));
+
+  const [application] = await db
+    .select()
+    .from(expertApplications)
+    .where(and(eq(expertApplications.id, id), eq(expertApplications.status, "new")))
+    .limit(1);
+
+  // Already handled — two operators with the queue open, or a double submit.
+  if (!application) {
+    revalidatePath("/ops/applications");
+    return;
+  }
+
+  const taken = await db.select({ slug: experts.slug }).from(experts);
+  const slug = uniqueSlug(application.name, taken.map((e) => e.slug));
+
+  const initials = application.name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]!.toUpperCase())
+    .join("");
+
+  const [expert] = await db
+    .insert(experts)
+    .values({
+      slug,
+      displayName: application.name,
+      initials: initials || "??",
+      headline: application.headline,
+      bio: application.bio,
+      specialties: application.specialties,
+      yearsExperience: application.yearsExperience,
+      pricePaise: SINGLE_CALL_PAISE,
+      sebiRegType: application.sebiRegType,
+      sebiRegNumber: application.sebiRegNumber,
+      contactEmail: application.email,
+      status: "draft",
+    })
+    .returning();
+
+  await db
+    .update(expertApplications)
+    .set({ status: "approved", reviewedAt: new Date(), expertId: expert.id })
+    .where(eq(expertApplications.id, id));
+
+  /*
+   * The sign-in link is how they get in to set their hours. If the email
+   * cannot go out the approval still stands — the expert row exists and ops
+   * can resend — so this must not throw the whole action away.
+   */
+  try {
+    const base = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+    const token = await mintExpertLink(expert.id);
+    await sendRaw({
+      to: expert.contactEmail,
+      ...expertSignInLink({
+        expertName: expert.displayName,
+        url: `${base}/api/expert/session?token=${token}`,
+      }),
+    });
+  } catch (err) {
+    console.error(`[ops] approved ${expert.id} but could not send their sign-in link`, err);
+  }
+
+  revalidatePath("/ops/applications");
+  revalidatePath("/ops/experts");
+}
+
+export async function rejectApplication(formData: FormData) {
+  await requireOps();
+  const id = String(formData.get("applicationId"));
+  const note = String(formData.get("reviewNote") ?? "").trim();
+
+  await db
+    .update(expertApplications)
+    .set({
+      status: "rejected",
+      reviewedAt: new Date(),
+      reviewNote: note === "" ? null : note,
+    })
+    .where(and(eq(expertApplications.id, id), eq(expertApplications.status, "new")));
+
+  revalidatePath("/ops/applications");
 }

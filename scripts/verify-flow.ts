@@ -6,8 +6,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "../lib/db";
-import { bookings, bundles, customers, experts, memberships } from "../lib/db/schema";
-import { MEMBERSHIP_TIERS } from "../lib/constants";
+import { bookings, bundles, customers, expertApplications, experts, memberships } from "../lib/db/schema";
+import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
 
 /**
  * Exercises the parts of the booking flow that need no Razorpay and no Resend.
@@ -23,7 +23,7 @@ import { MEMBERSHIP_TIERS } from "../lib/constants";
  *   npm run verify
  */
 
-const BASE = process.env.VERIFY_BASE ?? "http://localhost:3002";
+const BASE = process.env.VERIFY_BASE ?? "http://localhost:3000";
 const EXPERT = "rhea-kulkarni";
 
 let passed = 0;
@@ -247,8 +247,72 @@ async function main() {
   );
   check("cancelling under two hours out is refused", lateCancel.status === 409, `status ${lateCancel.status}`);
 
+  // ---- 9. an approved applicant is not published by being approved ----
+  const [draft] = await db
+    .insert(experts)
+    .values({
+      slug: `verify-draft-${Date.now().toString(36)}`,
+      displayName: "Verify Draft",
+      initials: "VD",
+      headline: "not live",
+      specialties: ["portfolio_audit"],
+      yearsExperience: 1,
+      pricePaise: SINGLE_CALL_PAISE,
+      contactEmail: "draft@example.in",
+      status: "draft",
+    })
+    .returning();
+
+  const listed = await fetch(`${BASE}/api/experts`).then(
+    (r) => r.json() as Promise<{ experts: { slug: string }[] }>,
+  );
+  check(
+    "an approved applicant is not on the site until published",
+    !listed.experts.some((e) => e.slug === draft.slug),
+    "draft experts are withheld from the public list",
+  );
+
+  const draftProfile = await fetch(`${BASE}/experts/${draft.slug}`);
+  check("a draft expert has no public profile page", draftProfile.status === 404, `status ${draftProfile.status}`);
+  await db.delete(experts).where(eq(experts.id, draft.id));
+
+  // ---- 10. one open application per address ----
+  const applicant = { email: `verify-${Date.now()}@example.in` };
+  const row = {
+    name: "Verify Applicant",
+    email: applicant.email,
+    headline: "checking the index",
+    bio: "checking the index",
+    specialties: ["portfolio_audit" as const],
+    yearsExperience: 3,
+  };
+  await db.insert(expertApplications).values(row);
+
+  let secondRefused = false;
+  try {
+    // Same address in a different case: the index is on lower(email).
+    await db.insert(expertApplications).values({ ...row, email: applicant.email.toUpperCase() });
+  } catch {
+    secondRefused = true;
+  }
+  check("a second open application from one address is refused", secondRefused);
+
+  await db
+    .update(expertApplications)
+    .set({ status: "rejected", reviewedAt: new Date() })
+    .where(eq(expertApplications.email, applicant.email));
+
+  let reapplyAllowed = true;
+  try {
+    await db.insert(expertApplications).values(row);
+  } catch {
+    reapplyAllowed = false;
+  }
+  check("someone rejected earlier can apply again", reapplyAllowed);
+  await db.delete(expertApplications).where(eq(expertApplications.email, applicant.email));
+
   /*
-   * ---- 9. the figure the customer is shown is the figure they are charged ----
+   * ---- 11. the figure the customer is shown is the figure they are charged ----
    *
    * Not a flow but a source check, because the flow cannot see this. The
    * booking dialog carried its own copy of the bundle price, marked "display

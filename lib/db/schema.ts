@@ -23,6 +23,7 @@ export const expertStatus = pgEnum("expert_status", ["draft", "live", "paused"])
 export const sebiRegType = pgEnum("sebi_reg_type", ["ria", "ra", "none"]);
 export const specialty = pgEnum("specialty", ["portfolio_audit", "fno_systematic"]);
 export const exceptionKind = pgEnum("exception_kind", ["block", "extra"]);
+export const applicationStatus = pgEnum("application_status", ["new", "approved", "rejected"]);
 export const bookingStatus = pgEnum("booking_status", [
   "held",
   "confirmed",
@@ -326,7 +327,65 @@ export const notifications = pgTable(
   (t) => [uniqueIndex("notifications_once_idx").on(t.bookingId, t.kind)],
 );
 
+/**
+ * People asking to become experts.
+ *
+ * Kept apart from `experts` on purpose. An applicant is not a draft expert:
+ * they have no price, no availability and no account, and a row in `experts`
+ * is something the booking code is entitled to assume is a real person we
+ * have checked. Approval is the moment one becomes the other, and it is a
+ * decision a human makes in the ops console.
+ *
+ * Applications carry personal data under the DPDP Act. Rejected ones should
+ * not be kept indefinitely — see the note in scripts/ and the purge cron.
+ */
+export const expertApplications = pgTable(
+  "expert_applications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    phone: text("phone"),
+    headline: text("headline").notNull(),
+    bio: text("bio").notNull(),
+    specialties: specialty("specialties").array().notNull(),
+    yearsExperience: smallint("years_experience").notNull(),
+
+    /**
+     * Asked at the door rather than after approval. Whether someone is
+     * registered changes what the listing has to say about them, and the
+     * terms commit to showing it either way.
+     */
+    sebiRegType: sebiRegType("sebi_reg_type").notNull().default("none"),
+    sebiRegNumber: text("sebi_reg_number"),
+
+    /** Where their work can be seen, in their own words. */
+    links: text("links"),
+    note: text("note"),
+
+    status: applicationStatus("status").notNull().default("new"),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+    reviewNote: text("review_note"),
+    /** Set on approval, so an application can never create two experts. */
+    expertId: uuid("expert_id").references(() => experts.id),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    /*
+     * One open application per address. A partial index rather than a plain
+     * unique one, so somebody rejected in March can apply again in October
+     * without a support ticket — but cannot submit the same form nine times
+     * while it is still sitting in the queue.
+     */
+    uniqueIndex("expert_applications_one_open_idx")
+      .on(sql`lower(${t.email})`)
+      .where(sql`status = 'new'`),
+    index("expert_applications_status_idx").on(t.status, t.createdAt),
+  ],
+);
+
 export type Expert = typeof experts.$inferSelect;
 export type Membership = typeof memberships.$inferSelect;
 export type Booking = typeof bookings.$inferSelect;
 export type Customer = typeof customers.$inferSelect;
+export type ExpertApplication = typeof expertApplications.$inferSelect;
