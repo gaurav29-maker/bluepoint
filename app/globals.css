@@ -1030,7 +1030,13 @@
   }
   .member-pass-sub { font-size: 13px; color: var(--blue-deep); margin: 5px 0 0; }
 
-  .member-section { margin-bottom: 38px; }
+  /*
+   * The consoles reuse <section>, which picks up the landing page's 72px
+   * band rhythm from the base rules. Stacked with the margin that is 182px
+   * of empty screen between two lists of bookings — marketing pacing applied
+   * to a working tool. The consoles set their own, tighter spacing.
+   */
+  .member-section { padding: 0; margin-bottom: 44px; }
   .member-h2 { font-size: 15px; letter-spacing: -0.01em; margin: 0 0 12px; }
 
   .member-list { list-style: none; padding: 0; margin: 0; }
@@ -2038,6 +2044,26 @@
      inherits from .site-dark, so the sign-in card's heading rendered at 40px+.
      A card heading is not a hero heading — restated at card scale.
   */
+  /*
+   * The same leak in its general form. `.site-dark h1` (0,1,1) outranks
+   * `.ops-h1` (0,1,0), so every console heading took the hero clamp — and
+   * with it the auto side margins written for the centred hero, which push
+   * the heading's box off the left edge of its own content column.
+   *
+   * The login card was patched one page at a time; this is the rule that
+   * covers the rest. Consoles are left-aligned working pages, so restate the
+   * console heading at (0,2,0) rather than chasing each new page that
+   * inherits the marketing hero.
+   */
+  .site-dark .ops-h1 {
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    max-width: none;
+    margin: 0 0 4px;
+  }
+
   .os .ops-login-card h1 {
     font-size: 22px;
     line-height: 1.2;
