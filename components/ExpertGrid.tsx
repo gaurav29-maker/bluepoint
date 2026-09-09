@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import BookingDialog from "./BookingDialog";
 
 export type ExpertCard = {
@@ -49,8 +50,16 @@ export default function ExpertGrid({
       <div className="expert-grid">
         {experts.map((e) => (
           <div className="expert-card" key={e.slug}>
-            <div className="expert-photo">{e.initials}</div>
-            <p className="expert-name">{e.displayName}</p>
+            {/*
+              The card is the fast path; the profile is the considered one.
+              Handing someone your portfolio off a headline and two initials
+              is a lot to ask, so the name opens the page that says who they
+              actually are — while "Book a call" still books in one click.
+            */}
+            <Link className="expert-idlink" href={`/experts/${e.slug}`}>
+              <div className="expert-photo">{e.initials}</div>
+              <p className="expert-name">{e.displayName}</p>
+            </Link>
             <p className="expert-tag">{e.headline}</p>
 
             {/*
@@ -84,6 +93,9 @@ export default function ExpertGrid({
             <button className="expert-book" onClick={() => setBooking(e)}>
               Book a call
             </button>
+            <Link className="expert-more" href={`/experts/${e.slug}`}>
+              Read more about {e.displayName.split(" ")[0]}
+            </Link>
           </div>
         ))}
       </div>

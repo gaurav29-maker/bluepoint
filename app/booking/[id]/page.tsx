@@ -4,7 +4,14 @@ import { use, useEffect, useState } from "react";
 
 type Status = {
   id: string;
-  status: "held" | "confirmed" | "completed" | "cancelled" | "refunded" | "expired";
+  status:
+    | "held"
+    | "confirmed"
+    | "completed"
+    | "no_show"
+    | "cancelled"
+    | "refunded"
+    | "expired";
   startsAt: string;
   amountPaise: number;
   meetingUrl: string | null;
@@ -116,6 +123,24 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
               Join link: <a href={data.meetingUrl}>{data.meetingUrl}</a>
             </p>
           ) : null}
+        </div>
+      ) : null}
+
+      {/*
+        A no-show is its own status, so it needs its own page. Without this
+        branch the booking rendered as a bare logo on a blank page — the worst
+        possible answer to "what happened to my session?".
+      */}
+      {data?.status === "no_show" ? (
+        <div className="bp-panel">
+          <h1>This session was marked as missed.</h1>
+          <p>
+            Your expert held the time and you were not able to join. If that is wrong, or something
+            got in the way, reply to your confirmation email and we will look at it.
+          </p>
+          <a className="btn-primary" href="/#experts">
+            Book another session
+          </a>
         </div>
       ) : null}
 

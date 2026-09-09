@@ -1,9 +1,10 @@
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { experts as expertsTable } from "@/lib/db/schema";
-import Link from "next/link";
 import ExpertGrid, { type ExpertCard } from "@/components/ExpertGrid";
 import PassPurchase from "@/components/PassPurchase";
+import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 
 export const dynamic = "force-dynamic";
 
@@ -45,27 +46,7 @@ export default async function Home() {
 
   return (
     <div className="site-dark">
-      <nav>
-        <div className="nav-inner">
-          <div className="logo">
-            blue<span>point</span>
-          </div>
-          <div className="nav-links">
-            <a href="#experts">Experts</a>
-            <a href="#how">How it works</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#faq">FAQs</a>
-          </div>
-          <div className="nav-right">
-            <Link className="nav-os" href="/member/login">
-              Bluepoint OS
-            </Link>
-            <a className="nav-cta" href="#experts">
-              Book a call
-            </a>
-          </div>
-        </div>
-      </nav>
+      <SiteNav onLanding />
 
       <div className="wrap">
         <div className="hero">
@@ -362,47 +343,7 @@ export default async function Home() {
         </section>
       </div>
 
-      <footer>
-        <div className="wrap">
-          <div className="footer-grid">
-            <div className="footer-col">
-              <h4>Navigate</h4>
-              <a href="#experts">Experts</a>
-              <a href="#how">How it works</a>
-              <a href="#pricing">Pricing</a>
-              <a href="#faq">FAQs</a>
-              <Link href="/member/login">Bluepoint OS</Link>
-            </div>
-            <div className="footer-col">
-              <h4>Get in touch</h4>
-              <a href="#">Email</a>
-              <a href="#">Instagram</a>
-              <a href="#">LinkedIn</a>
-            </div>
-            <div className="footer-col">
-              <h4>Useful links</h4>
-              <Link href="/legal/terms">Terms &amp; Conditions</Link>
-              <Link href="/legal/privacy">Privacy Policy</Link>
-              <Link href="/legal/refunds">Refund Policy</Link>
-            </div>
-            <div className="footer-col">
-              <div className="footer-recruit">
-                <h4>Are you an expert?</h4>
-                <p>Join the platform and help traders make sense of their portfolios.</p>
-                <a className="footer-apply" href="#">
-                  Apply now
-                </a>
-              </div>
-            </div>
-          </div>
-          <p className="footer-disclaimer">
-            Bluepoint sessions are a review and discussion of your existing portfolio and approach.
-            They are not a recommendation to buy or sell any security, and are not personalised
-            investment advice. You remain responsible for your own decisions.
-          </p>
-          <div className="footer-bottom">© 2026 Bluepoint. All rights reserved.</div>
-        </div>
-      </footer>
+      <SiteFooter onLanding />
     </div>
   );
 }

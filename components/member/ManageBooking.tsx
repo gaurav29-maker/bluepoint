@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { FREE_CANCEL_HOURS, LATE_CANCEL_HOURS } from "@/lib/cancellation";
 
 type Slot = { startsAt: string; endsAt: string };
 
 const IST = "Asia/Kolkata";
-const FREE_CANCEL_HOURS = 24;
-const LATE_CANCEL_HOURS = 2;
 
 function dayLabel(iso: string) {
   return new Intl.DateTimeFormat("en-IN", {

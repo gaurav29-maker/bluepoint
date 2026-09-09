@@ -2,6 +2,8 @@ import { loadEnv } from "./load-env";
 loadEnv();
 
 import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "../lib/db";
 import { bookings, bundles, customers, experts, memberships } from "../lib/db/schema";
@@ -244,6 +246,42 @@ async function main() {
     memberCookie(member.id),
   );
   check("cancelling under two hours out is refused", lateCancel.status === 409, `status ${lateCancel.status}`);
+
+  /*
+   * ---- 9. the figure the customer is shown is the figure they are charged ----
+   *
+   * Not a flow but a source check, because the flow cannot see this. The
+   * booking dialog carried its own copy of the bundle price, marked "display
+   * only - the server reads the real price". The list price later moved to
+   * 9,999 and the copy stayed at 3,600, so the dialog offered a three-call
+   * bundle at 3,600 and Razorpay then asked for 9,999. Nothing in the booking
+   * path was wrong; every figure the customer read was.
+   *
+   * Prices and policy windows live in lib/ and are imported, never retyped.
+   */
+  const uiFiles: string[] = [];
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name.endsWith(".tsx")) uiFiles.push(full);
+    }
+  };
+  walk("components");
+
+  const redeclared: string[] = [];
+  const pricePattern = /const\s+([A-Z0-9_]*(?:PRICE|PAISE|CREDITS|HOURS|DAYS)[A-Z0-9_]*)\s*=\s*\d/g;
+  for (const file of uiFiles) {
+    for (const m of fs.readFileSync(file, "utf8").matchAll(pricePattern)) {
+      redeclared.push(`${path.basename(file)}:${m[1]}`);
+    }
+  }
+  check(
+    "no price or policy figure is redeclared in the UI",
+    redeclared.length === 0,
+    redeclared.length > 0 ? redeclared.join(", ") : "all imported from lib/",
+  );
+
 
   console.log(`\n  ${passed} passed, ${failed} failed\n`);
   process.exit(failed === 0 ? 0 : 1);

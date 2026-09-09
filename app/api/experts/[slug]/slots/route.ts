@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { availabilityExceptions, availabilityRules, bookings, experts } from "@/lib/db/schema";
-import { and, eq, gte, lte } from "drizzle-orm";
-import { computeSlots, DEFAULT_HORIZON_DAYS } from "@/lib/slots";
-import { occupiesSlot } from "@/lib/bookings";
+import { experts } from "@/lib/db/schema";
+import { and, eq } from "drizzle-orm";
+import { DEFAULT_HORIZON_DAYS } from "@/lib/slots";
+import { openSlotsFor } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
@@ -25,39 +25,7 @@ export async function GET(
   const from = new Date();
   const to = new Date(from.getTime() + days * 24 * 60 * 60 * 1000);
 
-  const [rules, exceptions, taken] = await Promise.all([
-    db.select().from(availabilityRules).where(eq(availabilityRules.expertId, expert.id)),
-    db.select().from(availabilityExceptions).where(eq(availabilityExceptions.expertId, expert.id)),
-    db
-      .select({ startsAt: bookings.startsAt })
-      .from(bookings)
-      .where(
-        and(
-          eq(bookings.expertId, expert.id),
-          occupiesSlot(),
-          gte(bookings.startsAt, from),
-          lte(bookings.startsAt, to),
-        ),
-      ),
-  ]);
-
-  const slots = computeSlots({
-    timezone: expert.timezone,
-    rules: rules.map((r) => ({
-      weekday: r.weekday,
-      startMinute: r.startMinute,
-      endMinute: r.endMinute,
-    })),
-    exceptions: exceptions.map((e) => ({
-      date: e.date,
-      kind: e.kind,
-      startMinute: e.startMinute,
-      endMinute: e.endMinute,
-    })),
-    takenStarts: taken.map((b) => b.startsAt),
-    from,
-    to,
-  });
+  const slots = await openSlotsFor(expert, from, to);
 
   return NextResponse.json({
     expert: {

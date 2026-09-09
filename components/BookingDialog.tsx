@@ -2,14 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { ExpertCard } from "./ExpertGrid";
+import { BUNDLE_CREDITS, BUNDLE_DAYS, BUNDLE_PRICE_PAISE } from "@/lib/constants";
 
 type Slot = { startsAt: string; endsAt: string };
 type Step = "picking" | "details" | "paying" | "done";
 type Product = "single" | "bundle";
-
-/** Display only — the server reads the real price from the database. */
-const BUNDLE_PRICE_PAISE = 360000;
-const BUNDLE_CREDITS = 3;
 
 declare global {
   interface Window {
@@ -268,7 +265,7 @@ export default function BookingDialog({
                 <span className="bp-product-name">{BUNDLE_CREDITS} calls</span>
                 <span className="bp-product-price">{rupees(BUNDLE_PRICE_PAISE)}</span>
                 <span className="bp-product-note">
-                  Book the other two later · valid 60 days
+                  Book the other {BUNDLE_CREDITS - 1} later · valid {BUNDLE_DAYS} days
                 </span>
               </button>
             </div>
