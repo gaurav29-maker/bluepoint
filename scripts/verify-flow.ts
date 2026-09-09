@@ -49,6 +49,21 @@ function check(name: string, ok: boolean, detail = "") {
   }
 }
 
+/**
+ * Change a hex signature by exactly one character, guaranteed.
+ *
+ * The first version of this was `.replace(/.$/, "0")`, which does nothing at
+ * all when the signature already ends in "0" — so one run in sixteen sent a
+ * VALID signature and then reported that a tampered one had been accepted.
+ * A security check that cries wolf on a schedule is worse than no check: the
+ * first instinct on seeing it is to distrust the test, which is exactly the
+ * instinct that lets a real one through.
+ */
+function tamper(hex: string): string {
+  const last = hex.slice(-1);
+  return hex.slice(0, -1) + (last === "0" ? "1" : "0");
+}
+
 function memberCookie(customerId: string): string {
   const secret = process.env.TOKEN_SECRET!;
   const exp = Date.now() + 3_600_000;
@@ -532,7 +547,7 @@ async function main() {
 
   const forged = await post(`/api/bookings/${intakeBooking.id}/intake`, {
     ...intakeBody,
-    token: sign(intakeBooking.id).replace(/.$/, "0"),
+    token: tamper(sign(intakeBooking.id)),
   });
   check("a tampered intake token is refused", forged.status === 403, `status ${forged.status}`);
 
@@ -636,7 +651,7 @@ async function main() {
 
     // 2. A signature that is the right shape but the wrong key.
     const forgedBody = capture(heldRow.amountPaise, "pay_forged");
-    const forged = await fire(forgedBody, sign(forgedBody).replace(/.$/, "0"), "evt_forged");
+    const forged = await fire(forgedBody, tamper(sign(forgedBody)), "evt_forged");
     check("a forged webhook signature is refused", forged.status === 400, `status ${forged.status}`);
 
     const [stillHeld] = await db.select().from(bookings).where(eq(bookings.id, heldId)).limit(1);
@@ -761,6 +776,125 @@ async function main() {
     "a signature cannot be moved onto another account's id",
     swappedRes.headers.get("location")?.includes("expired=1") === true,
     swappedRes.headers.get("location") ?? "no redirect",
+  );
+
+
+  /*
+   * ---- moving a session, which is the refund policy in code ----
+   *
+   * /legal/refunds promises one free move, outside 24 hours. That promise is
+   * enforced entirely here and had never been run. The route also decides who
+   * is allowed to move whose session, which is the part that would matter
+   * most to get wrong.
+   */
+  const openForMove = await slots();
+  const [moveFrom, moveTo, alsoOpen] = openForMove.slice(6, 9);
+
+  const [movable] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(moveFrom),
+      endsAt: new Date(new Date(moveFrom).getTime() + 45 * 60_000),
+      status: "confirmed",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+
+  // Somebody else entirely, with a valid session of their own.
+  const [stranger] = await db
+    .insert(customers)
+    .values({ name: "Stranger", email: `stranger-${Date.now()}@example.in` })
+    .returning();
+
+  const notYours = await post(
+    "/api/member/bookings/reschedule",
+    { bookingId: movable.id, startsAt: moveTo },
+    memberCookie(stranger.id),
+  );
+  check(
+    "a signed-in member cannot move somebody else's session",
+    notYours.status === 404,
+    `status ${notYours.status}`,
+  );
+
+  const anonymous = await post("/api/member/bookings/reschedule", {
+    bookingId: movable.id,
+    startsAt: moveTo,
+  });
+  check("moving a session without a session cookie is refused", anonymous.status === 401, `status ${anonymous.status}`);
+
+  const [untouched] = await db
+    .select({ startsAt: bookings.startsAt })
+    .from(bookings)
+    .where(eq(bookings.id, movable.id))
+    .limit(1);
+  check(
+    "neither refused attempt moved the booking",
+    untouched.startsAt.getTime() === new Date(moveFrom).getTime(),
+    "still on its original slot",
+  );
+
+  // The owner, moving it properly.
+  const moved = await post(
+    "/api/member/bookings/reschedule",
+    { bookingId: movable.id, startsAt: moveTo },
+    memberCookie(member.id),
+  );
+  check("the owner can move their own session", moved.status === 200, `status ${moved.status}`);
+
+  const [afterMove] = await db
+    .select({ startsAt: bookings.startsAt, count: bookings.rescheduleCount })
+    .from(bookings)
+    .where(eq(bookings.id, movable.id))
+    .limit(1);
+  check(
+    "the move lands on the chosen slot and is counted",
+    afterMove.startsAt.getTime() === new Date(moveTo).getTime() && afterMove.count === 1,
+    `count ${afterMove.count}`,
+  );
+
+  // The slot it left has to come back, or every move quietly burns a slot.
+  const afterMoveSlots = await slots();
+  check(
+    "the vacated slot is offered again",
+    afterMoveSlots.includes(moveFrom),
+    "the old time is bookable",
+  );
+
+  // "One free move" is the whole promise.
+  const secondMove = await post(
+    "/api/member/bookings/reschedule",
+    { bookingId: movable.id, startsAt: alsoOpen },
+    memberCookie(member.id),
+  );
+  check("a second move is refused", secondMove.status === 409, `status ${secondMove.status}`);
+
+  // Inside 24 hours, a first move is refused too.
+  const [tooSoon] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() + 6 * 3_600_000),
+      endsAt: new Date(Date.now() + 6 * 3_600_000 + 45 * 60_000),
+      status: "confirmed",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+
+  const lateMove = await post(
+    "/api/member/bookings/reschedule",
+    { bookingId: tooSoon.id, startsAt: alsoOpen },
+    memberCookie(member.id),
+  );
+  check(
+    "a move inside 24 hours is refused",
+    lateMove.status === 409,
+    `status ${lateMove.status}`,
   );
 
 
