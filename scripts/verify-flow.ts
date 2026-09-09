@@ -276,6 +276,68 @@ async function main() {
   check("a draft expert has no public profile page", draftProfile.status === 404, `status ${draftProfile.status}`);
   await db.delete(experts).where(eq(experts.id, draft.id));
 
+  // ---- the expert's note is deleted on the same clock as the intake ----
+  const [noteBooking] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() - 200 * 86_400_000),
+      endsAt: new Date(Date.now() - 200 * 86_400_000 + 45 * 60_000),
+      status: "completed",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+      expertNote: "discussed the concentration and how it got there",
+      expertNoteAt: new Date(),
+    })
+    .returning();
+
+  const purge = await fetch(`${BASE}/api/cron/purge-intake`, {
+    headers: { authorization: `Bearer ${process.env.CRON_SECRET}` },
+  });
+  const [afterPurge] = await db
+    .select({ note: bookings.expertNote })
+    .from(bookings)
+    .where(eq(bookings.id, noteBooking.id))
+    .limit(1);
+  check(
+    "a session note is purged with the intake it describes",
+    purge.status === 200 && afterPurge.note === null,
+    `cron ${purge.status}, note ${afterPurge.note === null ? "gone" : "still there"}`,
+  );
+
+  // The other half of the rule: a purge that deleted everything would also
+  // have passed the check above.
+  const [freshNote] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() - 2 * 86_400_000),
+      endsAt: new Date(Date.now() - 2 * 86_400_000 + 45 * 60_000),
+      status: "completed",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+      expertNote: "written two days ago, well inside the window",
+      expertNoteAt: new Date(),
+    })
+    .returning();
+
+  await fetch(`${BASE}/api/cron/purge-intake`, {
+    headers: { authorization: `Bearer ${process.env.CRON_SECRET}` },
+  });
+  const [stillThere] = await db
+    .select({ note: bookings.expertNote })
+    .from(bookings)
+    .where(eq(bookings.id, freshNote.id))
+    .limit(1);
+  check(
+    "a note inside the retention window survives the purge",
+    stillThere.note !== null,
+    stillThere.note === null ? "it was deleted early" : "kept",
+  );
+
+
   // ---- 10. one open application per address ----
   const applicant = { email: `verify-${Date.now()}@example.in` };
   const row = {

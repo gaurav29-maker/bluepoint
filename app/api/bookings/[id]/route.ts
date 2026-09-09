@@ -31,6 +31,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     amountPaise: row.booking.amountPaise,
     meetingUrl: row.booking.meetingUrl,
     expertName: row.expertName,
+    expertNote: row.booking.expertNote,
     intakeDone: row.intakeId !== null,
     intakePath: `/booking/${row.booking.id}/intake?t=${signBookingToken(row.booking.id)}`,
   });

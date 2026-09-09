@@ -219,6 +219,23 @@ export const bookings = pgTable(
      */
     meetingUrl: text("meeting_url"),
     cancelledReason: text("cancelled_reason"),
+
+    /**
+     * What the expert recorded after the session, shown to the customer.
+     *
+     * The wording of this field is load-bearing. It records what was
+     * DISCUSSED, never what was recommended. "Discussed the concentration in
+     * IT and how it got there" is an account of a conversation; "advised
+     * cutting IT to 30%" is a written personalised recommendation sitting on
+     * Bluepoint's servers and delivered to the customer, which is the exact
+     * thing the terms say we do not do. The expert console says so at the
+     * point of writing, and the customer's view frames it the same way.
+     *
+     * Purged on the same 90-day clock as the intake it describes.
+     */
+    expertNote: text("expert_note"),
+    expertNoteAt: timestamp("expert_note_at", { withTimezone: true }),
+
     /** The refund policy allows one free move; this is what enforces "one". */
     rescheduleCount: smallint("reschedule_count").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

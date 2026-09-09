@@ -63,6 +63,7 @@ export default async function MemberConsole() {
         id: bookings.id,
         startsAt: bookings.startsAt,
         expertName: experts.displayName,
+        expertNote: bookings.expertNote,
       })
       .from(bookings)
       .innerJoin(experts, eq(bookings.expertId, experts.id))
@@ -315,16 +316,31 @@ export default async function MemberConsole() {
           <h2 className="member-h2">Past sessions</h2>
           <ul className="member-list">
             {past.map((b) => (
-              <li key={b.id}>
-                <div>
-                  <b>{istDateTime(b.startsAt)} IST</b>
-                  <span className="ops-sub">{b.expertName}</span>
+              <li key={b.id} className="member-past">
+                <div className="member-past-top">
+                  <div>
+                    <b>{istDateTime(b.startsAt)} IST</b>
+                    <span className="ops-sub">{b.expertName}</span>
+                  </div>
+                  <span className="member-list-right">
+                    <a className="ops-link" href={`/booking/${b.id}`}>
+                      What you shared
+                    </a>
+                  </span>
                 </div>
-                <span className="member-list-right">
-                  <a className="ops-link" href={`/booking/${b.id}`}>
-                    What you shared
-                  </a>
-                </span>
+                {/*
+                  Framed as what was discussed, matching how the expert was
+                  asked to write it and what the terms commit to. It is an
+                  account of a conversation, not advice given.
+                */}
+                {b.expertNote ? (
+                  <div className="member-note">
+                    <span className="member-note-label">
+                      {b.expertName.split(" ")[0]} noted
+                    </span>
+                    <p>{b.expertNote}</p>
+                  </div>
+                ) : null}
               </li>
             ))}
           </ul>

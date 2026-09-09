@@ -583,7 +583,9 @@
     padding: 32px;
     background: var(--white);
   }
-  .bp-panel h1 { font-size: 24px; letter-spacing: -0.02em; margin: 0 0 12px; }
+  /* max-width comes off too: the base 11ch measure is the hero's, and it
+     broke "You are booked in." across two lines inside a card. */
+  .bp-panel h1 { font-size: 24px; letter-spacing: -0.02em; margin: 0 0 12px; max-width: none; }
   .bp-lead { font-size: 15px; line-height: 1.65; color: var(--ink); margin: 0 0 20px; }
 
   .footer-disclaimer {
@@ -2681,4 +2683,124 @@
     font-size: 13.5px;
     color: var(--ink-dark);
     font-style: italic;
+  }
+
+  /* ---------- session notes ---------- */
+
+  .xp-note-form {
+    margin: 14px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--hair);
+    display: grid;
+    gap: 8px;
+  }
+  .os .xp-note-label,
+  .site-dark .xp-note-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .os .xp-note-input,
+  .site-dark .xp-note-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--hair-strong);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    line-height: 1.55;
+    color: var(--ink-dark);
+    resize: vertical;
+  }
+  .os .xp-note-input:focus,
+  .site-dark .xp-note-input:focus { outline: none; border-color: var(--blue); }
+  .os .xp-note-input::placeholder,
+  .site-dark .xp-note-input::placeholder { color: #5B6675; }
+
+  .xp-note-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .os .xp-note-hint,
+  .site-dark .xp-note-hint {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .xp-done { display: block; }
+  .xp-done .xp-head { margin-bottom: 0; }
+
+  /* The customer's side of the same note. */
+  .member-past { display: block; }
+  .member-past-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .member-note {
+    margin: 12px 0 0;
+    padding: 12px 14px;
+    border-left: 2px solid var(--blue);
+    background: rgba(29, 155, 240, 0.05);
+    border-radius: 0 8px 8px 0;
+  }
+  .os .member-note-label,
+  .site-dark .member-note-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--blue-deep);
+    margin-bottom: 5px;
+  }
+  .os .member-note p,
+  .site-dark .member-note p {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-dark);
+    white-space: pre-wrap;
+  }
+
+  @media (max-width: 640px) {
+    .xp-note-foot { align-items: flex-start; flex-direction: column; }
+    .member-past-top { flex-direction: column; gap: 4px; }
+  }
+
+  /*
+     `.member-list li` is a flex row (0,1,1) and `.member-past` is (0,1,0), so
+     the block display it asks for lost and the note was laid out as a third
+     column beside the date. Restated at (0,2,1).
+  */
+  .member-list li.member-past { display: block; }
+
+  /*
+     Fifth instance of the same collision. `.bp-panel h1` (0,1,1) and
+     `.site-dark h1` (0,1,1) tie, and the hero rule is written later in the
+     file, so "No active pass" rendered at 76px inside a card.
+
+     The real fault is that the hero clamp is bound to a theme class rather
+     than to the hero, so every h1 on a dark page inherits a marketing scale
+     and each new page pays for it again. That is a structural change worth
+     making deliberately, with the landing page re-checked afterwards; this
+     restates the card heading in the meantime.
+  */
+  .site-dark .bp-panel h1 {
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    max-width: none;
+    margin: 0 0 12px;
   }

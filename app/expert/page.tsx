@@ -7,7 +7,13 @@ import { db } from "@/lib/db";
 import { bookings, customers, experts, intakeSubmissions } from "@/lib/db/schema";
 import { EXPERT_COOKIE, verifyExpertSession } from "@/lib/expert-auth";
 import { istDateTime } from "@/lib/format";
-import { markCompleted, markNoShow, setMeetingLink, signOutExpert } from "./actions";
+import {
+  markCompleted,
+  markNoShow,
+  saveSessionNote,
+  setMeetingLink,
+  signOutExpert,
+} from "./actions";
 
 export const metadata: Metadata = { title: "Your schedule — Bluepoint", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -72,9 +78,43 @@ export default async function ExpertSchedule() {
 
   const { expert, upcoming, toClose, done } = data;
 
+  /*
+   * The note is what the customer is left holding after the call. It is
+   * framed here, at the point of writing, as an account of what was
+   * DISCUSSED — because an expert typing "cut IT to 30%" would be putting a
+   * written personalised recommendation into a customer's record, which is
+   * the one thing the terms promise Bluepoint does not do.
+   */
+  const noteForm = (r: (typeof upcoming)[number]) => (
+    <form action={saveSessionNote} className="xp-note-form">
+      <label className="xp-note-label" htmlFor={`note-${r.booking.id}`}>
+        What was discussed
+      </label>
+      <input type="hidden" name="bookingId" value={r.booking.id} />
+      <textarea
+        id={`note-${r.booking.id}`}
+        name="note"
+        rows={3}
+        maxLength={900}
+        className="xp-note-input"
+        defaultValue={r.booking.expertNote ?? ""}
+        placeholder="What you went through together, in a line or two."
+      />
+      <div className="xp-note-foot">
+        <span className="xp-note-hint">
+          Goes to the customer and stays in their record. Write what you discussed, not what you
+          advised.
+        </span>
+        <button className="ops-btn" type="submit">
+          {r.booking.expertNote ? "Update note" : "Save note"}
+        </button>
+      </div>
+    </form>
+  );
+
   const session = (
     r: (typeof upcoming)[number],
-    opts: { closable?: boolean } = {},
+    opts: { closable?: boolean; notable?: boolean } = {},
   ) => {
     const payload = (r.payload ?? {}) as Intake;
     const holdings = Array.isArray(payload.holdings) ? payload.holdings : [];
@@ -160,6 +200,8 @@ export default async function ExpertSchedule() {
             </>
           ) : null}
         </div>
+
+        {opts.notable ? noteForm(r) : null}
       </li>
     );
   };
@@ -199,7 +241,9 @@ export default async function ExpertSchedule() {
       {toClose.length > 0 ? (
         <section className="member-section">
           <h2 className="member-h2">Needs closing</h2>
-          <ul className="member-list xp-list">{toClose.map((r) => session(r, { closable: true }))}</ul>
+          <ul className="member-list xp-list">
+            {toClose.map((r) => session(r, { closable: true, notable: true }))}
+          </ul>
         </section>
       ) : null}
 
@@ -215,18 +259,20 @@ export default async function ExpertSchedule() {
       {done.length > 0 ? (
         <section className="member-section">
           <h2 className="member-h2">Done</h2>
-          <ul className="member-list">
+          <ul className="member-list xp-list">
             {done.map((r) => (
-              <li key={r.booking.id}>
-                <div>
-                  <b>{istDateTime(r.booking.startsAt)} IST</b>
-                  <span className="ops-sub">{r.customerName}</span>
-                </div>
-                <span className="member-list-right">
+              <li key={r.booking.id} className="xp-done">
+                <div className="xp-head">
+                  <div>
+                    <b>{istDateTime(r.booking.startsAt)} IST</b>
+                    <span className="ops-sub">{r.customerName}</span>
+                  </div>
                   <span className={`pill s-${r.booking.status}`}>
                     {r.booking.status.replace("_", " ")}
                   </span>
-                </span>
+                </div>
+                {/* Editable afterwards: a note written in a hurry is worth correcting. */}
+                {r.booking.status === "completed" ? noteForm(r) : null}
               </li>
             ))}
           </ul>

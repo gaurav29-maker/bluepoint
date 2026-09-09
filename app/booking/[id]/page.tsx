@@ -16,6 +16,7 @@ type Status = {
   amountPaise: number;
   meetingUrl: string | null;
   expertName: string;
+  expertNote: string | null;
   intakeDone: boolean;
   intakePath: string;
 };
@@ -122,6 +123,18 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
             <p className="bp-muted bp-spaced">
               Join link: <a href={data.meetingUrl}>{data.meetingUrl}</a>
             </p>
+          ) : null}
+
+          {/*
+            An account of what was covered, in the expert's words. Framed as
+            discussion rather than advice, in line with the terms and with how
+            the expert was asked to write it.
+          */}
+          {data.expertNote ? (
+            <div className="member-note bp-spaced">
+              <span className="member-note-label">{data.expertName.split(" ")[0]} noted</span>
+              <p>{data.expertNote}</p>
+            </div>
           ) : null}
         </div>
       ) : null}

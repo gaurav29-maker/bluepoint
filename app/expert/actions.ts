@@ -40,6 +40,37 @@ export async function setMeetingLink(formData: FormData) {
   revalidatePath("/expert");
 }
 
+/** Notes are shown to the customer, so there is a limit on what fits. */
+const NOTE_MAX = 900;
+
+/**
+ * What the expert recorded about the session.
+ *
+ * Kept separate from marking a session complete so it can be written
+ * afterwards, corrected, or added to a session closed weeks ago — an expert
+ * finishing four calls in an afternoon should not have to choose between
+ * writing something useful and clearing the queue.
+ */
+export async function saveSessionNote(formData: FormData) {
+  const expertId = await requireExpert();
+  const bookingId = String(formData.get("bookingId"));
+  const note = String(formData.get("note") ?? "").trim();
+
+  if (note.length > NOTE_MAX) {
+    throw new Error(`Keep the note under ${NOTE_MAX} characters`);
+  }
+
+  await db
+    .update(bookings)
+    .set({
+      expertNote: note === "" ? null : note,
+      expertNoteAt: note === "" ? null : new Date(),
+    })
+    .where(and(eq(bookings.id, bookingId), eq(bookings.expertId, expertId)));
+
+  revalidatePath("/expert");
+}
+
 export async function markCompleted(formData: FormData) {
   const expertId = await requireExpert();
   const bookingId = String(formData.get("bookingId"));
