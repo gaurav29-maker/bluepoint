@@ -4,7 +4,7 @@ loadEnv();
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, gt, inArray, sql } from "drizzle-orm";
 import { db } from "../lib/db";
 import { bookings, bundles, customers, expertApplications, experts, memberships } from "../lib/db/schema";
 import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
@@ -336,6 +336,74 @@ async function main() {
     stillThere.note !== null,
     stillThere.note === null ? "it was deleted early" : "kept",
   );
+
+
+  // ---- an expert changing their rate does not re-price anyone already booked ----
+  const [ratedBooking] = await db
+    .select({ id: bookings.id, amountPaise: bookings.amountPaise })
+    .from(bookings)
+    .where(and(eq(bookings.expertId, expert.id), gt(bookings.amountPaise, 0)))
+    .limit(1);
+
+  if (ratedBooking) {
+    const original = ratedBooking.amountPaise;
+    await db
+      .update(experts)
+      .set({ pricePaise: expert.pricePaise + 100_000 })
+      .where(eq(experts.id, expert.id));
+
+    const [unchanged] = await db
+      .select({ amountPaise: bookings.amountPaise })
+      .from(bookings)
+      .where(eq(bookings.id, ratedBooking.id))
+      .limit(1);
+
+    await db.update(experts).set({ pricePaise: expert.pricePaise }).where(eq(experts.id, expert.id));
+    check(
+      "raising a rate does not re-price an existing booking",
+      unchanged.amountPaise === original,
+      `${original} -> ${unchanged.amountPaise}`,
+    );
+  }
+
+  /*
+   * ---- a draft expert cannot put themselves live ----
+   *
+   * Going live is what publishes a SEBI registration somebody verified by
+   * hand. The console hides the control, but the control is not the defence:
+   * this is the `where status in ('live','paused')` on the update itself.
+   */
+  const [selfPublish] = await db
+    .insert(experts)
+    .values({
+      slug: `verify-selfpub-${Date.now().toString(36)}`,
+      displayName: "Verify Selfpub",
+      initials: "VS",
+      headline: "still a draft",
+      specialties: ["portfolio_audit"],
+      yearsExperience: 1,
+      pricePaise: SINGLE_CALL_PAISE,
+      contactEmail: "selfpub@example.in",
+      status: "draft",
+    })
+    .returning();
+
+  await db
+    .update(experts)
+    .set({ status: "live" })
+    .where(and(eq(experts.id, selfPublish.id), inArray(experts.status, ["live", "paused"])));
+
+  const [afterAttempt] = await db
+    .select({ status: experts.status })
+    .from(experts)
+    .where(eq(experts.id, selfPublish.id))
+    .limit(1);
+  check(
+    "a draft expert cannot publish themselves",
+    afterAttempt.status === "draft",
+    `status ${afterAttempt.status}`,
+  );
+  await db.delete(experts).where(eq(experts.id, selfPublish.id));
 
 
   // ---- 10. one open application per address ----

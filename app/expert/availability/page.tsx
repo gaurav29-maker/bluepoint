@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { asc, eq } from "drizzle-orm";
@@ -8,6 +7,7 @@ import { availabilityRules, experts } from "@/lib/db/schema";
 import { EXPERT_COOKIE, verifyExpertSession } from "@/lib/expert-auth";
 import { rethrowIfNavigation } from "@/lib/nav";
 import { addAvailability, removeAvailability } from "../actions";
+import ExpertBar from "@/components/expert/ExpertBar";
 
 export const metadata: Metadata = { title: "Availability — Bluepoint", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -50,14 +50,7 @@ export default async function Availability() {
 
   return (
     <div className="wrap bp-page member">
-      <div className="os-bar">
-        <Link href="/expert" className="logo os-mark">
-          blue<span>point</span> <em>experts</em>
-        </Link>
-        <span className="os-nav">
-          <Link href="/expert">Schedule</Link>
-        </span>
-      </div>
+      <ExpertBar current="availability" />
 
       <h1 className="ops-h1">Availability</h1>
       <p className="bp-muted ops-lede">

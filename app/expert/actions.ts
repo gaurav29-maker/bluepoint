@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { availabilityRules, bookings } from "@/lib/db/schema";
+import { availabilityRules, bookings, experts } from "@/lib/db/schema";
 import { EXPERT_COOKIE, verifyExpertSession } from "@/lib/expert-auth";
 
 /**
@@ -147,4 +147,75 @@ export async function removeAvailability(formData: FormData) {
 
   revalidatePath("/expert/availability");
   revalidatePath("/expert");
+}
+
+/*
+ * What an expert may change about themselves, and what they may not.
+ *
+ * Rate and words: yes. /apply promises "you set your own rate and hours",
+ * and a promise the software does not keep is worse than one never made.
+ * Changing the rate is safe for anyone already booked because a booking
+ * captures amount_paise when it is held, never at the time of the call.
+ *
+ * SEBI registration: no. The whole value of that line on a profile page is
+ * that a person checked it against the register before the expert went live.
+ * If an expert could edit it afterwards, the check would verify nothing. It
+ * stays with ops.
+ *
+ * Going live: no. An expert can pause and unpause themselves — the apply page
+ * says pausing takes one click — but draft to live stays a deliberate
+ * decision by whoever did the verifying.
+ */
+const PRICE_MIN_PAISE = 50_000;
+const PRICE_MAX_PAISE = 5_000_000;
+
+export async function updateExpertProfile(formData: FormData) {
+  const expertId = await requireExpert();
+
+  const headline = String(formData.get("headline") ?? "").trim();
+  const bio = String(formData.get("bio") ?? "").trim();
+  const rupees = Number(formData.get("priceRupees"));
+
+  if (headline.length < 6 || headline.length > 90) {
+    throw new Error("A headline needs to be between 6 and 90 characters");
+  }
+  if (bio.length < 40 || bio.length > 1200) {
+    throw new Error("A description needs to be between 40 and 1200 characters");
+  }
+  if (!Number.isFinite(rupees)) throw new Error("Enter your rate in rupees");
+
+  const pricePaise = Math.round(rupees * 100);
+  if (pricePaise < PRICE_MIN_PAISE || pricePaise > PRICE_MAX_PAISE) {
+    throw new Error(
+      `A session rate has to be between ₹${PRICE_MIN_PAISE / 100} and ₹${PRICE_MAX_PAISE / 100}`,
+    );
+  }
+
+  await db
+    .update(experts)
+    .set({ headline, bio, pricePaise, updatedAt: new Date() })
+    .where(eq(experts.id, expertId));
+
+  revalidatePath("/expert/profile");
+  revalidatePath("/");
+}
+
+/** Pausing hides them from the site at once. Booked calls are untouched. */
+export async function setOwnPaused(formData: FormData) {
+  const expertId = await requireExpert();
+  const paused = String(formData.get("paused")) === "true";
+
+  const [me] = await db.select().from(experts).where(eq(experts.id, expertId)).limit(1);
+  if (!me) throw new Error("Not signed in");
+  // A draft expert has never been published, so there is nothing to pause and
+  // un-pausing must not become a way to publish yourself.
+  if (me.status === "draft") throw new Error("Your profile has not been published yet");
+
+  await db
+    .update(experts)
+    .set({ status: paused ? "paused" : "live", updatedAt: new Date() })
+    .where(and(eq(experts.id, expertId), inArray(experts.status, ["live", "paused"])));
+
+  revalidatePath("/expert/profile");
+  revalidatePath("/");
 }

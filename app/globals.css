@@ -2825,3 +2825,21 @@
     max-width: none;
     margin: 0 0 12px;
   }
+
+  .xp-profile-form { max-width: 620px; gap: 16px; }
+  .xp-price-field { max-width: 240px; }
+  .os .xp-facts { border-bottom: 1px solid var(--hair); max-width: 620px; }
+  .xp-pause {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    max-width: 620px;
+  }
+  .os .xp-pause p, .site-dark .xp-pause p { margin: 0; max-width: 46ch; }
+
+  @media (max-width: 640px) {
+    .xp-pause { align-items: flex-start; }
+    .xp-price-field { max-width: none; }
+  }
