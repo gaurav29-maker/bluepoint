@@ -36,11 +36,13 @@ export default async function Receipts() {
 
   return (
     <div className="wrap bp-page member">
-      <div className="member-top">
-        <Link href="/member" className="logo bp-page-logo">
-          blue<span>point</span>
+      <div className="os-bar">
+        <Link href="/member" className="logo os-mark">
+          blue<span>point</span> <em>os</em>
         </Link>
-        <span className="bp-muted">{name}</span>
+        <span className="os-nav">
+          <span className="bp-muted">{name}</span>
+        </span>
       </div>
 
       <p className="ops-crumb">

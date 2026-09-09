@@ -49,10 +49,10 @@ export default async function MemberLogin({
   return (
     <div className="ops-login">
       <form action={requestLink} className="ops-login-card">
-        <p className="logo">
-          blue<span>point</span>
+        <p className="logo os-mark">
+          blue<span>point</span> <em>os</em>
         </p>
-        <h1>Your console</h1>
+        <h1>Bluepoint OS</h1>
         <p className="ops-login-sub">
           Enter the email your pass was bought with. We will send a link — no password.
         </p>

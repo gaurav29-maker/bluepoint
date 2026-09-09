@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Bluepoint — Get your portfolio reviewed, by a real person",
+  title: "Bluepoint — Get your portfolio reviewed, before the market does",
   description:
     "Book a call with a vetted market expert. A straight read on what you hold, or a system for sizing your F&O trades instead of guessing.",
 };

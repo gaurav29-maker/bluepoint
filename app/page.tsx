@@ -57,8 +57,8 @@ export default async function Home() {
             <a href="#faq">FAQs</a>
           </div>
           <div className="nav-right">
-            <Link className="nav-login" href="/member/login">
-              Your console
+            <Link className="nav-os" href="/member/login">
+              Bluepoint OS
             </Link>
             <a className="nav-cta" href="#experts">
               Book a call
@@ -72,7 +72,7 @@ export default async function Home() {
           <div>
             <span className="eyebrow-pill">One-to-one calls with vetted experts</span>
             <h1>
-              Get your portfolio <span className="said">reviewed</span>, by a real person.
+              Get your portfolio <span className="said">reviewed</span>, before the market does.
             </h1>
             <p className="sub">
               Book a call with a market expert. A straight read on what you hold, or a system for
@@ -346,7 +346,7 @@ export default async function Home() {
               <a href="#how">How it works</a>
               <a href="#pricing">Pricing</a>
               <a href="#faq">FAQs</a>
-              <Link href="/member/login">Your console</Link>
+              <Link href="/member/login">Bluepoint OS</Link>
             </div>
             <div className="footer-col">
               <h4>Get in touch</h4>

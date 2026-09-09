@@ -104,19 +104,35 @@ export default async function MemberConsole() {
 
   return (
     <div className="wrap bp-page member">
-      <div className="member-top">
-        <a href="/" className="logo bp-page-logo">
-          blue<span>point</span>
+      <div className="os-bar">
+        <a href="/" className="logo os-mark">
+          blue<span>point</span> <em>os</em>
         </a>
-        <span className="member-top-right">
-          <a className="ops-link" href="/member/receipts">
-            Receipts
-          </a>
-          <a className="ops-link" href="/member/profile">
-            Your details
-          </a>
-          <span className="bp-muted">{customer.name}</span>
+        <span className="os-nav">
+          <a href="/member/receipts">Receipts</a>
+          <a href="/member/profile">Your details</a>
         </span>
+      </div>
+
+      {/*
+        A status line rather than a greeting: what you hold, and how long it
+        has left. Real values, in a mono so the day count does not shift the
+        line as it counts down.
+      */}
+      <div className="os-status">
+        <span className="os-status-user">{customer.name}</span>
+        <span className="os-status-sep">/</span>
+        <span className="os-status-plan">
+          {membership ? MEMBERSHIP_TIERS[membership.tier].label : "No active pass"}
+        </span>
+        {membership ? (
+          <>
+            <span className="os-status-sep">/</span>
+            <span className="os-status-days">
+              {daysLeft} day{daysLeft === 1 ? "" : "s"} remaining
+            </span>
+          </>
+        ) : null}
       </div>
 
       {membership ? (

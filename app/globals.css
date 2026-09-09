@@ -1855,3 +1855,200 @@
     text-align: center;
   }
   .site-dark .footer-apply:hover { border-color: var(--blue); color: var(--blue-deep); }
+
+  /* ================= BLUEPOINT OS =================
+     The member area, styled as a console rather than a page. It inherits the
+     dark palette and terminal typography from .site-dark; everything here is
+     the console-specific furniture.
+
+     Borrowed from Edit Lobby: giving the member area its own name and its own
+     door, so a member is never hunting for the way in through a sales page.
+     Not borrowed: their second filled pill in the nav. Ours is an outline, so
+     the entry point is distinct by shape rather than by adding another shout.
+  */
+
+  .os { min-height: 100vh; }
+  .os .bp-page { padding-top: 26px; }
+
+  /* ---------- title bar ---------- */
+
+  .os-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--hair);
+    margin-bottom: 0;
+    flex-wrap: wrap;
+  }
+  .os-mark { font-size: 16px; color: var(--ink-dark); }
+  .os-mark em {
+    font-style: normal;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-left: 4px;
+    vertical-align: 2px;
+  }
+  .os-nav { display: flex; align-items: baseline; gap: 20px; font-size: 13px; }
+  .os-nav a { color: var(--ink); }
+  .os-nav a:hover { color: var(--blue-deep); }
+
+  /* ---------- status line ---------- */
+  /*
+     Reads like a prompt: who, what they hold, how long is left. Mono so the
+     day count does not reflow the line each day as it ticks down.
+  */
+  .os-status {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 11px 0 0;
+    margin-bottom: 30px;
+    color: var(--ink-soft);
+  }
+  .os-status-user { color: var(--ink-dark); }
+  .os-status-plan { color: var(--blue-deep); }
+  .os-status-days { font-variant-numeric: tabular-nums; }
+  .os-status-sep { color: var(--hair-strong); }
+
+  /* ---------- panels ---------- */
+
+  .os .member-pass {
+    background: rgba(8, 8, 10, 0.93);
+    border: 1px solid rgba(29, 155, 240, 0.28);
+    border-radius: 4px;
+  }
+  .os .member-pass-label {
+    font-family: var(--mono);
+    letter-spacing: 0.14em;
+    color: var(--blue-deep);
+  }
+  .os .member-pass-main { color: var(--ink-dark); letter-spacing: -0.03em; }
+  .os .member-pass-sub { color: var(--ink-soft); font-family: var(--mono); font-size: 11.5px; }
+
+  .os .bp-panel,
+  .os .member-book {
+    background: rgba(8, 8, 10, 0.93);
+    border: 1px solid var(--hair);
+    border-radius: 4px;
+  }
+
+  .os .member-h2 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+
+  /* ---------- rows ---------- */
+
+  .os .member-list li { border-color: var(--hair); }
+  .os .member-list li:last-child { border-bottom-color: var(--hair); }
+  .os .member-list b { color: var(--ink-dark); font-variant-numeric: tabular-nums; }
+  .os .ops-sub { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; }
+  .os .ops-link { color: var(--blue-deep); }
+
+  .os .member-expert { border-color: var(--hair); background: transparent; border-radius: 4px; }
+  .os .member-expert.is-active { border-color: var(--blue); background: var(--blue-tint); }
+  .os .member-expert-av { border-radius: 4px; }
+
+  .os .bp-slot,
+  .os .bp-day {
+    border-radius: 4px;
+    background: transparent;
+    border-color: var(--hair-strong);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.03em;
+  }
+  .os .bp-slot:hover, .os .bp-day:hover { border-color: var(--blue); color: var(--blue-deep); }
+  .os .bp-day.is-active { background: var(--blue); border-color: var(--blue); color: var(--on-accent); }
+  .os .bp-slot.is-active { background: var(--blue-tint); border-color: var(--blue); color: var(--blue-deep); }
+
+  .os .ops-btn {
+    border-radius: 4px;
+    background: transparent;
+    border-color: var(--hair-strong);
+    color: var(--ink-dark);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .os .ops-btn:hover { border-color: var(--blue); color: var(--blue-deep); }
+  .os .ops-btn.danger { border-color: rgba(230, 120, 120, 0.4); color: #E77B7B; }
+  .os .ops-btn.danger:hover { background: rgba(230, 120, 120, 0.1); border-color: #C97676; }
+
+  .os .member-confirm { background: rgba(8, 8, 10, 0.93); border-color: var(--hair); border-radius: 4px; }
+  .os .ops-input { background: var(--panel, rgba(8,8,10,.93)); border-color: var(--hair-strong); color: var(--ink-dark); border-radius: 4px; }
+  .os .bp-field input, .os .bp-field textarea, .os .bp-field select {
+    background: rgba(8, 8, 10, 0.93);
+    border-color: var(--hair-strong);
+    color: var(--ink-dark);
+    border-radius: 4px;
+  }
+  .os .bp-field > span { color: var(--ink); }
+
+  /* ---------- receipts ---------- */
+
+  .os .receipt { background: rgba(8, 8, 10, 0.93); border-color: var(--hair); border-radius: 4px; }
+  .os .receipt-head, .os .receipt-foot, .os .receipt-table th { border-color: var(--hair); }
+  .os .receipt-table td { border-color: var(--rule-soft, var(--hair)); }
+  .os .receipt-ref, .os .receipt-table .num { font-family: var(--mono); }
+  .os .receipt-label { font-family: var(--mono); letter-spacing: 0.14em; }
+  .os .receipt-issuer, .os .receipt-foot p { color: var(--ink-soft); }
+  .os .receipt-table td { color: var(--ink); }
+  .os .receipt-table tfoot td { color: var(--ink-dark); }
+  .os .receipt-refs code, .os .ops-empty code { background: var(--blue-tint); color: var(--blue-deep); }
+
+  /* ---------- the door, on the marketing page ---------- */
+
+  .site-dark .nav-os {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+    border: 1px solid var(--hair-strong);
+    border-radius: 999px;
+    padding: 8px 15px;
+    white-space: nowrap;
+  }
+  .site-dark .nav-os:hover { border-color: var(--blue); color: var(--blue-deep); }
+
+  @media (max-width: 640px) {
+    .os-status { font-size: 10.5px; gap: 7px; }
+    .os-nav { gap: 14px; }
+  }
+
+  /*
+     Cascade leak: `.site-dark h1` sets a hero-scale clamp, and the OS shell
+     inherits from .site-dark, so the sign-in card's heading rendered at 40px+.
+     A card heading is not a hero heading — restated at card scale.
+  */
+  .os .ops-login-card h1 {
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    margin: 18px 0 4px;
+  }
+  .os .ops-login-card {
+    background: rgba(8, 8, 10, 0.93);
+    border: 1px solid var(--hair);
+    border-radius: 4px;
+  }
+  .os .ops-login-sub { color: var(--ink-soft); }
+  .os .ops-login { background: transparent; }
