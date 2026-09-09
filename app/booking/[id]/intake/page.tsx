@@ -7,6 +7,11 @@ import { Suspense } from "react";
 function IntakeForm({ id }: { id: string }) {
   const token = useSearchParams().get("t") ?? "";
 
+  const [rows, setRows] = useState<{ label: string; pct: string }[]>([
+    { label: "", pct: "" },
+    { label: "", pct: "" },
+    { label: "", pct: "" },
+  ]);
   const [holdingsSummary, setHoldings] = useState("");
   const [goals, setGoals] = useState("");
   const [experienceYears, setExperience] = useState("");
@@ -18,6 +23,8 @@ function IntakeForm({ id }: { id: string }) {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
+  const totalPct = rows.reduce((n, r) => n + (Number(r.pct) || 0), 0);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -28,6 +35,9 @@ function IntakeForm({ id }: { id: string }) {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           token,
+          holdings: rows
+            .map((r) => ({ label: r.label.trim(), pct: Number(r.pct) }))
+            .filter((r) => r.label !== "" && Number.isFinite(r.pct)),
           holdingsSummary,
           goals,
           experienceYears: experienceYears === "" ? undefined : Number(experienceYears),
@@ -70,14 +80,75 @@ function IntakeForm({ id }: { id: string }) {
         is no field on this form that asks for one.
       </div>
 
-      <label className="bp-field">
+      {/*
+        Rows first, prose second. The rows are what make one session
+        comparable to the last; the prose is what a percentage cannot say.
+      */}
+      <div className="bp-field">
         <span>What are you holding?</span>
+        <p className="bp-fineprint intake-hint">
+          Rough percentages are fine — they only need to be close enough to talk about.
+        </p>
+        <div className="intake-rows">
+          {rows.map((r, i) => (
+            <div className="intake-row" key={i}>
+              <input
+                aria-label={`Holding ${i + 1}`}
+                placeholder="e.g. two IT largecaps"
+                value={r.label}
+                onChange={(e) =>
+                  setRows(rows.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))
+                }
+              />
+              <div className="intake-pct">
+                <input
+                  aria-label={`Percentage for holding ${i + 1}`}
+                  type="number"
+                  min={0}
+                  max={100}
+                  placeholder="0"
+                  value={r.pct}
+                  onChange={(e) =>
+                    setRows(rows.map((x, j) => (j === i ? { ...x, pct: e.target.value } : x)))
+                  }
+                />
+                <span>%</span>
+              </div>
+              <button
+                type="button"
+                className="intake-drop"
+                aria-label={`Remove holding ${i + 1}`}
+                onClick={() => setRows(rows.filter((_, j) => j !== i))}
+                disabled={rows.length <= 1}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="intake-tools">
+          <button
+            type="button"
+            className="ops-btn"
+            onClick={() => setRows([...rows, { label: "", pct: "" }])}
+            disabled={rows.length >= 20}
+          >
+            Add a line
+          </button>
+          <span className={`intake-total${totalPct > 100 ? " over" : ""}`}>
+            {totalPct}% accounted for
+          </span>
+        </div>
+      </div>
+
+      <label className="bp-field">
+        <span>Anything the percentages do not say</span>
         <textarea
-          rows={6}
+          rows={4}
           required
           value={holdingsSummary}
           onChange={(e) => setHoldings(e.target.value)}
-          placeholder="Roughly what you own and how much of the portfolio each part is. Approximate is fine — for example: 40% large-cap MFs, 25% two IT stocks, 20% a PSU bank, 15% cash."
+          placeholder="How you got here, what you keep changing your mind about, anything you would tell a friend about this portfolio."
         />
       </label>
 

@@ -13,6 +13,21 @@ export const dynamic = "force-dynamic";
  */
 const Body = z.object({
   token: z.string().min(1),
+  /**
+   * Rows, so two intakes can be compared. The prose below is kept as well —
+   * a percentage cannot say "I keep averaging down on this one", and that is
+   * often the sentence the expert actually needs.
+   */
+  holdings: z
+    .array(
+      z.object({
+        label: z.string().min(1).max(80),
+        pct: z.coerce.number().min(0).max(100),
+      }),
+    )
+    .max(20)
+    .optional()
+    .default([]),
   holdingsSummary: z.string().min(1).max(5000),
   goals: z.string().max(2000).optional().default(""),
   experienceYears: z.coerce.number().int().min(0).max(80).optional(),

@@ -5,9 +5,11 @@ import { and, desc, eq, gte } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { bookings, customers, experts, memberships } from "@/lib/db/schema";
 import { MEMBER_COOKIE, verifySession } from "@/lib/member-auth";
-import { MEMBERSHIP_TIERS } from "@/lib/constants";
-import { istDateTime } from "@/lib/format";
+import { MEMBERSHIP_TIERS, RENEWAL_WINDOW_DAYS } from "@/lib/constants";
+import { istDateTime, rupees } from "@/lib/format";
 import MemberBooking, { type BookableExpert } from "@/components/member/MemberBooking";
+import { liveBundlesForCustomer, recordForCustomer } from "@/lib/record";
+import PassPurchase from "@/components/PassPurchase";
 import ManageBooking from "@/components/member/ManageBooking";
 
 export const metadata: Metadata = { title: "Your console — Bluepoint", robots: { index: false } };
@@ -82,7 +84,12 @@ export default async function MemberConsole() {
         ).map((e) => e)
       : [];
 
-    data = { customer, membership, upcoming, past, bookable };
+    const [liveBundles, record] = await Promise.all([
+      liveBundlesForCustomer(customerId),
+      recordForCustomer(customerId),
+    ]);
+
+    data = { customer, membership, upcoming, past, bookable, liveBundles, record };
   } catch {
     return (
       <div className="wrap bp-page">
@@ -97,7 +104,7 @@ export default async function MemberConsole() {
     );
   }
 
-  const { customer, membership, upcoming, past, bookable } = data;
+  const { customer, membership, upcoming, past, bookable, liveBundles, record } = data;
   const daysLeft = membership
     ? Math.max(0, Math.ceil((membership.endsAt.getTime() - Date.now()) / 86_400_000))
     : 0;
@@ -201,6 +208,104 @@ export default async function MemberConsole() {
             Included in your pass — any expert, as often as you like.
           </p>
           <MemberBooking experts={bookable} />
+        </section>
+      ) : null}
+
+      {/*
+        Bundles were invisible here until now: a three-call buyer could sign in
+        and had no way to book calls two and three. Each live bundle gets its
+        own picker, locked to the expert it was bought against.
+      */}
+      {liveBundles.map((b) => (
+        <section className="member-section" key={b.id}>
+          <h2 className="member-h2">
+            {b.creditsLeft} of {b.creditsTotal} calls left
+            {b.expertName ? ` with ${b.expertName}` : ""}
+          </h2>
+          <p className="bp-muted" style={{ marginBottom: 14 }}>
+            Already paid for. Valid until {istDateTime(b.expiresAt)} IST.
+          </p>
+          <MemberBooking
+            bundleId={b.id}
+            experts={
+              b.expertSlug
+                ? [
+                    {
+                      slug: b.expertSlug,
+                      displayName: b.expertName ?? "Your expert",
+                      initials: b.expertInitials ?? "??",
+                      headline: b.expertHeadline ?? "",
+                    },
+                  ]
+                : []
+            }
+          />
+        </section>
+      ))}
+
+      {/*
+        A pass is bought outright rather than auto-renewed, so this prompt is
+        the renewal mechanism. It carries what the sessions would have cost one
+        at a time, because that is the number the decision actually turns on —
+        including when it is unflattering.
+      */}
+      {membership && daysLeft <= RENEWAL_WINDOW_DAYS ? (
+        <section className="member-section">
+          <div className="os-renew">
+            <div>
+              <h2 className="member-h2">
+                Your pass ends in {daysLeft} day{daysLeft === 1 ? "" : "s"}
+              </h2>
+              <p className="bp-muted">
+                {record.sessionsTaken > 0 ? (
+                  <>
+                    You have taken {record.sessionsTaken} session
+                    {record.sessionsTaken === 1 ? "" : "s"} on it. One at a time those would have
+                    cost {rupees(record.atSingleCallPaise)}.
+                  </>
+                ) : (
+                  <>You have not used it yet. Book something before it lapses.</>
+                )}
+              </p>
+            </div>
+            <PassPurchase
+              tier={membership.tier}
+              label={MEMBERSHIP_TIERS[membership.tier].label}
+              priceLabel={rupees(MEMBERSHIP_TIERS[membership.tier].pricePaise)}
+              cta="Renew"
+              className="btn-primary"
+            />
+          </div>
+        </section>
+      ) : null}
+
+      {/*
+        The record. It states what was DECLARED and what was DISCUSSED — never
+        what was recommended, and never that a change followed advice. The terms
+        say Bluepoint does not give personalised advice, and this has to agree.
+      */}
+      {record.movements.length > 0 ? (
+        <section className="member-section">
+          <h2 className="member-h2">What has moved</h2>
+          <p className="bp-muted" style={{ marginBottom: 14 }}>
+            What you told us you held, first session against most recent. Your own figures.
+          </p>
+          <ul className="os-moves">
+            {record.movements.map((m) => (
+              <li key={m.label}>
+                <span className="os-move-label">{m.label}</span>
+                <span className="os-move-nums">
+                  <b>{m.first}%</b>
+                  <span className="os-move-arrow">→</span>
+                  <b>{m.latest}%</b>
+                  <span className={`os-move-delta${m.delta === 0 ? " flat" : ""}`}>
+                    {m.delta > 0 ? "+" : ""}
+                    {m.delta}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
 

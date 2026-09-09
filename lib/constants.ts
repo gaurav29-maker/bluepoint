@@ -45,5 +45,12 @@ export type MembershipTierName = keyof typeof MEMBERSHIP_TIERS;
  */
 export const EXPERT_PAYOUT_PAISE = Number(process.env.EXPERT_PAYOUT_PAISE ?? 220000);
 
+/**
+ * A pass is bought outright, not auto-renewed, so a member has to actively
+ * decide to pay again. The prompt IS the renewal mechanism — without it they
+ * simply lapse.
+ */
+export const RENEWAL_WINDOW_DAYS = 30;
+
 /** Intake payloads are deleted this long after the call. */
 export const INTAKE_RETENTION_DAYS = 90;

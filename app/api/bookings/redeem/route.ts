@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
@@ -15,14 +16,13 @@ import { computeSlots, SLOT_MINUTES } from "@/lib/slots";
 import { DISCLAIMER_VERSION } from "@/lib/constants";
 import { occupiesSlot, releaseStaleHold } from "@/lib/bookings";
 import { customerConfirmation, expertNotification, sendOnce } from "@/lib/email";
+import { MEMBER_COOKIE, verifySession } from "@/lib/member-auth";
 
 export const dynamic = "force-dynamic";
 
 const Body = z.object({
   bundleId: z.string().uuid(),
   startsAt: z.string().datetime(),
-  /** Stands in for a login: you must know the address the bundle was bought with. */
-  email: z.string().email().max(200),
 });
 
 function isUniqueViolation(err: unknown): boolean {
@@ -34,10 +34,15 @@ function isUniqueViolation(err: unknown): boolean {
  * hands when the bundle was bought.
  */
 export async function POST(req: NextRequest) {
+  // Identity comes from the signed member cookie, never from the body —
+  // otherwise knowing an address would be enough to spend someone's credits.
+  const customerId = await verifySession((await cookies()).get(MEMBER_COOKIE)?.value);
+  if (!customerId) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 
-  const { bundleId, email } = parsed.data;
+  const { bundleId } = parsed.data;
   const startsAt = new Date(parsed.data.startsAt);
 
   const [row] = await db
@@ -51,8 +56,8 @@ export async function POST(req: NextRequest) {
   if (!row) return NextResponse.json({ error: "Bundle not found" }, { status: 404 });
   const { bundle, expert, customer } = row;
 
-  if (customer.email.toLowerCase() !== email.trim().toLowerCase()) {
-    return NextResponse.json({ error: "That email does not match this bundle" }, { status: 403 });
+  if (bundle.customerId !== customerId) {
+    return NextResponse.json({ error: "Bundle not found" }, { status: 404 });
   }
   if (bundle.status !== "active") {
     return NextResponse.json({ error: "This bundle is no longer active" }, { status: 409 });

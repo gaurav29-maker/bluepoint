@@ -31,8 +31,23 @@ function timeLabel(iso: string) {
   }).format(new Date(iso));
 }
 
-export default function MemberBooking({ experts }: { experts: BookableExpert[] }) {
-  const [expert, setExpert] = useState<BookableExpert | null>(null);
+/**
+ * One picker for both ways of booking without paying. A pass books against the
+ * membership; a bundle spends a credit. Same slot mechanics, different endpoint
+ * — duplicating the picker to change one URL would have been the worse trade.
+ */
+export default function MemberBooking({
+  experts,
+  bundleId,
+}: {
+  experts: BookableExpert[];
+  bundleId?: string;
+}) {
+  const [expert, setExpert] = useState<BookableExpert | null>(
+    // A bundle belongs to one expert; offering a list of one is a decision
+    // the member does not have to make.
+    experts.length === 1 ? experts[0] : null,
+  );
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [activeDay, setActiveDay] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -70,11 +85,18 @@ export default function MemberBooking({ experts }: { experts: BookableExpert[] }
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/memberships/book", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ expertSlug: expert.slug, startsAt: slot.startsAt }),
-      });
+      const res = await fetch(
+        bundleId ? "/api/bookings/redeem" : "/api/memberships/book",
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(
+            bundleId
+              ? { bundleId, startsAt: slot.startsAt }
+              : { expertSlug: expert.slug, startsAt: slot.startsAt },
+          ),
+        },
+      );
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Could not book that slot");
       window.location.href = `/booking/${json.bookingId}`;
@@ -140,7 +162,9 @@ export default function MemberBooking({ experts }: { experts: BookableExpert[] }
                 ))}
               </div>
               <p className="bp-fineprint">
-                Picking a time books it straight away — nothing to pay, it is inside your pass.
+                {bundleId
+                  ? "Picking a time books it straight away and spends one of your calls."
+                  : "Picking a time books it straight away — nothing to pay, it is inside your pass."}
               </p>
             </>
           ) : null}
