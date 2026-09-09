@@ -14,6 +14,8 @@ import {
   experts,
   intakeSubmissions,
   memberships,
+  payments,
+  webhookEvents,
 } from "../lib/db/schema";
 import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
 
@@ -85,6 +87,14 @@ async function main() {
   console.log(`\nVerifying against ${BASE}\n`);
 
   // Start from a clean slate so reruns are meaningful.
+  /*
+   * Payments reference bookings, bundles and memberships, so they go first or
+   * the reset trips the foreign key. Webhook events are cleared too: they are
+   * deduplicated on a unique event id, and a leftover row from a previous run
+   * would make a fresh delivery look like a redelivery.
+   */
+  await db.delete(payments);
+  await db.delete(webhookEvents);
   await db.delete(bookings);
   await db.delete(bundles);
   await db.delete(memberships);
@@ -563,6 +573,194 @@ async function main() {
     "intake closes once the session has happened",
     late.status === 409,
     `status ${late.status}`,
+  );
+
+
+  /*
+   * ---- the payment webhook, which decides whether a booking is real ----
+   *
+   * "The only place a booking becomes confirmed", and it had never been run.
+   * Razorpay is not needed to exercise it: the signature is an HMAC of the
+   * raw body under RAZORPAY_WEBHOOK_SECRET, so signing a crafted payload with
+   * the same key drives the real code path. What that leaves untested is
+   * Razorpay's side of the handshake, not ours.
+   */
+  const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    check("the payment webhook can be exercised", false, "RAZORPAY_WEBHOOK_SECRET is not set");
+  } else {
+    const hookSlot = (await slots())[0];
+    const held = await post("/api/bookings/hold", {
+      expertSlug: EXPERT,
+      startsAt: hookSlot,
+      name: "Webhook Test",
+      email: `webhook-${Date.now()}@example.in`,
+      disclaimerAccepted: true,
+    });
+    const heldId = String(held.json.bookingId);
+
+    const [heldRow] = await db.select().from(bookings).where(eq(bookings.id, heldId)).limit(1);
+    const orderId = `order_verify_${Date.now()}`;
+    await db.insert(payments).values({
+      bookingId: heldId,
+      razorpayOrderId: orderId,
+      amountPaise: heldRow.amountPaise,
+      status: "created",
+    });
+
+    const capture = (amountPaise: number, paymentId: string) =>
+      JSON.stringify({
+        event: "payment.captured",
+        payload: {
+          payment: { entity: { id: paymentId, order_id: orderId, amount: amountPaise } },
+        },
+      });
+
+    const sign = (body: string) =>
+      crypto.createHmac("sha256", webhookSecret).update(body).digest("hex");
+
+    const fire = async (body: string, signature: string | null, eventId: string) =>
+      fetch(`${BASE}/api/webhooks/razorpay`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-razorpay-event-id": eventId,
+          ...(signature ? { "x-razorpay-signature": signature } : {}),
+        },
+        body,
+      });
+
+    // 1. No signature at all. This is the request an attacker sends first.
+    const unsigned = await fire(capture(heldRow.amountPaise, "pay_unsigned"), null, "evt_unsigned");
+    check("an unsigned payment webhook is refused", unsigned.status === 400, `status ${unsigned.status}`);
+
+    // 2. A signature that is the right shape but the wrong key.
+    const forgedBody = capture(heldRow.amountPaise, "pay_forged");
+    const forged = await fire(forgedBody, sign(forgedBody).replace(/.$/, "0"), "evt_forged");
+    check("a forged webhook signature is refused", forged.status === 400, `status ${forged.status}`);
+
+    const [stillHeld] = await db.select().from(bookings).where(eq(bookings.id, heldId)).limit(1);
+    check(
+      "neither forged call confirmed the booking",
+      stillHeld.status === "held",
+      `status ${stillHeld.status}`,
+    );
+
+    /*
+     * 3. Correctly signed, but for less money than the session costs. The
+     *    signature proves Razorpay sent it; it does not prove the amount is
+     *    the one we asked for.
+     */
+    const shortBody = capture(100, "pay_short");
+    const short = await fire(shortBody, sign(shortBody), "evt_short");
+    const [afterShort] = await db.select().from(bookings).where(eq(bookings.id, heldId)).limit(1);
+    check(
+      "a signed webhook paying the wrong amount confirms nothing",
+      short.status === 500 && afterShort.status === "held",
+      `status ${short.status}, booking ${afterShort.status}`,
+    );
+
+    // 4. The real thing.
+    const goodBody = capture(heldRow.amountPaise, "pay_good");
+    const good = await fire(goodBody, sign(goodBody), "evt_good");
+    const [confirmedRow] = await db.select().from(bookings).where(eq(bookings.id, heldId)).limit(1);
+    check(
+      "a correctly signed capture confirms the booking",
+      good.status === 200 && confirmedRow.status === "confirmed",
+      `status ${good.status}, booking ${confirmedRow.status}`,
+    );
+
+    // 5. Razorpay retries. The same event must not be handled twice.
+    const replay = await fire(goodBody, sign(goodBody), "evt_good");
+    const replayJson = (await replay.json()) as { deduped?: boolean };
+    check(
+      "a redelivered webhook is deduplicated",
+      replay.status === 200 && replayJson.deduped === true,
+      `deduped ${replayJson.deduped}`,
+    );
+  }
+
+
+  /*
+   * ---- the three sign-in scopes, which exist to not be interchangeable ----
+   *
+   * One TOKEN_SECRET signs member, expert and ops tokens, and an expert sees
+   * other people's portfolios while a member sees only their own. The whole
+   * defence is that the scope is inside the signed payload, so a token minted
+   * for one purpose cannot be presented as another. That is a claim, and it
+   * had never been tested.
+   */
+  const linkSecret = process.env.TOKEN_SECRET!;
+  const mint = (payload: string) =>
+    crypto.createHmac("sha256", linkSecret).update(payload).digest("hex");
+  const linkExp = Date.now() + 600_000;
+
+  const follow = async (token: string) =>
+    fetch(`${BASE}/api/member/session?t=${token}`, { redirect: "manual" });
+
+  // A genuine member sign-in link works.
+  const goodLink = `${member.id}.${linkExp}.${mint(`link:${member.id}:${linkExp}`)}`;
+  const signedIn = await follow(goodLink);
+  const setCookie = signedIn.headers.get("set-cookie") ?? "";
+  check(
+    "a valid sign-in link mints a member session",
+    signedIn.headers.get("location")?.endsWith("/member") === true &&
+      setCookie.includes("bp_member="),
+    signedIn.headers.get("location") ?? "no redirect",
+  );
+  check(
+    "the session cookie is httpOnly",
+    /httponly/i.test(setCookie),
+    setCookie.includes("HttpOnly") ? "HttpOnly set" : "MISSING HttpOnly",
+  );
+
+  // A 30-day session token replayed as a 30-minute sign-in link.
+  const sessionAsLink = `${member.id}.${linkExp}.${mint(`session:${member.id}:${linkExp}`)}`;
+  const replayed = await follow(sessionAsLink);
+  check(
+    "a session token cannot be replayed as a sign-in link",
+    replayed.headers.get("location")?.includes("expired=1") === true,
+    replayed.headers.get("location") ?? "no redirect",
+  );
+
+  // An expert's link presented to the member endpoint. Same secret, same
+  // shape, different scope — this is the one the design exists for.
+  const expertLinkOnMember = `${expert.id}.${linkExp}.${mint(`expert-link:${expert.id}:${linkExp}`)}`;
+  const crossScope = await follow(expertLinkOnMember);
+  check(
+    "an expert's link cannot open a member session",
+    crossScope.headers.get("location")?.includes("expired=1") === true,
+    crossScope.headers.get("location") ?? "no redirect",
+  );
+
+  // And the reverse, on the expert endpoint.
+  const memberLinkOnExpert = await fetch(
+    `${BASE}/api/expert/session?t=${member.id}.${linkExp}.${mint(`link:${member.id}:${linkExp}`)}`,
+    { redirect: "manual" },
+  );
+  check(
+    "a member's link cannot open an expert session",
+    memberLinkOnExpert.headers.get("location")?.includes("expired=1") === true,
+    memberLinkOnExpert.headers.get("location") ?? "no redirect",
+  );
+
+  // An expired link, however genuine.
+  const stale = Date.now() - 1000;
+  const expiredLink = `${member.id}.${stale}.${mint(`link:${member.id}:${stale}`)}`;
+  const expired = await follow(expiredLink);
+  check(
+    "an expired sign-in link is refused",
+    expired.headers.get("location")?.includes("expired=1") === true,
+    expired.headers.get("location") ?? "no redirect",
+  );
+
+  // Someone else's id with a signature that was never over it.
+  const swapped = `${expert.id}.${linkExp}.${mint(`link:${member.id}:${linkExp}`)}`;
+  const swappedRes = await follow(swapped);
+  check(
+    "a signature cannot be moved onto another account's id",
+    swappedRes.headers.get("location")?.includes("expired=1") === true,
+    swappedRes.headers.get("location") ?? "no redirect",
   );
 
 
