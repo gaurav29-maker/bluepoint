@@ -4,7 +4,7 @@ loadEnv();
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { and, eq, gt, inArray, sql } from "drizzle-orm";
+import { and, eq, gt, gte, inArray, sql } from "drizzle-orm";
 import { db } from "../lib/db";
 import { bookings, bundles, customers, expertApplications, experts, memberships } from "../lib/db/schema";
 import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
@@ -404,6 +404,47 @@ async function main() {
     `status ${afterAttempt.status}`,
   );
   await db.delete(experts).where(eq(experts.id, selfPublish.id));
+
+
+  // ---- the public apply form throttles one source ----
+  const burstSource = `verify-source-${Date.now().toString(36)}`;
+  const burst = (n: number) => ({
+    name: `Burst ${n}`,
+    email: `burst-${Date.now()}-${n}@example.in`,
+    headline: "flooding the queue",
+    bio: "flooding the queue",
+    specialties: ["portfolio_audit" as const],
+    yearsExperience: 1,
+    ipHash: burstSource,
+  });
+  for (let n = 0; n < 5; n++) await db.insert(expertApplications).values(burst(n));
+
+  const [fromSource] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(expertApplications)
+    .where(
+      and(
+        eq(expertApplications.ipHash, burstSource),
+        gte(expertApplications.createdAt, new Date(Date.now() - 60 * 60_000)),
+      ),
+    );
+  check(
+    "a burst from one source is counted for throttling",
+    fromSource.n >= 5,
+    `${fromSource.n} in the last hour, limit is 5`,
+  );
+
+  const [stored] = await db
+    .select({ ipHash: expertApplications.ipHash })
+    .from(expertApplications)
+    .where(eq(expertApplications.ipHash, burstSource))
+    .limit(1);
+  check(
+    "no raw IP address is stored with an application",
+    stored.ipHash !== null && !/^\d{1,3}(\.\d{1,3}){3}$/.test(stored.ipHash),
+    "the source is a salted hash",
+  );
+  await db.delete(expertApplications).where(eq(expertApplications.ipHash, burstSource));
 
 
   // ---- 10. one open application per address ----

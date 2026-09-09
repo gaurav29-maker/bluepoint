@@ -1,6 +1,9 @@
 "use server";
 
+import { createHmac } from "node:crypto";
+import { headers } from "next/headers";
 import { z } from "zod";
+import { and, count, eq, gte } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { expertApplications } from "@/lib/db/schema";
 
@@ -27,6 +30,39 @@ const Body = z.object({
 });
 
 export type ApplyState = { ok: boolean; error?: string; fieldErrors?: Record<string, string> };
+
+/**
+ * How many applications one source may send in an hour.
+ *
+ * Generous on purpose: this is not trying to catch a determined attacker, it
+ * is stopping an open write endpoint from being trivially flooded. A real
+ * person applying, mistyping their email and applying again stays well under
+ * it; the shared office or campus NAT that puts three colleagues behind one
+ * address does too.
+ */
+const MAX_PER_SOURCE_PER_HOUR = 5;
+
+/**
+ * A salted hash of the caller's address — never the address.
+ *
+ * Throttling only ever asks "is this the same source again?", which does not
+ * require storing who they are. Salted with TOKEN_SECRET so the stored value
+ * cannot be matched against a list of candidate IPs by anyone who reads the
+ * table, and cannot be correlated with any other system's logs.
+ */
+async function sourceHash(): Promise<string | null> {
+  const secret = process.env.TOKEN_SECRET;
+  if (!secret) return null;
+
+  const h = await headers();
+  const ip =
+    h.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    h.get("x-real-ip")?.trim() ||
+    "";
+  if (ip === "") return null;
+
+  return createHmac("sha256", secret).update(`apply:${ip}`).digest("hex");
+}
 
 function isUniqueViolation(err: unknown): boolean {
   return typeof err === "object" && err !== null && (err as { code?: string }).code === "23505";
@@ -61,6 +97,27 @@ export async function submitApplication(
 
   const data = parsed.data;
 
+  const source = await sourceHash();
+  if (source) {
+    const [recent] = await db
+      .select({ n: count() })
+      .from(expertApplications)
+      .where(
+        and(
+          eq(expertApplications.ipHash, source),
+          gte(expertApplications.createdAt, new Date(Date.now() - 60 * 60_000)),
+        ),
+      );
+
+    if ((recent?.n ?? 0) >= MAX_PER_SOURCE_PER_HOUR) {
+      // Says only what the sender already knows about their own behaviour.
+      return {
+        ok: false,
+        error: "That is several applications in a short time. Give us a while to read them.",
+      };
+    }
+  }
+
   /*
    * A claimed registration number has to be a number. It is not verified here
    * — that is a person's job before anyone is approved — but a registration
@@ -88,15 +145,17 @@ export async function submitApplication(
       sebiRegNumber: data.sebiRegType === "none" ? null : (data.sebiRegNumber ?? null),
       links: data.links ?? null,
       note: data.note ?? null,
+      ipHash: source,
     });
   } catch (err) {
-    // The partial unique index means one open application per address.
-    if (isUniqueViolation(err)) {
-      return {
-        ok: true,
-        error: undefined,
-      };
-    }
+    /*
+     * The partial unique index: one open application per address. Reported as
+     * success rather than as an error, because the sender has an application
+     * with us either way and telling them so is the truthful answer — and
+     * because a distinct "already applied" reply would turn this form into a
+     * way to test whether a given person has applied.
+     */
+    if (isUniqueViolation(err)) return { ok: true };
     console.error("[apply] could not record application", err);
     return { ok: false, error: "We could not record that. Please try again shortly." };
   }

@@ -380,6 +380,17 @@ export const expertApplications = pgTable(
     links: text("links"),
     note: text("note"),
 
+    /**
+     * A salted hash of the sender's IP, never the address itself.
+     *
+     * /apply is a public write with no account behind it, so it needs some
+     * throttle or one script fills the database. Throttling needs to
+     * recognise a repeat sender, which does not require knowing who they
+     * are — the hash answers "same source again?" and nothing else, and it
+     * cannot be turned back into an address or matched against logs.
+     */
+    ipHash: text("ip_hash"),
+
     status: applicationStatus("status").notNull().default("new"),
     reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
     reviewNote: text("review_note"),
@@ -398,6 +409,7 @@ export const expertApplications = pgTable(
       .on(sql`lower(${t.email})`)
       .where(sql`status = 'new'`),
     index("expert_applications_status_idx").on(t.status, t.createdAt),
+    index("expert_applications_source_idx").on(t.ipHash, t.createdAt),
   ],
 );
 

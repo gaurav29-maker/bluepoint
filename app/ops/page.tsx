@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { and, asc, count, eq, gte, isNull, lte, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { bookings, bundles, customers, experts, intakeSubmissions } from "@/lib/db/schema";
+import {
+  bookings,
+  bundles,
+  customers,
+  expertApplications,
+  experts,
+  intakeSubmissions,
+} from "@/lib/db/schema";
 import { istDateTime, rupees } from "@/lib/format";
 import NoDatabase from "@/components/ops/NoDatabase";
 import { occupiesSlot } from "@/lib/bookings";
@@ -13,6 +20,7 @@ type Overview = {
   awaitingPayment: number;
   missingIntake: number;
   activeBundles: number;
+  openApplications: number;
   next: {
     id: string;
     startsAt: Date;
@@ -30,7 +38,7 @@ async function load(): Promise<Overview | null> {
     const now = new Date();
     const in7 = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    const [[upcoming], [awaiting], [needIntake], [activeBundles]] = await Promise.all([
+    const [[upcoming], [awaiting], [needIntake], [activeBundles], [openApps]] = await Promise.all([
       db
         .select({ n: count() })
         .from(bookings)
@@ -48,6 +56,10 @@ async function load(): Promise<Overview | null> {
           ),
         ),
       db.select({ n: count() }).from(bundles).where(eq(bundles.status, "active")),
+      db
+        .select({ n: count() })
+        .from(expertApplications)
+        .where(eq(expertApplications.status, "new")),
     ]);
 
     const next = await db
@@ -80,6 +92,7 @@ async function load(): Promise<Overview | null> {
       awaitingPayment: awaiting?.n ?? 0,
       missingIntake: needIntake?.n ?? 0,
       activeBundles: activeBundles?.n ?? 0,
+      openApplications: openApps?.n ?? 0,
       next: next.map((r) => ({ ...r, hasIntake: r.intakeId !== null })),
     };
   } catch {
@@ -100,6 +113,19 @@ export default async function OpsOverview() {
           <p className="ops-tile-n">{data.upcoming}</p>
           <p className="ops-tile-l">Upcoming calls</p>
         </div>
+        {/*
+          Applications arrive silently — there is no notification, and until
+          Resend is configured there will not be one. Without a count here an
+          application can sit unread for weeks while the person who sent it
+          assumes they were turned down.
+        */}
+        <Link
+          href="/ops/applications"
+          className={`ops-tile ops-tile-link${data.openApplications > 0 ? " is-warn" : ""}`}
+        >
+          <p className="ops-tile-n">{data.openApplications}</p>
+          <p className="ops-tile-l">Applications waiting</p>
+        </Link>
         <div className={`ops-tile${data.missingIntake > 0 ? " is-warn" : ""}`}>
           <p className="ops-tile-n">{data.missingIntake}</p>
           <p className="ops-tile-l">Missing intake</p>
