@@ -120,7 +120,7 @@ export default async function Home() {
             <h2>
               Pick an expert who <span className="said">fits</span> your portfolio
             </h2>
-            <p>Vetted for track record before they are ever listed here.</p>
+            <p>Every expert shows their SEBI registration, or says plainly that they have none.</p>
           </div>
           <ExpertGrid experts={experts} dbReady={dbReady} />
         </section>
@@ -164,38 +164,56 @@ export default async function Home() {
           <div className="section-head">
             <p className="section-eyebrow">Why us</p>
             <h2>Reasons traders choose us</h2>
-            <p>No gimmicks, no gamification — just a clear, honest review of where you stand.</p>
+            <p>
+              Most advice starts with what to buy. Bluepoint starts with what you already hold.
+            </p>
           </div>
           <div className="features-grid">
             <div className="feature-item">
               <div className="f-glyph"></div>
-              <h3>Vetted experts only</h3>
-              <p>Every expert is reviewed for track record before they are listed here.</p>
+              <h3>Nobody here earns commission</h3>
+              <p>
+                Experts are paid per session. Not by a product, not by a distributor, not by
+                anyone whose fund they might otherwise mention.
+              </p>
             </div>
             <div className="feature-item">
               <div className="f-glyph"></div>
-              <h3>No spam, no upsell</h3>
-              <p>The call is the product. No follow-up pitches after.</p>
+              <h3>The call is the product</h3>
+              <p>
+                There is nothing after it to sell you. No follow-up, no funnel, no second
+                conversation you did not ask for.
+              </p>
             </div>
             <div className="feature-item">
               <div className="f-glyph"></div>
-              <h3>Your data, your call</h3>
-              <p>Portfolio details are shared only with the expert you book.</p>
+              <h3>What you share, we delete</h3>
+              <p>
+                Ninety days after the call, automatically. The session stays on your record.
+                What you told us does not.
+              </p>
             </div>
             <div className="feature-item">
               <div className="f-glyph"></div>
-              <h3>Systematic F&O guidance</h3>
-              <p>A structured way to think about position sizing and risk, not tips.</p>
+              <h3>A system, not a signal</h3>
+              <p>
+                Position sizing and risk, examined properly. Not a trade to copy.
+              </p>
             </div>
             <div className="feature-item">
               <div className="f-glyph"></div>
-              <h3>Instant booking</h3>
-              <p>Real-time slots. No emails back and forth to find a time.</p>
+              <h3>You book a time, not a request</h3>
+              <p>
+                Slots are live. A held slot releases itself if payment does not complete, so
+                nothing sits reserved against you.
+              </p>
             </div>
             <div className="feature-item">
               <div className="f-glyph"></div>
-              <h3>Clear, flat pricing</h3>
-              <p>You see the price before you book. No hidden fees.</p>
+              <h3>One price, stated once</h3>
+              <p>
+                Nothing is added at checkout. What you read is what you pay.
+              </p>
             </div>
           </div>
         </section>
