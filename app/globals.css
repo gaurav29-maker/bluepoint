@@ -2134,3 +2134,31 @@
     font-size: 11px;
   }
   .os-move-delta.flat { opacity: 0.5; }
+
+  /*
+     The Foundery opens by rejecting three things it is not, then names
+     itself. Kept quiet on purpose — this replaces the eyebrow pill rather
+     than adding to a hero whose accent fills were deliberately cut.
+  */
+  .site-dark .not-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 18px;
+    margin: 0 0 26px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .site-dark .not-list span { position: relative; }
+  .site-dark .not-list span + span::before {
+    content: "";
+    position: absolute;
+    left: -9px;
+    top: 0.42em;
+    width: 1px;
+    height: 0.72em;
+    background: var(--hair-strong);
+  }

@@ -70,7 +70,11 @@ export default async function Home() {
       <div className="wrap">
         <div className="hero">
           <div>
-            <span className="eyebrow-pill">One-to-one calls with vetted experts</span>
+            <p className="not-list">
+              <span>Not a tip service</span>
+              <span>Not a Telegram group</span>
+              <span>Not a distributor</span>
+            </p>
             <h1>
               Get a <span className="said">fix</span> on your position, before the market does.
             </h1>
@@ -342,7 +346,7 @@ export default async function Home() {
               <h2>
                 Find out exactly where you <span className="said">stand</span>.
               </h2>
-              <p>One call. No pitch at the end of it, and nothing to buy.</p>
+              <p>You book. They look. You decide.</p>
             </div>
             <div className="cta-row">
               <a className="btn-primary" href="#experts">
