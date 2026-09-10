@@ -2941,6 +2941,7 @@
     --on-accent:  #FFFFFF;
     --lift: 0 8px 16px rgba(0, 0, 0, 0.16);
     --nav-bg: rgba(255, 255, 255, 0.88);
+    --notice-bg: #F1F5FD;
 
     background: var(--bg);
     color: var(--ink-body);
@@ -2963,6 +2964,7 @@
       --accent-ink: #8AA5F0;
       --lift: 0 8px 16px rgba(0, 0, 0, 0.5);
       --nav-bg: rgba(14, 16, 19, 0.88);
+      --notice-bg: #111621;
     }
   }
 
@@ -3240,3 +3242,138 @@
   .site .doc-name { font-size: 34px; line-height: 42px; margin: 0 0 14px; }
   .site .doc-done-h { font-size: 22px; line-height: 30px; margin: 0 0 12px; }
   .site .doc-sec p { font-size: 15px; line-height: 24px; color: var(--ink-body); margin-bottom: 12px; }
+
+  /* ---- panels, notices and the intake, on the same system ---- */
+
+  .site .panel {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--bg);
+    padding: 28px;
+    max-width: 620px;
+  }
+  .site .panel h1 { font-size: 24px; line-height: 32px; margin: 0 0 12px; }
+  .site .panel p { font-size: 15px; line-height: 24px; color: var(--ink-body); margin-bottom: 14px; }
+  .site .panel p:last-child { margin-bottom: 0; }
+  .site .panel .b { margin-top: 6px; }
+
+  .site .lede { font-size: 17px; line-height: 26px; color: var(--ink-body); }
+  .site .muted { font-size: 14px; line-height: 22px; color: var(--ink-mute); }
+  .site .spaced { margin-top: 18px; }
+
+  .site .err {
+    font-style: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #B3261E;
+  }
+  @media (prefers-color-scheme: dark) {
+    .site .err { color: #F2B8B5; }
+  }
+  .site .notice {
+    border-left: 2px solid var(--accent);
+    background: var(--notice-bg);
+    border-radius: 0 4px 4px 0;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    line-height: 21px;
+    color: var(--ink-body);
+  }
+  .site .notice-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin-bottom: 5px;
+  }
+  .site .notice p { margin: 0; white-space: pre-wrap; font-size: 13.5px; line-height: 21px; }
+
+  /* The intake: rows of label + percentage, so two intakes can be compared. */
+  .site .intake-rows { display: grid; gap: 8px; }
+  .site .intake-row { display: grid; grid-template-columns: 1fr 92px auto; gap: 8px; align-items: center; }
+  .site .intake-row input { min-width: 0; }
+  .site .intake-pct { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+  .site .intake-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .site .intake-total { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+  .site .drop {
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--ink-mute);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1;
+    padding: 9px 11px;
+    cursor: pointer;
+  }
+  .site .drop:hover { border-color: var(--ink-mute); color: var(--ink); }
+
+  .site .check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    line-height: 21px;
+    color: var(--ink-body);
+  }
+  .site .check input { accent-color: var(--accent); width: 16px; height: 16px; margin-top: 2px; flex: 0 0 16px; }
+
+  .site .fineprint { font-size: 12.5px; line-height: 20px; color: var(--ink-mute); margin: 0; }
+  .site .full { width: 100%; }
+
+  /* ---- legal ---- */
+  .site .legal-doc { max-width: 720px; margin: 0 auto; padding: 48px 0 24px; }
+  .site .legal-doc h1 { font-size: 30px; line-height: 38px; margin: 0 0 8px; }
+  .site .legal-doc h2 { font-size: 17px; line-height: 24px; margin: 34px 0 10px; }
+  .site .legal-doc p,
+  .site .legal-doc li { font-size: 15px; line-height: 25px; color: var(--ink-body); }
+  .site .legal-doc p { margin: 0 0 14px; }
+  .site .legal-doc ul, .site .legal-doc ol { margin: 0 0 14px; padding-left: 22px; display: grid; gap: 8px; }
+  .site .updated {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 26px;
+  }
+  /*
+     An open drafting question, marked so it cannot be mistaken for settled
+     policy. These pages are read by people deciding whether to trust us with
+     money; an unresolved bracket has to look unresolved.
+  */
+  .site .draft {
+    border: 1px dashed var(--rule);
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin: 0 0 22px;
+    font-size: 13.5px;
+    line-height: 21px;
+    color: var(--ink-mute);
+  }
+  .site .todo {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--ink-body);
+  }
+  .site .legal-nav {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+  }
+  .site .legal-nav a { font-size: 13.5px; color: var(--ink-mute); text-decoration: none; }
+  .site .legal-nav a:hover { color: var(--ink); }
+
+  @media (max-width: 460px) {
+    .site .intake-row { grid-template-columns: 1fr 74px auto; }
+    .site .panel { padding: 20px; }
+  }

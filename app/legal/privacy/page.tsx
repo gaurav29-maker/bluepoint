@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 const TODO = ({ children }: { children: React.ReactNode }) => (
-  <span className="legal-todo">{children}</span>
+  <span className="todo">{children}</span>
 );
 
 export default function Privacy() {
@@ -15,7 +15,7 @@ export default function Privacy() {
       <h1>Privacy Policy</h1>
       <p className="updated">Draft of 8 September 2026</p>
 
-      <div className="legal-draft">
+      <div className="draft">
         <b>This draft has not been reviewed by a lawyer.</b>
         It is an accurate description of what the software actually collects and deletes, written
         against the Digital Personal Data Protection Act, 2023. It still needs review, and every

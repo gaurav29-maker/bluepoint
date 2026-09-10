@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 const TODO = ({ children }: { children: React.ReactNode }) => (
-  <span className="legal-todo">{children}</span>
+  <span className="todo">{children}</span>
 );
 
 export default function Refunds() {
@@ -15,7 +15,7 @@ export default function Refunds() {
       <h1>Refund Policy</h1>
       <p className="updated">Draft of 8 September 2026</p>
 
-      <div className="legal-draft">
+      <div className="draft">
         <b>This draft has not been reviewed by a lawyer.</b>
         Every rule below matches what the software actually does today. It still needs review, and
         the bracketed items need real answers, before Bluepoint accepts real money.

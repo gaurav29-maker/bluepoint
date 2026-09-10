@@ -1,6 +1,8 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 
 type Status = {
   id: string;
@@ -71,22 +73,23 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
   }, [id]);
 
   return (
-    <div className="wrap bp-page">
-      <div className="logo bp-page-logo">
-        blue<span>point</span>
-      </div>
+    <div className="site">
+      <SiteNav />
 
-      {error ? <p className="bp-error">{error}</p> : null}
-      {!data && !error ? <p className="bp-muted">Loading…</p> : null}
+      <div className="wrap">
+        <div className="doc">
+
+      {error ? <p className="err">{error}</p> : null}
+      {!data && !error ? <p className="muted">Loading…</p> : null}
 
       {data?.status === "held" ? (
-        <div className="bp-panel">
+        <div className="panel">
           <h1>Confirming your payment…</h1>
-          <p className="bp-muted">
+          <p className="muted">
             This usually takes a few seconds. You do not need to pay again.
           </p>
           {waited > 15 ? (
-            <p className="bp-muted">
+            <p className="muted">
               Still waiting on the payment provider. If you were charged, your confirmation email
               will arrive shortly — nothing is lost.
             </p>
@@ -95,16 +98,16 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
       ) : null}
 
       {data?.status === "confirmed" || data?.status === "completed" ? (
-        <div className="bp-panel">
+        <div className="panel">
           <h1>You are booked in.</h1>
-          <p className="bp-lead">
+          <p className="lede">
             Your session with <strong>{data.expertName}</strong>
             <br />
             {istDateTime(data.startsAt)} IST
           </p>
 
           {data.intakeDone ? (
-            <p className="bp-muted">
+            <p className="muted">
               Your intake form is in. Your expert will read it before the call.
             </p>
           ) : (
@@ -113,14 +116,14 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
                 One thing left — the short intake form. It is what lets your expert arrive having
                 already looked at your holdings.
               </p>
-              <a className="btn-primary" href={data.intakePath}>
+              <a className="b b-fill" href={data.intakePath}>
                 Fill the intake form
               </a>
             </>
           )}
 
           {data.meetingUrl ? (
-            <p className="bp-muted bp-spaced">
+            <p className="muted spaced">
               Join link: <a href={data.meetingUrl}>{data.meetingUrl}</a>
             </p>
           ) : null}
@@ -131,8 +134,8 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
             the expert was asked to write it.
           */}
           {data.expertNote ? (
-            <div className="member-note bp-spaced">
-              <span className="member-note-label">{data.expertName.split(" ")[0]} noted</span>
+            <div className="notice spaced">
+              <span className="notice-label">{data.expertName.split(" ")[0]} noted</span>
               <p>{data.expertNote}</p>
             </div>
           ) : null}
@@ -145,42 +148,46 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
         possible answer to "what happened to my session?".
       */}
       {data?.status === "no_show" ? (
-        <div className="bp-panel">
+        <div className="panel">
           <h1>This session was marked as missed.</h1>
           <p>
             Your expert held the time and you were not able to join. If that is wrong, or something
             got in the way, reply to your confirmation email and we will look at it.
           </p>
-          <a className="btn-primary" href="/#experts">
+          <a className="b b-fill" href="/#experts">
             Book another session
           </a>
         </div>
       ) : null}
 
       {data?.status === "refunded" ? (
-        <div className="bp-panel">
+        <div className="panel">
           <h1>That slot went, and your money is coming back.</h1>
           <p>
             Your payment arrived just after someone else took the slot. We have refunded it in full
             — it should reach your account within 5-7 working days.
           </p>
-          <a className="btn-primary" href="/#experts">
+          <a className="b b-fill" href="/#experts">
             Pick another slot
           </a>
         </div>
       ) : null}
 
       {data?.status === "expired" || data?.status === "cancelled" ? (
-        <div className="bp-panel">
+        <div className="panel">
           <h1>This booking is no longer active.</h1>
-          <p className="bp-muted">
+          <p className="muted">
             The hold on the slot lapsed before payment completed. Nothing was charged.
           </p>
-          <a className="btn-primary" href="/#experts">
+          <a className="b b-fill" href="/#experts">
             Book again
           </a>
         </div>
       ) : null}
+        </div>
+      </div>
+
+      <SiteFooter />
     </div>
   );
 }

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 
 const TODO = ({ children }: { children: React.ReactNode }) => (
-  <span className="legal-todo">{children}</span>
+  <span className="todo">{children}</span>
 );
 
 export default function Terms() {
@@ -15,7 +15,7 @@ export default function Terms() {
       <h1>Terms &amp; Conditions</h1>
       <p className="updated">Draft of 8 September 2026</p>
 
-      <div className="legal-draft">
+      <div className="draft">
         <b>This draft has not been reviewed by a lawyer.</b>
         It describes what Bluepoint actually does today and is written to be accurate, not to be
         sufficient. Every bracketed item needs a real answer, and the whole document needs review

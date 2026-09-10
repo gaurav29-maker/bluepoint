@@ -3,6 +3,8 @@
 import { use, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 
 function IntakeForm({ id }: { id: string }) {
   const token = useSearchParams().get("t") ?? "";
@@ -58,9 +60,9 @@ function IntakeForm({ id }: { id: string }) {
 
   if (done) {
     return (
-      <div className="bp-panel">
+      <div className="panel">
         <h1>Thank you — that is everything.</h1>
-        <p className="bp-muted">
+        <p className="muted">
           Your expert will read this before the call. You can close this page.
         </p>
       </div>
@@ -68,14 +70,14 @@ function IntakeForm({ id }: { id: string }) {
   }
 
   return (
-    <form className="bp-panel" onSubmit={submit}>
+    <form className="panel" onSubmit={submit}>
       <h1>Before your call</h1>
-      <p className="bp-lead">
+      <p className="lede">
         Five minutes here saves fifteen on the call. The more concrete you are, the more useful the
         session.
       </p>
 
-      <div className="bp-warn">
+      <div className="notice">
         Never share a demat or broker login — not here, not with your expert, not with anyone. There
         is no field on this form that asks for one.
       </div>
@@ -84,9 +86,9 @@ function IntakeForm({ id }: { id: string }) {
         Rows first, prose second. The rows are what make one session
         comparable to the last; the prose is what a percentage cannot say.
       */}
-      <div className="bp-field">
+      <div className="f">
         <span>What are you holding?</span>
-        <p className="bp-fineprint intake-hint">
+        <p className="hint">
           Rough percentages are fine — they only need to be close enough to talk about.
         </p>
         <div className="intake-rows">
@@ -116,7 +118,7 @@ function IntakeForm({ id }: { id: string }) {
               </div>
               <button
                 type="button"
-                className="intake-drop"
+                className="drop"
                 aria-label={`Remove holding ${i + 1}`}
                 onClick={() => setRows(rows.filter((_, j) => j !== i))}
                 disabled={rows.length <= 1}
@@ -129,7 +131,7 @@ function IntakeForm({ id }: { id: string }) {
         <div className="intake-tools">
           <button
             type="button"
-            className="ops-btn"
+            className="b b-line b-sm"
             onClick={() => setRows([...rows, { label: "", pct: "" }])}
             disabled={rows.length >= 20}
           >
@@ -141,7 +143,7 @@ function IntakeForm({ id }: { id: string }) {
         </div>
       </div>
 
-      <label className="bp-field">
+      <label className="f">
         <span>Anything the percentages do not say</span>
         <textarea
           rows={4}
@@ -152,7 +154,7 @@ function IntakeForm({ id }: { id: string }) {
         />
       </label>
 
-      <label className="bp-field">
+      <label className="f">
         <span>What do you want out of the call?</span>
         <textarea
           rows={3}
@@ -162,8 +164,8 @@ function IntakeForm({ id }: { id: string }) {
         />
       </label>
 
-      <div className="bp-row">
-        <label className="bp-field">
+      <div className="row2">
+        <label className="f">
           <span>
             Years investing <em>optional</em>
           </span>
@@ -176,7 +178,7 @@ function IntakeForm({ id }: { id: string }) {
           />
         </label>
 
-        <label className="bp-field">
+        <label className="f">
           <span>
             Comfort with risk <em>optional</em>
           </span>
@@ -189,7 +191,7 @@ function IntakeForm({ id }: { id: string }) {
         </label>
       </div>
 
-      <label className="bp-check">
+      <label className="check">
         <input
           type="checkbox"
           checked={tradesFno}
@@ -198,20 +200,20 @@ function IntakeForm({ id }: { id: string }) {
         <span>I trade futures and options</span>
       </label>
 
-      <label className="bp-field">
+      <label className="f">
         <span>
           Anything specific you want to ask? <em>optional</em>
         </span>
         <textarea rows={3} value={questions} onChange={(e) => setQuestions(e.target.value)} />
       </label>
 
-      {error ? <p className="bp-error">{error}</p> : null}
+      {error ? <p className="err">{error}</p> : null}
 
-      <button className="btn-primary bp-full" disabled={busy || holdingsSummary.trim() === ""}>
+      <button className="b b-fill full" disabled={busy || holdingsSummary.trim() === ""}>
         {busy ? "Saving…" : "Send to my expert"}
       </button>
 
-      <p className="bp-fineprint">
+      <p className="fineprint">
         This goes only to the expert you booked, and is deleted 90 days after the call.
       </p>
     </form>
@@ -221,13 +223,16 @@ function IntakeForm({ id }: { id: string }) {
 export default function IntakePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   return (
-    <div className="wrap bp-page">
-      <div className="logo bp-page-logo">
-        blue<span>point</span>
+    <div className="site">
+      <SiteNav />
+      <div className="wrap">
+        <div className="doc">
+          <Suspense fallback={<p className="muted">Loading…</p>}>
+            <IntakeForm id={id} />
+          </Suspense>
+        </div>
       </div>
-      <Suspense fallback={<p className="bp-muted">Loading…</p>}>
-        <IntakeForm id={id} />
-      </Suspense>
+      <SiteFooter />
     </div>
   );
 }
