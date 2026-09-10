@@ -3603,3 +3603,57 @@
   }
 
   .member-nopass-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 4px; }
+
+  /* ---------------------------------------------------------------------
+     Loading skeletons.
+
+     Every page that reads the database showed nothing at all while it did:
+     the browser sat on the previous page, then swapped. Locally that gap is
+     invisible. On a serverless function cold-starting against Postgres in
+     Mumbai it is long enough for somebody to click twice.
+
+     One primitive rather than a set of themed ones. `currentColor` means a
+     skeleton takes the colour of whatever text would have been there, so the
+     same block works on the light marketing site and on the dark console
+     ground without either knowing the other exists — no token per surface,
+     and nothing to keep in step when a palette changes.
+  */
+  .sk {
+    display: block;
+    width: 100%;
+    height: 12px;
+    border-radius: 3px;
+    background: currentColor;
+    opacity: 0.1;
+    animation: sk-pulse 1.5s ease-in-out infinite;
+  }
+  .sk-lines { display: grid; gap: 9px; flex: 1; min-width: 0; }
+  .sk-av { width: 46px; height: 46px; flex: 0 0 46px; border-radius: 999px; }
+  .sk-btn { height: 40px; border-radius: 4px; margin-top: 20px; }
+  /* A bar is shorter than the line box it stands in for, so a skeleton that
+     matches bar-to-text drifts upward. `.sk-box` holds the real element's
+     height and centres the bar inside it, which keeps everything below in
+     the place it will actually occupy. */
+  .sk-box { display: grid; align-content: center; gap: 12px; }
+  .sk-h1 { height: 30px; max-width: 380px; }
+  .sk-lede { height: 14px; max-width: 560px; }
+
+  @keyframes sk-pulse {
+    0%, 100% { opacity: 0.08; }
+    50% { opacity: 0.16; }
+  }
+
+  /* A pulsing block is exactly the kind of thing this setting is asking us
+     not to do. The skeleton still reads as a placeholder standing still. */
+  @media (prefers-reduced-motion: reduce) {
+    .sk { animation: none; opacity: 0.11; }
+  }
+
+  /* For the one word a screen reader needs while the blocks say nothing. */
+  .sk-say {
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0; border: 0;
+    overflow: hidden; white-space: nowrap;
+    clip-path: inset(50%);
+  }

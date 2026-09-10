@@ -1402,6 +1402,34 @@ async function main() {
     indexable.length > 0 ? indexable.join(", ") : `${privatePaths.length} paths noindex`,
   );
 
+  /*
+   * ---- a signed-out console redirects, it does not stream a page ----
+   *
+   * This exists because adding loading.tsx quietly broke it. A loading file
+   * opens a Suspense boundary, so the response starts streaming before the
+   * page runs, and a redirect() after the first flush cannot set a status —
+   * it becomes 200 with the redirect carried inside the stream. GET /member
+   * signed out went from 307 to 200 and nothing here noticed, because every
+   * other check follows redirects and so could not tell the difference.
+   *
+   * redirect: "manual" is the whole point: it reads the status rather than
+   * the page at the end of it.
+   */
+  const guarded = ["/member", "/member/receipts", "/member/profile", "/expert", "/ops"];
+  const notRedirecting: string[] = [];
+  for (const path of guarded) {
+    const res = await fetch(`${BASE}${path}`, { redirect: "manual" });
+    if (res.status !== 307 && res.status !== 308 && res.status !== 302) {
+      notRedirecting.push(`${path} (${res.status})`);
+    }
+  }
+
+  check(
+    "a signed-out console redirects with a status, not a streamed page",
+    notRedirecting.length === 0,
+    notRedirecting.length > 0 ? notRedirecting.join(", ") : `${guarded.length} paths redirect`,
+  );
+
 
   console.log(`\n  ${passed} passed, ${failed} failed\n`);
   process.exit(failed === 0 ? 0 : 1);
