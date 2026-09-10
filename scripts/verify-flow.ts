@@ -18,6 +18,7 @@ import {
   webhookEvents,
 } from "../lib/db/schema";
 import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
+import { openSlotsFor, openSlotsForMany } from "../lib/availability";
 
 /**
  * Exercises the parts of the booking flow that need no Razorpay and no Resend.
@@ -1244,6 +1245,120 @@ async function main() {
     "no price or policy figure is redeclared in the UI",
     redeclared.length === 0,
     redeclared.length > 0 ? redeclared.join(", ") : "all imported from lib/",
+  );
+
+  /*
+   * ---- the batched availability read agrees with the single one ----
+   *
+   * /experts was issuing three queries per expert to show the next open
+   * time. The batched version does three for the whole page — but a faster
+   * path that quietly disagrees with the slow one is worse than the N+1 it
+   * replaced, so the two are held to each other here rather than trusted.
+   */
+  const liveExperts = await db
+    .select({ id: experts.id, timezone: experts.timezone, slug: experts.slug })
+    .from(experts)
+    .where(eq(experts.status, "live"));
+
+  if (liveExperts.length > 0) {
+    const from = new Date();
+    const to = new Date(from.getTime() + 14 * 86_400_000);
+
+    const batched = await openSlotsForMany(liveExperts, from, to);
+    const oneByOne = await Promise.all(
+      liveExperts.map(async (e) => [e.id, await openSlotsFor(e, from, to)] as const),
+    );
+
+    const mismatches = oneByOne.filter(([id, slots]) => {
+      const other = batched.get(id) ?? [];
+      if (other.length !== slots.length) return true;
+      return slots.some((s, i) => s.startsAt.getTime() !== other[i].startsAt.getTime());
+    });
+
+    check(
+      "the batched availability read matches the per-expert one",
+      mismatches.length === 0,
+      mismatches.length > 0
+        ? `${mismatches.length} expert(s) disagree`
+        : `${liveExperts.length} experts, identical slot for slot`,
+    );
+  }
+
+
+
+  /*
+   * ---- every internal link goes somewhere, and every anchor exists ----
+   *
+   * Written because a rename broke one and nothing noticed. The home page's
+   * packages section became #ways, and the member console kept pointing at
+   * /#pricing — an anchor that no longer existed, so a member clicking "see
+   * passes" was dropped at the top of the home page. It survived several
+   * commits because no check has ever looked at a link.
+   *
+   * Anchors are checked against the ids in the page they point AT, not the
+   * page they sit on, which is the case the broken one was.
+   */
+  const publicPages = ["/", "/experts", "/apply", "/legal/terms", "/legal/privacy", "/legal/refunds"];
+
+  const [anExpert] = await db
+    .select({ slug: experts.slug })
+    .from(experts)
+    .where(eq(experts.status, "live"))
+    .limit(1);
+  if (anExpert) publicPages.push(`/experts/${anExpert.slug}`);
+
+  const html = new Map<string, string>();
+  const fetchPage = async (path: string): Promise<string> => {
+    const cached = html.get(path);
+    if (cached !== undefined) return cached;
+    const res = await fetch(`${BASE}${path}`);
+    const body = res.ok ? await res.text() : "";
+    html.set(path, body);
+    return body;
+  };
+
+  const brokenLinks: string[] = [];
+  const brokenAnchors: string[] = [];
+
+  for (const page of publicPages) {
+    const body = await fetchPage(page);
+    const hrefs = [...body.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+
+    for (const href of new Set(hrefs)) {
+      // Only our own pages. Skip mail, external hosts and Next's own assets.
+      if (!href.startsWith("/") && !href.startsWith("#")) continue;
+      if (href.startsWith("/_next")) continue;
+
+      const [rawPath, hash] = href.split("#");
+      const target = rawPath === "" ? page : rawPath;
+
+      if (rawPath !== "") {
+        const res = await fetch(`${BASE}${rawPath}`, { redirect: "manual" });
+        // A redirect is a guarded page doing its job, not a broken link.
+        if (res.status === 404 || res.status >= 500) {
+          brokenLinks.push(`${page} -> ${href} (${res.status})`);
+          continue;
+        }
+      }
+
+      if (hash) {
+        const targetBody = await fetchPage(target.split("?")[0]);
+        if (targetBody && !targetBody.includes(`id="${hash}"`)) {
+          brokenAnchors.push(`${page} -> ${href}`);
+        }
+      }
+    }
+  }
+
+  check(
+    "every internal link on a public page resolves",
+    brokenLinks.length === 0,
+    brokenLinks.length > 0 ? brokenLinks.join(", ") : `${publicPages.length} pages crawled`,
+  );
+  check(
+    "every anchor points at an id that exists",
+    brokenAnchors.length === 0,
+    brokenAnchors.length > 0 ? brokenAnchors.join(", ") : "no dangling anchors",
   );
 
 

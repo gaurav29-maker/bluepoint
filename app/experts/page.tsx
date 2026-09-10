@@ -3,7 +3,7 @@ import Link from "next/link";
 import { asc, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { experts as expertsTable } from "@/lib/db/schema";
-import { openSlotsFor } from "@/lib/availability";
+import { openSlotsForMany } from "@/lib/availability";
 import { istDayLabel, istTime } from "@/lib/format";
 import { rethrowIfNavigation } from "@/lib/nav";
 import ExpertGrid, { type ExpertCard } from "@/components/ExpertGrid";
@@ -73,21 +73,26 @@ export default async function FindAnExpert({
     }));
 
     /*
-     * One slot computation per expert shown. Fine at this size and it is the
-     * figure that actually decides a booking — but it is linear, so past
-     * roughly twenty experts this wants caching or a stored "next open slot"
-     * rather than being recomputed on every page view.
+     * Three queries for the whole page rather than three per expert. The
+     * next open time is the figure that decides a booking, so it is worth
+     * computing — but it was being computed with an N+1.
      */
     const from = new Date();
     const to = new Date(from.getTime() + HORIZON_DAYS * 86_400_000);
-    const reads = await Promise.all(
-      matching.map(async (e) => {
-        const slots = await openSlotsFor({ id: e.id, timezone: e.timezone }, from, to);
-        const first = slots[0];
-        return [e.slug, first ? `${istDayLabel(first.startsAt)}, ${istTime(first.startsAt)}` : ""] as const;
-      }),
+    const slotsBy = await openSlotsForMany(
+      matching.map((e) => ({ id: e.id, timezone: e.timezone })),
+      from,
+      to,
     );
-    nextAvailable = Object.fromEntries(reads.filter(([, v]) => v !== ""));
+
+    nextAvailable = Object.fromEntries(
+      matching
+        .map((e) => {
+          const first = slotsBy.get(e.id)?.[0];
+          return [e.slug, first ? `${istDayLabel(first.startsAt)}, ${istTime(first.startsAt)}` : ""] as const;
+        })
+        .filter(([, v]) => v !== ""),
+    );
   } catch (err) {
     rethrowIfNavigation(err);
     dbReady = false;
