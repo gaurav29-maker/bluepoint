@@ -9,7 +9,7 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
       <div className="wrap">
         <div className="foot-grid">
           <div className="foot-col">
-            <h4>Navigate</h4>
+            <h2 className="foot-h">Navigate</h2>
             <Link href="/experts">Find an expert</Link>
             <a href={to("#audit")}>Audit my portfolio</a>
             <a href={to("#ways")}>Packages</a>
@@ -23,17 +23,17 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
             behind a footer link is worse than no link.
           */}
           <div className="foot-col">
-            <h4>Get in touch</h4>
+            <h2 className="foot-h">Get in touch</h2>
             <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </div>
           <div className="foot-col">
-            <h4>Useful links</h4>
+            <h2 className="foot-h">Useful links</h2>
             <Link href="/legal/terms">Terms &amp; Conditions</Link>
             <Link href="/legal/privacy">Privacy Policy</Link>
             <Link href="/legal/refunds">Refund Policy</Link>
           </div>
           <div className="foot-col">
-            <h4>Are you an expert?</h4>
+            <h2 className="foot-h">Are you an expert?</h2>
             <p className="foot-note">
               Take calls on Bluepoint. You set your own rate and your own hours.
             </p>

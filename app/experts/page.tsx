@@ -146,6 +146,18 @@ export default async function FindAnExpert({
             </div>
           </div>
 
+          {/*
+            A heading between the page title and the cards, which the cards
+            need anyway: their names are h3, and without this the outline
+            jumped h1 to h3. It doubles as the answer to "did my filter do
+            anything", which is the question a filter should always answer.
+          */}
+          <h2 className="find-count">
+            {cards.length === total
+              ? `${total} expert${total === 1 ? "" : "s"}`
+              : `${cards.length} of ${total} expert${total === 1 ? "" : "s"}`}
+          </h2>
+
           {dbReady && cards.length === 0 && total > 0 ? (
             <p className="band-empty find-empty">
               Nobody listed under that focus yet.{" "}

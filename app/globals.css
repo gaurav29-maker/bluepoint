@@ -3174,7 +3174,7 @@
   /* ---- footer ---- */
   .site .foot { border-top: 1px solid var(--rule); background: var(--bg-alt); padding: 52px 0 34px; }
   .site .foot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 32px; }
-  .site .foot-col h4 { margin: 0 0 14px; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+  .site .foot-col .foot-h { margin: 0 0 14px; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
   .site .foot-col a { display: block; margin-bottom: 9px; font-size: 13.5px; color: var(--ink-mute); text-decoration: none; }
   .site .foot-col a:hover { color: var(--ink); }
   .site .foot-note { font-size: 13.5px; line-height: 20px; color: var(--ink-mute); margin-bottom: 14px; }
@@ -3559,3 +3559,12 @@
     color: var(--ink-mute);
   }
   .site .find-foot a { color: var(--accent-ink); }
+  .site .find-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 16px;
+  }
