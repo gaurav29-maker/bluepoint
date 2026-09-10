@@ -67,7 +67,7 @@
     background: var(--blue);
     color: var(--on-accent);
     padding: 9px 20px;
-    border-radius: 999px;
+    border-radius: 4px;
     font-size: 13.5px;
     font-weight: 600;
   }
@@ -134,7 +134,7 @@
     color: var(--on-accent);
     border: none;
     padding: 13px 28px;
-    border-radius: 999px;
+    border-radius: 4px;
     font-family: 'Inter', sans-serif;
     font-size: 14.5px;
     font-weight: 600;
@@ -147,7 +147,7 @@
     border: 1px solid var(--line);
     color: var(--ink-dark);
     padding: 12px 26px;
-    border-radius: 999px;
+    border-radius: 4px;
     font-size: 14.5px;
     font-weight: 500;
     cursor: pointer;
@@ -233,7 +233,7 @@
   .expert-rate span { font-size: 12px; font-weight: 400; color: var(--ink-soft); }
   .expert-book {
     font-size: 13px; font-weight: 600; color: var(--blue-deep);
-    background: var(--blue-tint); padding: 8px 16px; border-radius: 999px;
+    background: var(--blue-tint); padding: 8px 16px; border-radius: 4px;
     border: none; cursor: pointer;
   }
   .expert-book:hover { background: var(--blue); color: var(--on-accent); }
@@ -299,7 +299,7 @@
   .price-cta {
     display: block; text-align: center;
     background: var(--blue); color: var(--on-accent);
-    padding: 11px; border-radius: 999px;
+    padding: 11px; border-radius: 4px;
     font-size: 14px; font-weight: 600; cursor: pointer; border: none; width: 100%;
   }
   .price-card:not(.popular) .price-cta { background: var(--ink-dark); }
@@ -458,7 +458,7 @@
   .bp-day {
     flex: 0 0 auto;
     padding: 8px 13px;
-    border-radius: 999px;
+    border-radius: 4px;
     border: 1px solid var(--line);
     background: var(--white);
     font-size: 13px;
@@ -870,7 +870,7 @@
   .ops-filter {
     font-size: 12.5px;
     padding: 5px 12px;
-    border-radius: 999px;
+    border-radius: 4px;
     border: 1px solid var(--line);
     background: var(--white);
     color: var(--ink);
@@ -1190,7 +1190,7 @@
   .site-dark .nav-cta {
     background: var(--blue);
     color: var(--on-accent);
-    border-radius: 999px;
+    border-radius: 4px;
     padding: 9px 20px;
     font-size: 13px;
     font-weight: 600;
@@ -1258,7 +1258,7 @@
   .site-dark .nav-cta,
   .site-dark .price-cta,
   .site-dark .expert-book {
-    border-radius: 999px;
+    border-radius: 4px;
     font-weight: 600;
     letter-spacing: 0.01em;
   }
@@ -1274,7 +1274,7 @@
     background: transparent;
     color: var(--ink-dark);
     border: 1px solid var(--line);
-    border-radius: 999px;
+    border-radius: 4px;
     padding: 15px 30px;
     font-size: 14px;
     font-weight: 500;
@@ -1877,7 +1877,7 @@
     background: transparent;
     border: 1px solid var(--hair-strong);
     color: var(--ink-dark);
-    border-radius: 999px;
+    border-radius: 4px;
     padding: 8px 16px;
     font-size: 12.5px;
     font-weight: 500;
@@ -2051,7 +2051,7 @@
     text-transform: uppercase;
     color: var(--ink);
     border: 1px solid var(--hair-strong);
-    border-radius: 999px;
+    border-radius: 4px;
     padding: 8px 15px;
     white-space: nowrap;
   }
@@ -2846,3 +2846,60 @@
 
   /* The dialog takes focus programmatically; the ring would be noise. */
   .bp-dialog:focus { outline: none; }
+
+  /* ==================== RESTRAINT, AFTER TESLA ====================
+     Measured from tesla.com rather than recalled: their hero heading is
+     28px at weight 500 with tracking left at normal, and their buttons
+     carry a 4px radius, not a pill. A company selling a forty-thousand
+     dollar car whispers; this page was set at 58px with -0.05em tracking
+     and an 11ch measure that broke the line into four.
+
+     What is taken is the restraint and the button shape. What is not is
+     the layout, because Tesla's page is four fifths product photography
+     and Bluepoint sells a conversation — the honest equivalent of their
+     hero image is empty space, not a stock photo of somebody at a screen.
+  */
+
+  .site-dark .hero h1 {
+    /* Was clamp(40px, 6.4vw, 76px) at -0.045em. */
+    font-size: clamp(34px, 4.4vw, 54px);
+    letter-spacing: -0.022em;
+    line-height: 1.08;
+    /* 11ch forced four lines out of eleven words. */
+    max-width: 17ch;
+  }
+
+  .site-dark .section-head h2 {
+    font-size: clamp(24px, 2.8vw, 34px);
+    letter-spacing: -0.018em;
+  }
+
+  /*
+     Tesla's two calls to action are one object: same size, side by side,
+     filled and outlined. Equal width is what makes them read as a pair
+     rather than as a button and an afterthought.
+  */
+  .cta-row .btn-primary,
+  .cta-row .btn-ghost,
+  .final-cta .btn-primary,
+  .final-cta .btn-ghost {
+    min-width: 176px;
+    text-align: center;
+  }
+
+  @media (max-width: 430px) {
+    /*
+       Two 176px buttons and a gap need 366px before padding. Below that the
+       pair has to stack, or the second one leaves the screen.
+    */
+    .cta-row, .final-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+    .cta-row .btn-primary,
+    .cta-row .btn-ghost,
+    .final-cta .btn-primary,
+    .final-cta .btn-ghost { min-width: 0; width: 100%; }
+  }
