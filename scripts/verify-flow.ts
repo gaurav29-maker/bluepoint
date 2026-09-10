@@ -1361,6 +1361,47 @@ async function main() {
     brokenAnchors.length > 0 ? brokenAnchors.join(", ") : "no dangling anchors",
   );
 
+  /*
+   * ---- nothing private is indexable ----
+   *
+   * robots.ts disallows these paths, and its comment claimed that each page
+   * also carries index: false in its own metadata. Two did not. Both pages
+   * under /booking are client components, and a client component cannot
+   * export metadata, so they inherited the root layout's index: true — not
+   * merely missing the directive but actively opted in. The intake page
+   * holds what somebody actually owns.
+   *
+   * robots.txt is a request to a crawler. noindex is the instruction to the
+   * ones that fetched the page anyway. This asserts the second layer is
+   * really there, reading the rendered HTML rather than the source, because
+   * what matters is what a crawler receives.
+   */
+  const privatePaths = [
+    "/member",
+    "/member/receipts",
+    "/expert",
+    "/ops",
+    // A uuid belonging to nobody: the shell still renders, which is the point.
+    "/booking/00000000-0000-4000-8000-000000000000",
+    "/booking/00000000-0000-4000-8000-000000000000/intake",
+  ];
+
+  const indexable: string[] = [];
+  for (const path of privatePaths) {
+    const body = await fetchPage(path);
+    // Next renders <meta name="robots" content="noindex, nofollow"/>.
+    const tag = body.match(/<meta name="robots" content="([^"]*)"/);
+    if (!tag || !tag[1].includes("noindex")) {
+      indexable.push(`${path} (${tag ? tag[1] : "no robots meta"})`);
+    }
+  }
+
+  check(
+    "no private page is indexable",
+    indexable.length === 0,
+    indexable.length > 0 ? indexable.join(", ") : `${privatePaths.length} paths noindex`,
+  );
+
 
   console.log(`\n  ${passed} passed, ${failed} failed\n`);
   process.exit(failed === 0 ? 0 : 1);
