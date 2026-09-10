@@ -1,8 +1,9 @@
 # Bluepoint
 
 An expert-call marketplace for Indian retail traders. Customers book a
-45-minute portfolio audit or F&O session with a vetted expert, pay through
-Razorpay, and fill a short intake form before the call.
+45-minute portfolio audit or F&O session, pay through Razorpay, and fill a
+short intake form before the call. Every expert's SEBI registration is shown
+on their profile, or its absence is stated plainly.
 
 Next.js (App Router) · Postgres · Drizzle · Razorpay · Resend · Vercel.
 
@@ -12,9 +13,14 @@ Read that before changing how booking or payment works.
 
 ## Where this is
 
-**Phase 1 — demo.** Everything works end to end, in Razorpay **test mode**.
-No real money, no real experts. Phase 2 switches to live keys; phase 3 adds
-expert accounts, self-serve availability and payouts.
+**Phase 1 — demo.** Everything works end to end except payment, which has
+never been exercised against Razorpay: no keys are configured. No real money,
+no real experts.
+
+Expert accounts and self-serve availability, once planned for phase 3, are
+built — see *The expert console* below. What is left before this is usable by
+anyone is a production `DATABASE_URL`, a Resend key (without which nobody can
+sign in anywhere, since sign-in is a link by email), and Razorpay test keys.
 
 ## Running it
 
@@ -59,7 +65,7 @@ Razorpay cannot reach `localhost`, so the webhook — which is the only thing
 that confirms a booking — will not fire. Tunnel it:
 
 ```bash
-npx untun@latest tunnel http://localhost:3002
+npx untun@latest tunnel http://localhost:3000
 ```
 
 Then add `<tunnel-url>/api/webhooks/razorpay` as a webhook in the Razorpay
@@ -71,6 +77,11 @@ any future expiry, any CVV.
 ```
 app/
   page.tsx                       landing page, experts from the database
+  experts/[slug]/                expert profile, with live availability
+  apply/                         public application form
+  expert/                        the expert console — schedule, hours, profile
+  sitemap.ts robots.ts           only live experts are listed
+  opengraph-image.tsx            generated share cards, one per expert too
   booking/[id]/page.tsx          post-payment status, polls until confirmed
   booking/[id]/intake/page.tsx   intake form, reached by signed link
   api/
@@ -90,7 +101,7 @@ app/
   ops/                           the operations console, password-guarded
     members                      usage and margin per pass
 lib/
-  db/schema.ts                   eleven tables
+  db/schema.ts                   thirteen tables
   slots.ts                       availability arithmetic, no stored slots
   razorpay.ts                    client and signature verification
   email.ts                       Resend, send-at-most-once
@@ -149,8 +160,107 @@ If `OPS_PASSWORD` is unset the console refuses everyone. That is deliberate:
 the failure mode of a missing password should be a locked door, not an open
 one.
 
-Editing availability is not in the console yet — change `availability_rules`
-directly or re-run the seed.
+Applications from `/apply` are reviewed here too. Approving creates the
+expert as **draft**, never live: publishing someone the moment they are
+approved would put a profile on the site with no availability behind it.
+
+## The expert console
+
+`/expert` is the tool for the person delivering the product. Same magic-link
+sign-in as members, on its own cookie and its own scope — an expert sees other
+people's portfolios, a member sees only their own, and a token minted for one
+cannot be presented as the other.
+
+- **Schedule.** Sessions that have already happened come first, under *Needs
+  closing*, because they are the only thing on the page that needs a decision.
+  Each session shows the customer's intake, takes a per-session join link, and
+  closes as completed or no-show.
+- **Availability.** The weekly windows, editable. A window shorter than one
+  session is refused, because it can never produce a bookable slot and would
+  silently do nothing.
+- **Profile.** Headline, description and rate, self-service — `/apply`
+  promises "you set your own rate and hours", and a promise the software does
+  not keep is worse than one never made. Changing a rate never re-prices an
+  existing booking: a booking captures `amount_paise` when the slot is held.
+
+Two things an expert deliberately cannot change. **SEBI registration is
+read-only** — the entire value of that line on a public profile is that a
+person checked it against the register before the expert went live, and an
+editable field would verify nothing. **Going live is not self-service** either:
+an expert can pause and unpause themselves, but draft to live stays with
+whoever did the verifying.
+
+## Becoming an expert
+
+`/apply` is a public form; `/ops/applications` is the queue. Applicants are
+kept out of `experts` until a person approves them — an applicant has no
+price, no hours and no account, and a row in `experts` is something the
+booking code is entitled to treat as somebody we have checked.
+
+A claimed SEBI registration must carry a number, or the profile would publish
+a bare "RIA" with nothing to check it against. One open application per
+address, enforced by a partial unique index on `lower(email)` where the status
+is still `new`, so the form cannot be sent nine times while it sits in the
+queue but somebody rejected in March can apply again in October.
+
+The form is throttled at five per source per hour, keyed on a **salted hash**
+of the address rather than the address. Throttling only ever asks "same source
+again?", which does not require knowing who they are.
+
+## Checking it still works
+
+```bash
+npm run db:local     # in one terminal
+npm run dev          # in another
+npm run verify
+```
+
+64 checks against a real database and a running server. They cover the parts
+that need neither Razorpay nor Resend, and several of them exist because the
+thing they check is a claim rather than an observation:
+
+- two simultaneous holds on one slot — exactly one wins, defended by the
+  partial unique index rather than by application code
+- a correctly signed payment webhook paying the wrong amount confirms nothing
+- an expert's sign-in link cannot open a member session, and the reverse
+- one booking's intake link cannot fill in another's
+- a draft expert is absent from the site and their profile returns 404
+- a session note is purged with the intake it describes, and one inside the
+  window is not
+- no price or policy figure is retyped anywhere in the UI
+
+That last one is a source check, not a flow. The booking dialog once carried
+its own copy of the bundle price marked "display only"; the list moved and the
+copy did not, so the dialog offered a ₹9,999 bundle at ₹3,600.
+
+Four routes remain unexercised — `bundles/hold`, `payments/order`,
+`memberships/purchase` and `cron/reminders` — and every one of them needs
+Razorpay or Resend.
+
+## The design
+
+One system across the public pages and all three consoles, taken from
+tesla.com and measured off the live site rather than recalled: two text
+weights (400 and 500), letter-spacing left at normal, a 4px control radius, a
+56px nav, one elevation, and text that never sits at pure black.
+
+What could not be carried over is the layout. Four fifths of that site is
+product photography and every panel is carried by a car; Bluepoint sells
+forty-five minutes of somebody's attention and has nothing to photograph. Each
+band is carried instead by a piece of the product — the hero holds a real
+availability read, computed through the same helper the booking dialog uses,
+so the page cannot advertise a week the dialog then refuses.
+
+The public pages wrap in `.site`. The member and expert consoles wrap in
+`.site-dark os` and the ops console in `.ops`; all three share the same
+neutral ramp and the same accent.
+
+**On the accent.** White clears `#3E6AE1` at 4.82:1, which is why a filled
+control carries a white label. The same blue as *text* reads 4.82:1 on white
+but only 3.95:1 on the dark ground, so `--blue-deep` darkens in the light
+theme and lightens in the dark one. Same token, opposite direction, because
+the ground moved rather than the hue. Do not lift a colour system one value at
+a time.
 
 ## Three things not to break
 
