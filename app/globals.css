@@ -3389,3 +3389,116 @@
     .site .intake-row { grid-template-columns: 1fr 74px auto; }
     .site .panel { padding: 20px; }
   }
+
+  /* ---- the three ways to work with us, as a progression ---- */
+
+  .site .ladder { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: stretch; }
+  .site .rung {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--bg);
+    padding: 26px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .site .rung.deepest { border-color: var(--accent); box-shadow: var(--lift); }
+  .site .rung-step {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .site .rung h3 { margin: 12px 0 6px; font-size: 20px; line-height: 27px; }
+  .site .rung-line { font-size: 14px; line-height: 22px; color: var(--ink-mute); }
+  .site .rung-price {
+    margin: 18px 0 0;
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+  .site .rung-per { font-size: 12.5px; color: var(--ink-faint); margin-top: 3px; }
+  .site .rung ul {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    gap: 9px;
+  }
+  .site .rung li { font-size: 13.5px; line-height: 20px; color: var(--ink-mute); }
+  .site .rung-foot { margin-top: auto; padding-top: 20px; }
+  .site .rung-foot .b { width: 100%; }
+  .site .rung-also { font-size: 12.5px; line-height: 19px; color: var(--ink-faint); margin-top: 10px; }
+
+  /* The progression stated once, under the three, rather than as arrows
+     drawn between cards that stack on a phone and stop meaning anything. */
+  .site .progression {
+    margin: 34px auto 0;
+    max-width: 62ch;
+    text-align: center;
+    font-size: 15px;
+    line-height: 25px;
+    color: var(--ink-mute);
+  }
+  .site .progression b { color: var(--ink); font-weight: 500; }
+
+  /* ---- audit my portfolio ---- */
+
+  .site .audit-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 34px;
+  }
+  .site .audit-step { background: var(--bg); padding: 22px 20px; }
+  .site .audit-step .n {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    color: var(--accent-ink);
+  }
+  .site .audit-step h3 { margin: 10px 0 6px; font-size: 15px; line-height: 22px; }
+  .site .audit-step p { font-size: 13.5px; line-height: 20px; color: var(--ink-mute); }
+
+  .site .covers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px 28px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site .covers li {
+    font-size: 14px;
+    line-height: 21px;
+    color: var(--ink-body);
+    padding-left: 18px;
+    position: relative;
+  }
+  .site .covers li::before {
+    content: "\2014";
+    position: absolute;
+    left: 0;
+    color: var(--ink-faint);
+  }
+
+  /* ---- the six-step process ---- */
+  .site .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+  .site .flow-step { background: var(--bg); padding: 24px 22px; }
+  .site .flow-step .n { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; color: var(--accent-ink); }
+  .site .flow-step h3 { margin: 11px 0 7px; font-size: 16px; line-height: 23px; }
+  .site .flow-step p { font-size: 13.5px; line-height: 20px; color: var(--ink-mute); }
+
+  @media (max-width: 460px) {
+    .site .rung { padding: 20px; }
+    .site .covers { grid-template-columns: 1fr; }
+  }

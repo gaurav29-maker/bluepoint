@@ -61,12 +61,12 @@ export default function Image() {
               maxWidth: 940,
             }}
           >
-            Get a fix on your position, before the market does.
+            Real experts. Real work. Real conversations.
           </div>
         </div>
 
         <div style={{ display: "flex", fontSize: 26, color: "#798497" }}>
-          A straight read on what you hold. You book. They look. You decide.
+          A real expert reads your portfolio. You book. They look. You decide.
         </div>
       </div>
     ),

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const TITLE = "Bluepoint — Get a fix on your position, before the market does";
+const TITLE = "Bluepoint — book a market expert to read your portfolio";
 const DESCRIPTION =
-  "Book a call with a market expert. A straight read on what you hold, or a system for sizing your F&O trades instead of guessing.";
+  "Book an experienced market professional directly. They read your portfolio before you meet, and tell you what they actually see in it.";
 
 /**
  * `metadataBase` is what turns the relative image paths below into the

@@ -7,7 +7,6 @@ import { SLOT_MINUTES } from "@/lib/slots";
 import {
   BUNDLE_CREDITS,
   BUNDLE_DAYS,
-  BUNDLE_PER_CALL_PAISE,
   BUNDLE_PRICE_PAISE,
   CONTACT_EMAIL,
   INTAKE_RETENTION_DAYS,
@@ -30,6 +29,25 @@ const BROKERS = [
   "Upstox",
   "Kotak Neo",
   "5paisa",
+];
+
+/*
+ * What a portfolio review actually covers.
+ *
+ * Everything here is something an expert can look at and discuss. Notably
+ * absent, and absent on purpose: thesis development, hedging and derivative
+ * strategy. Those are advisory activities, and this platform is not a
+ * registered adviser — see the terms.
+ */
+const REVIEW_COVERS = [
+  "Concentration",
+  "Diversification",
+  "Sector exposure",
+  "Position sizing",
+  "Overlap between holdings",
+  "How the portfolio is built",
+  "Downside risk",
+  "Where it is most vulnerable",
 ];
 
 /** How far ahead the hero instrument reads, and how many days it shows. */
@@ -59,10 +77,9 @@ async function load(): Promise<{ experts: ExpertCard[]; dbReady: boolean; previe
     const experts: ExpertCard[] = rows.map(({ id: _id, timezone: _tz, ...card }) => card);
 
     /*
-     * The hero carries a real availability read where the reference design
-     * puts a photograph of the product. It goes through the same helper the
-     * booking dialog reads, so this panel cannot advertise a week the dialog
-     * then refuses.
+     * The hero carries a real availability read where a reference design would
+     * put a photograph. It goes through the same helper the booking dialog
+     * reads, so this panel cannot advertise a week the dialog then refuses.
      */
     let preview: Preview | null = null;
     const first = rows[0];
@@ -113,18 +130,18 @@ export default async function Home() {
             <span>Not a distributor</span>
           </p>
           <h1>
-            Get a <span className="said">fix</span> on your position, before the market does.
+            Real experts. Real work. <span className="said">Real conversations.</span>
           </h1>
           <p className="hero-sub">
-            Book a call with a market expert. A straight read on what you hold, or a system for
-            sizing your F&amp;O trades instead of guessing. No pitch at the end of the call.
+            Book an experienced market professional directly. They read your portfolio before you
+            meet, and tell you what they actually see in it. No pitch at the end of the call.
           </p>
           <div className="b-pair">
             <a className="b b-fill" href="#experts">
-              Browse experts
+              Find an expert
             </a>
-            <a className="b b-line" href="#how">
-              How it works
+            <a className="b b-line" href="#audit">
+              Audit my portfolio
             </a>
           </div>
 
@@ -158,7 +175,7 @@ export default async function Home() {
 
       <div className="strip">
         <div className="strip-in">
-          <span className="eyebrow">Built for traders using</span>
+          <span className="eyebrow">Built for investors using</span>
           <ul>
             {BROKERS.map((b) => (
               <li key={b}>{b}</li>
@@ -167,12 +184,160 @@ export default async function Home() {
         </div>
       </div>
 
-      <section className="band" id="experts">
+      {/*
+        The ladder comes before the expert grid on purpose. A visitor has to
+        understand what they can buy before a list of people means anything.
+      */}
+      <section className="band alt" id="ways">
         <div className="wrap">
           <div className="band-head">
-            <span className="eyebrow">Our experts</span>
+            <span className="eyebrow">Three ways to work with us</span>
+            <h2>Start with a conversation. Go as deep as you want.</h2>
+          </div>
+
+          <div className="ladder">
+            <div className="rung">
+              <p className="rung-step">One-time</p>
+              <h3>Individual call</h3>
+              <p className="rung-line">One question. One expert. One meaningful conversation.</p>
+              <p className="rung-price">{rupees(SINGLE_CALL_PAISE)}</p>
+              <p className="rung-per">a session, {SLOT_MINUTES} minutes</p>
+              <ul>
+                <li>A specific investment question</li>
+                <li>A company or sector discussion</li>
+                <li>A portfolio review</li>
+                <li>A second opinion</li>
+              </ul>
+              <div className="rung-foot">
+                <a className="b b-line" href="#experts">
+                  Find an expert
+                </a>
+                <p className="rung-also">
+                  Or {BUNDLE_CREDITS} calls with the same expert for {rupees(BUNDLE_PRICE_PAISE)},
+                  valid {BUNDLE_DAYS} days.
+                </p>
+              </div>
+            </div>
+
+            <div className="rung">
+              <p className="rung-step">Ongoing</p>
+              <h3>{MEMBERSHIP_TIERS.quarterly.label}</h3>
+              <p className="rung-line">Ongoing access and periodic portfolio review.</p>
+              <p className="rung-price">{rupees(MEMBERSHIP_TIERS.quarterly.pricePaise)}</p>
+              <p className="rung-per">{MEMBERSHIP_TIERS.quarterly.days} days, unlimited calls</p>
+              <ul>
+                <li>Any expert, as often as you like</li>
+                <li>Come back as the position changes</li>
+                <li>Follow-up conversations</li>
+                <li>Your own console, with your history</li>
+              </ul>
+              <div className="rung-foot">
+                <PassPurchase
+                  tier="quarterly"
+                  label={MEMBERSHIP_TIERS.quarterly.label}
+                  priceLabel={rupees(MEMBERSHIP_TIERS.quarterly.pricePaise)}
+                  cta="Get quarterly"
+                  className="b b-line"
+                />
+              </div>
+            </div>
+
+            <div className="rung deepest">
+              <p className="rung-step">Long term</p>
+              <h3>{MEMBERSHIP_TIERS.annual.label}</h3>
+              <p className="rung-line">
+                A long-term relationship with people who know your portfolio.
+              </p>
+              <p className="rung-price">{rupees(MEMBERSHIP_TIERS.annual.pricePaise)}</p>
+              <p className="rung-per">{MEMBERSHIP_TIERS.annual.days} days, unlimited calls</p>
+              <ul>
+                <li>Everything in the quarterly</li>
+                <li>Regular portfolio reviews</li>
+                <li>Sector and thematic discussions</li>
+                <li>A record of how your book has moved</li>
+              </ul>
+              <div className="rung-foot">
+                <PassPurchase
+                  tier="annual"
+                  label={MEMBERSHIP_TIERS.annual.label}
+                  priceLabel={rupees(MEMBERSHIP_TIERS.annual.pricePaise)}
+                  cta="Get annual"
+                  className="b b-fill"
+                />
+              </div>
+            </div>
+          </div>
+
+          <p className="progression">
+            Start with <b>one conversation</b>. If it is useful, keep the same people across a{" "}
+            <b>quarter</b>. If it keeps being useful, make it the <b>year</b>. Nothing renews on its
+            own — you decide each time.
+          </p>
+        </div>
+      </section>
+
+      <section className="band" id="audit">
+        <div className="wrap">
+          <div className="band-head">
+            <span className="eyebrow">Audit my portfolio</span>
+            <h2>A real expert reads your actual portfolio.</h2>
+            <p>
+              Not an automated score. A person who has run money looks at what you hold and tells
+              you what they see in it.
+            </p>
+          </div>
+
+          {/*
+            The order here is the order the software actually works in. The
+            expert is chosen and the time is booked before the portfolio is
+            shared, because the intake form is reached after payment — showing
+            "share portfolio" first would describe a flow that does not exist.
+          */}
+          <div className="audit-steps">
+            <div className="audit-step">
+              <p className="n">01</p>
+              <h3>Choose your expert</h3>
+              <p>On focus, experience and rate. Every profile states all three.</p>
+            </div>
+            <div className="audit-step">
+              <p className="n">02</p>
+              <h3>Book a time</h3>
+              <p>Live availability. Pick a slot that suits you.</p>
+            </div>
+            <div className="audit-step">
+              <p className="n">03</p>
+              <h3>Share your portfolio</h3>
+              <p>A short form. What you hold and in what proportion, in your own words.</p>
+            </div>
+            <div className="audit-step">
+              <p className="n">04</p>
+              <h3>They read it first</h3>
+              <p>Before you meet, so the call starts at your question.</p>
+            </div>
+            <div className="audit-step">
+              <p className="n">05</p>
+              <h3>You discuss it</h3>
+              <p>{SLOT_MINUTES} minutes, one to one. Then you decide what to do.</p>
+            </div>
+          </div>
+
+          <p className="eyebrow" style={{ marginBottom: 16 }}>
+            What a review looks at
+          </p>
+          <ul className="covers">
+            {REVIEW_COVERS.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="band alt" id="experts">
+        <div className="wrap">
+          <div className="band-head">
+            <span className="eyebrow">The expert network</span>
             <h2>
-              Pick an expert who <span className="said">fits</span> your portfolio
+              The right expert changes the <span className="said">conversation</span>.
             </h2>
             <p>Every expert shows their SEBI registration, or says plainly that they have none.</p>
           </div>
@@ -180,89 +345,46 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="band alt" id="how">
+      <section className="band" id="how">
         <div className="wrap">
           <div className="band-head">
-            <span className="eyebrow">Process</span>
+            <span className="eyebrow">How it works</span>
             <h2>
               Your review, <span className="said">effortlessly</span>.
             </h2>
-            <p>Four steps in order — no back-and-forth scheduling emails.</p>
+            <p>Six steps in order — no back-and-forth scheduling emails.</p>
           </div>
-          {/* Numbered because it genuinely is a sequence; the order carries information. */}
-          <div className="steps">
-            <div className="step">
-              <p className="step-n">01</p>
-              <h3>Choose your expert</h3>
-              <p>Pick on focus, rate and registration. Every profile states all three.</p>
+          <div className="flow">
+            <div className="flow-step">
+              <p className="n">01</p>
+              <h3>Tell us what you need</h3>
+              <p>A portfolio review, a company question, a sector view, a second opinion.</p>
             </div>
-            <div className="step">
-              <p className="step-n">02</p>
-              <h3>Pick a slot</h3>
+            <div className="flow-step">
+              <p className="n">02</p>
+              <h3>Find the right expert</h3>
+              <p>Compare focus, experience, registration and rate.</p>
+            </div>
+            <div className="flow-step">
+              <p className="n">03</p>
+              <h3>Book a time</h3>
               <p>Availability is live. A held slot releases itself if payment does not complete.</p>
             </div>
-            <div className="step">
-              <p className="step-n">03</p>
-              <h3>Send your holdings</h3>
-              <p>A short form after payment. It is what lets the call start at the question.</p>
+            <div className="flow-step">
+              <p className="n">04</p>
+              <h3>Share your portfolio</h3>
+              <p>Or just your question, if that is what you came with.</p>
             </div>
-            <div className="step">
-              <p className="step-n">04</p>
-              <h3>Take the call</h3>
-              <p>
-                {SLOT_MINUTES} minutes, one to one. They read the position back to you and say what
-                they see in it.
-              </p>
+            <div className="flow-step">
+              <p className="n">05</p>
+              <h3>Have a real conversation</h3>
+              <p>{SLOT_MINUTES} minutes, one to one, with someone who has read it.</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="band">
-        <div className="wrap split">
-          <div className="split-copy">
-            <span className="eyebrow">Before the call</span>
-            <h2>They arrive already knowing the book.</h2>
-            <p>
-              You write down what you hold and in what proportion, in your own words. Your expert
-              reads it before you meet, so the {SLOT_MINUTES} minutes start at your question instead
-              of at a summary.
-            </p>
-            <p className="fine">
-              What you send goes to the expert you booked and no one else, and is deleted{" "}
-              {INTAKE_RETENTION_DAYS} days after the call.
-            </p>
-          </div>
-
-          {/*
-            Illustrative figures, labelled as such on the panel itself. An
-            invented allocation under a real-looking name would be a
-            fabricated customer presented as a real one, on a page selling
-            financial services.
-          */}
-          <div className="alloc">
-            <div className="alloc-top">
-              <span className="eyebrow">What your expert sees</span>
-              <span className="eyebrow">Example</span>
+            <div className="flow-step">
+              <p className="n">06</p>
+              <h3>Continue if you want to</h3>
+              <p>Come back for one more, or keep the same people for a quarter.</p>
             </div>
-            {[
-              { label: "IT largecaps", pct: 45 },
-              { label: "PSU bank", pct: 20 },
-              { label: "Smallcap MFs", pct: 20 },
-              { label: "Cash", pct: 15 },
-            ].map((h) => (
-              <div className="alloc-row" key={h.label}>
-                <span className="alloc-label">{h.label}</span>
-                <span className="alloc-pct">{h.pct}%</span>
-                <span className="alloc-bar">
-                  <i style={{ width: `${h.pct}%` }} />
-                </span>
-              </div>
-            ))}
-            <p className="alloc-note">
-              Plus whatever you want to say in your own words. The sentence a percentage cannot
-              carry is usually the one your expert needs.
-            </p>
           </div>
         </div>
       </section>
@@ -286,114 +408,19 @@ export default async function Home() {
             </div>
             <div className="not">
               <p>
-                <b>Not a place anyone asks for your demat login.</b> There is no field for one.
+                <b>Not an automated score.</b> A person reads your portfolio, not a model.
               </p>
             </div>
             <div className="not">
               <p>
-                <b>Not a subscription.</b> One session is one session.
+                <b>Not a place anyone asks for your demat login.</b> There is no field for one.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="band" id="pricing">
-        <div className="wrap">
-          <div className="band-head">
-            <span className="eyebrow">Pricing</span>
-            <h2>Pay per call, or stop counting.</h2>
-            <p>Every price is what you pay. Nothing renews on its own.</p>
-          </div>
-
-          <div className="prices">
-            <div className="price">
-              <div className="price-name">
-                <span className="eyebrow">Single call</span>
-              </div>
-              <p className="amount">{rupees(SINGLE_CALL_PAISE)}</p>
-              <p className="per">One session with an expert</p>
-              <ul>
-                <li>{SLOT_MINUTES}-minute video call</li>
-                <li>Intake read before the call</li>
-                <li>Any expert on the platform</li>
-              </ul>
-              <div className="price-foot">
-                <a className="b b-line" href="#experts">
-                  Book one
-                </a>
-              </div>
-            </div>
-
-            <div className="price">
-              <div className="price-name">
-                <span className="eyebrow">{BUNDLE_CREDITS}-call bundle</span>
-              </div>
-              <p className="amount">{rupees(BUNDLE_PRICE_PAISE)}</p>
-              <p className="per">
-                {rupees(BUNDLE_PER_CALL_PAISE)} a call · valid {BUNDLE_DAYS} days
-              </p>
-              <ul>
-                <li>{BUNDLE_CREDITS} sessions</li>
-                <li>Same expert across all of them</li>
-                <li>Book the other two later</li>
-              </ul>
-              <div className="price-foot">
-                <a className="b b-line" href="#experts">
-                  Buy a bundle
-                </a>
-              </div>
-            </div>
-
-            <div className="price pick">
-              <div className="price-name">
-                <span className="eyebrow">{MEMBERSHIP_TIERS.quarterly.label}</span>
-                <span className="tag">Popular</span>
-              </div>
-              <p className="amount">{rupees(MEMBERSHIP_TIERS.quarterly.pricePaise)}</p>
-              <p className="per">{MEMBERSHIP_TIERS.quarterly.days} days, unlimited</p>
-              <ul>
-                <li>As many calls as you want</li>
-                <li>Any expert on the platform</li>
-                <li>Your own console</li>
-              </ul>
-              <div className="price-foot">
-                <PassPurchase
-                  tier="quarterly"
-                  label={MEMBERSHIP_TIERS.quarterly.label}
-                  priceLabel={rupees(MEMBERSHIP_TIERS.quarterly.pricePaise)}
-                  cta="Get quarterly"
-                  className="b b-fill"
-                />
-              </div>
-            </div>
-
-            <div className="price">
-              <div className="price-name">
-                <span className="eyebrow">{MEMBERSHIP_TIERS.annual.label}</span>
-              </div>
-              <p className="amount">{rupees(MEMBERSHIP_TIERS.annual.pricePaise)}</p>
-              <p className="per">{MEMBERSHIP_TIERS.annual.days} days, unlimited</p>
-              <ul>
-                <li>As many calls as you want</li>
-                <li>Any expert on the platform</li>
-                <li>Your own console</li>
-              </ul>
-              <div className="price-foot">
-                <PassPurchase
-                  tier="annual"
-                  label={MEMBERSHIP_TIERS.annual.label}
-                  priceLabel={rupees(MEMBERSHIP_TIERS.annual.pricePaise)}
-                  cta="Get annual"
-                  className="b b-line"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="band alt" id="faq">
+      <section className="band" id="faq">
         <div className="wrap">
           <div className="band-head">
             <span className="eyebrow">Frequently asked</span>
@@ -403,16 +430,22 @@ export default async function Home() {
             <details>
               <summary>Do I need to share my demat login?</summary>
               <p>
-                No. You share a summary of your holdings during intake — never login credentials.
+                No. You share a summary of your holdings before the call — never login credentials.
                 There is no field anywhere on Bluepoint that accepts one.
+              </p>
+            </details>
+            <details>
+              <summary>Is this AI reading my portfolio?</summary>
+              <p>
+                No. A named person with market experience reads what you send and talks to you about
+                it. Nothing on this platform generates an automated verdict on your holdings.
               </p>
             </details>
             <details>
               <summary>Do experts give stock tips?</summary>
               <p>
-                No. Experts review your existing portfolio and F&amp;O approach. They do not
-                recommend specific trades, and nothing said on a call is personalised investment
-                advice.
+                No. Experts review your existing portfolio and approach. They do not recommend
+                specific trades, and nothing said on a call is personalised investment advice.
               </p>
             </details>
             <details>
@@ -424,17 +457,12 @@ export default async function Home() {
               </p>
             </details>
             <details>
-              <summary>Can I book the same expert again?</summary>
+              <summary>What is the difference between the packages?</summary>
               <p>
-                Yes — the {BUNDLE_CREDITS}-call bundle keeps you with the same expert across
-                sessions.
-              </p>
-            </details>
-            <details>
-              <summary>What if I am not satisfied with the call?</summary>
-              <p>
-                Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> within 24 hours and we
-                will arrange a follow-up or a refund, case by case.
+                An individual call is one conversation. The quarterly and annual passes are
+                unlimited calls with any expert across {MEMBERSHIP_TIERS.quarterly.days} or{" "}
+                {MEMBERSHIP_TIERS.annual.days} days, so you can come back as your position changes
+                rather than saving everything for one session.
               </p>
             </details>
             <details>
@@ -444,20 +472,27 @@ export default async function Home() {
                 after the call — along with whatever your expert wrote up afterwards.
               </p>
             </details>
+            <details>
+              <summary>What if I am not satisfied with the call?</summary>
+              <p>
+                Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> within 24 hours and we
+                will arrange a follow-up or a refund, case by case.
+              </p>
+            </details>
           </div>
         </div>
       </section>
 
-      <section className="band closer">
+      <section className="band alt closer">
         <div className="wrap">
           <h2>One call. One honest read.</h2>
           <p className="triple">You book. They look. You decide.</p>
           <div className="b-pair">
             <a className="b b-fill" href="#experts">
-              Browse experts
+              Find an expert
             </a>
-            <a className="b b-line" href="#pricing">
-              See pricing
+            <a className="b b-line" href="#audit">
+              Audit my portfolio
             </a>
           </div>
         </div>
