@@ -133,6 +133,16 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
             discussion rather than advice, in line with the terms and with how
             the expert was asked to write it.
           */}
+          {/*
+            The console is how somebody finds this booking again without the
+            email. Worth saying here, because this page is the last thing they
+            see and the URL is a uuid nobody will remember.
+          */}
+          <p className="muted spaced">
+            Everything you book lives in{" "}
+            <a href="/member/login">Bluepoint OS</a> — sign in with the address you booked with.
+          </p>
+
           {data.expertNote ? (
             <div className="notice spaced">
               <span className="notice-label">{data.expertName.split(" ")[0]} noted</span>

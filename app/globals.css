@@ -3568,3 +3568,9 @@
     color: var(--ink-faint);
     margin: 0 0 16px;
   }
+
+  .site .see-all { margin: 26px 0 0; text-align: center; }
+  .site .recruit { text-align: center; }
+  .site .recruit h2 { margin: 12px 0 10px; }
+  .site .recruit p { max-width: 52ch; margin: 0 auto 24px; font-size: 16px; line-height: 25px; color: var(--ink-mute); }
+  .site .panel a.b { margin-top: 8px; }

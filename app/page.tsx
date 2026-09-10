@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { experts as expertsTable } from "@/lib/db/schema";
@@ -137,9 +138,9 @@ export default async function Home() {
             meet, and tell you what they actually see in it. No pitch at the end of the call.
           </p>
           <div className="b-pair">
-            <a className="b b-fill" href="#experts">
+            <Link className="b b-fill" href="/experts">
               Find an expert
-            </a>
+            </Link>
             <a className="b b-line" href="#audit">
               Audit my portfolio
             </a>
@@ -342,6 +343,18 @@ export default async function Home() {
             <p>Every expert shows their SEBI registration, or says plainly that they have none.</p>
           </div>
           <ExpertGrid experts={experts} dbReady={dbReady} />
+          {/*
+            The homepage shows everyone while there are three. The page it
+            links to is the one that filters, sorts and shows when each of
+            them is next free — and it is where this section stops scaling.
+          */}
+          {experts.length > 0 ? (
+            <p className="see-all">
+              <Link className="b b-line" href="/experts">
+                See all experts
+              </Link>
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -488,13 +501,33 @@ export default async function Home() {
           <h2>One call. One honest read.</h2>
           <p className="triple">You book. They look. You decide.</p>
           <div className="b-pair">
-            <a className="b b-fill" href="#experts">
+            <Link className="b b-fill" href="/experts">
               Find an expert
-            </a>
+            </Link>
             <a className="b b-line" href="#audit">
               Audit my portfolio
             </a>
           </div>
+        </div>
+      </section>
+
+      {/*
+        Supply is the constraint on this business, and until now the only way
+        in was a footer link. Placed after the customer story rather than
+        inside it: somebody reading this page is usually a customer, and the
+        few who are not should not have to hunt.
+      */}
+      <section className="band recruit">
+        <div className="wrap">
+          <span className="eyebrow">For market professionals</span>
+          <h2>Do you take these calls?</h2>
+          <p>
+            Be useful and paid, without taking on a client. Your own rate, your own hours, and
+            nothing to sell.
+          </p>
+          <Link className="b b-line" href="/apply">
+            Take calls on Bluepoint
+          </Link>
         </div>
       </section>
 

@@ -62,9 +62,14 @@ function IntakeForm({ id }: { id: string }) {
     return (
       <div className="panel">
         <h1>Thank you — that is everything.</h1>
+        <p>Your expert will read this before the call.</p>
         <p className="muted">
-          Your expert will read this before the call. You can close this page.
+          You can change any of it up until the session starts — come back to this page and send it
+          again.
         </p>
+        <a className="b b-line" href={`/booking/${id}`}>
+          Back to your booking
+        </a>
       </div>
     );
   }
