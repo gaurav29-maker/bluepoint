@@ -12,22 +12,22 @@ export default function SiteNav({ onLanding = false }: { onLanding?: boolean }) 
   const to = (hash: string) => (onLanding ? hash : `/${hash}`);
 
   return (
-    <nav>
-      <div className="nav-inner">
-        <Link href="/" className="logo">
+    <nav className="nav">
+      <div className="nav-in">
+        <Link href="/" className="mark">
           blue<span>point</span>
         </Link>
-        <div className="nav-links">
+        <div className="nav-mid">
           <a href={to("#experts")}>Experts</a>
           <a href={to("#how")}>How it works</a>
           <a href={to("#pricing")}>Pricing</a>
           <a href={to("#faq")}>FAQs</a>
         </div>
-        <div className="nav-right">
-          <Link className="nav-os" href="/member/login">
+        <div className="nav-end">
+          <Link className="b b-line b-sm" href="/member/login">
             Bluepoint OS
           </Link>
-          <a className="nav-cta" href={to("#experts")}>
+          <a className="b b-fill b-sm" href={to("#experts")}>
             Book a call
           </a>
         </div>

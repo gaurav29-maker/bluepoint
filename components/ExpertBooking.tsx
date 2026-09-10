@@ -12,7 +12,7 @@ import type { ExpertCard } from "./ExpertGrid";
 export default function ExpertBooking({
   expert,
   label = "Book a call",
-  className = "btn-primary",
+  className = "b b-fill",
 }: {
   expert: ExpertCard;
   label?: string;

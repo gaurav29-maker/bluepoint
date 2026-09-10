@@ -66,13 +66,13 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
   } catch (err) {
     rethrowIfNavigation(err);
     return (
-      <div className="site-dark">
+      <div className="site">
         <SiteNav />
         <div className="wrap bp-page">
           <div className="bp-panel">
             <h1>Not available right now</h1>
-            <p className="bp-muted">We could not load this expert. Please try again shortly.</p>
-            <Link className="btn-primary" href="/#experts">
+            <p className="note">We could not load this expert. Please try again shortly.</p>
+            <Link className="b b-fill" href="/#experts">
               See all experts
             </Link>
           </div>
@@ -112,24 +112,24 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
     .map(([day, times]) => ({ day, first: times[0], count: times.length }));
 
   return (
-    <div className="site-dark">
+    <div className="site">
       <SiteNav />
 
       <div className="wrap">
-        <div className="xprof">
-          <Link className="xprof-back" href="/#experts">
+        <div className="doc">
+          <Link className="back" href="/#experts">
             ← All experts
           </Link>
 
-          <header className="xprof-head">
-            <div className="xprof-photo">{expert.initials}</div>
+          <header className="doc-head">
+            <div className="doc-av">{expert.initials}</div>
             <div>
-              <h1 className="xprof-name">{expert.displayName}</h1>
-              <p className="xprof-headline">{expert.headline}</p>
+              <h1 className="doc-name">{expert.displayName}</h1>
+              <p className="xrole">{expert.headline}</p>
             </div>
           </header>
 
-          {expert.bio ? <p className="xprof-bio">{expert.bio}</p> : null}
+          {expert.bio ? <p className="doc-lede">{expert.bio}</p> : null}
 
           {/*
             The registration line is stated for every expert, registered or
@@ -137,7 +137,7 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
             one case a reader most needs to see — and the terms already promise
             it is shown.
           */}
-          <dl className="xprof-facts">
+          <dl className="facts">
             {expert.specialties.length > 0 ? (
               <div>
                 <dt>Focus</dt>
@@ -150,7 +150,7 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
             </div>
             <div>
               <dt>Rate</dt>
-              <dd className="xprof-rate">
+              <dd className="rate">
                 {rupees(expert.pricePaise)} <span>/ call</span>
               </dd>
             </div>
@@ -166,13 +166,13 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
                     {expert.sebiRegType.toUpperCase()} · {expert.sebiRegNumber}
                   </>
                 ) : (
-                  <span className="expert-none">Not registered</span>
+                  <span className="unreg">Not registered</span>
                 )}
               </dd>
             </div>
           </dl>
 
-          <p className="xprof-sebi-note">
+          <p className="note">
             {registered
               ? "Registration is shown so you know who you are speaking to. It does not change what a session is."
               : "This expert holds no SEBI registration as an investment adviser or research analyst. It is stated here rather than left out."}{" "}
@@ -180,9 +180,9 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
             personalised investment advice, and never a recommendation to buy or sell.
           </p>
 
-          <div className="xprof-cta">
+          <div className="cta-row">
             <ExpertBooking expert={card} label={`Book a call · ${rupees(expert.pricePaise)}`} />
-            <span className="xprof-cta-note">Slots are live. Nothing is charged until you pay.</span>
+            <span className="cta-note">Slots are live. Nothing is charged until you pay.</span>
           </div>
 
           {/*
@@ -190,15 +190,15 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
             reads through — so this page cannot advertise a time the dialog
             then refuses.
           */}
-          <section className="xprof-section">
-            <h2 className="xprof-h2">Next available</h2>
+          <section className="doc-sec">
+            <h2 className="doc-h2">Next available</h2>
             {preview.length === 0 ? (
-              <p className="bp-muted">
+              <p className="note">
                 Nothing open in the next {PREVIEW_DAYS} days. Other experts may have earlier times.
               </p>
             ) : (
               <>
-                <ul className="xprof-slots">
+                <ul className="slots">
                   {preview.map((d) => (
                     <li key={d.day}>
                       <b>{d.day}</b>
@@ -209,7 +209,7 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
                     </li>
                   ))}
                 </ul>
-                <p className="bp-muted xprof-more">
+                <p className="note">
                   {slots.length} open time{slots.length === 1 ? "" : "s"} across the next{" "}
                   {PREVIEW_DAYS} days.
                 </p>
@@ -217,9 +217,9 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
             )}
           </section>
 
-          <section className="xprof-section">
-            <h2 className="xprof-h2">What happens</h2>
-            <ol className="xprof-steps">
+          <section className="doc-sec">
+            <h2 className="doc-h2">What happens</h2>
+            <ol className="ol">
               <li>
                 <b>You send your holdings first.</b> A short form after payment — what you hold and
                 in what proportion, in your own words. It is what lets the call start at the question
@@ -240,23 +240,23 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
             </ol>
           </section>
 
-          <section className="xprof-section">
-            <h2 className="xprof-h2">What this is not</h2>
-            <ul className="xprof-nots">
+          <section className="doc-sec">
+            <h2 className="doc-h2">What this is not</h2>
+            <ul className="ul">
               <li>Not a tip, a call, or a target.</li>
               <li>Not personalised investment advice.</li>
               <li>Not a place anyone asks for your demat or broker login — here or on the call.</li>
               <li>Not a subscription. One session is one session.</li>
             </ul>
-            <p className="xprof-retain">
+            <p className="note">
               What you send is read by the expert you booked and no one else, and is deleted 90 days
               after the call.
             </p>
           </section>
 
-          <div className="xprof-cta xprof-cta-end">
+          <div className="cta-row">
             <ExpertBooking expert={card} label={`Book a call · ${rupees(expert.pricePaise)}`} />
-            <Link className="btn-ghost" href="/#experts">
+            <Link className="b b-line" href="/#experts">
               See other experts
             </Link>
           </div>

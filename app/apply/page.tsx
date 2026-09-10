@@ -14,13 +14,13 @@ export const metadata: Metadata = {
 
 export default function Apply() {
   return (
-    <div className="site-dark">
+    <div className="site">
       <SiteNav />
 
       <div className="wrap">
-        <div className="apply">
-          <h1 className="apply-h1">Take calls on Bluepoint.</h1>
-          <p className="apply-lede">
+        <div className="doc">
+          <h1 className="doc-name">Take calls on Bluepoint.</h1>
+          <p className="doc-lede">
             People arrive having already written down what they hold and what they are worried
             about. You read it before the call, spend {SLOT_MINUTES} minutes telling them what you
             see in it, and that is the whole job.
@@ -31,9 +31,9 @@ export default function Apply() {
             spend twenty minutes on an application deserves to know what the
             work is and what it pays before they start writing, not after.
           */}
-          <section className="apply-section">
-            <h2 className="apply-h2">What the work is</h2>
-            <ul className="apply-terms">
+          <section className="doc-sec">
+            <h2 className="doc-h2">What the work is</h2>
+            <ul className="ul">
               <li>
                 <b>You set your own rate and hours.</b> Sessions currently list from{" "}
                 {rupees(SINGLE_CALL_PAISE)}. You edit both yourself once you are live, and pausing
@@ -59,8 +59,8 @@ export default function Apply() {
             </ul>
           </section>
 
-          <section className="apply-section">
-            <h2 className="apply-h2">Apply</h2>
+          <section className="doc-sec">
+            <h2 className="doc-h2">Apply</h2>
             <ApplyForm />
           </section>
         </div>

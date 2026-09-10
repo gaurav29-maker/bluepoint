@@ -15,13 +15,13 @@ export default function ApplyForm() {
 
   if (state.ok) {
     return (
-      <div className="apply-done">
-        <h2 className="apply-done-h">That is with us.</h2>
+      <div className="doc-sec">
+        <h2 className="doc-done-h">That is with us.</h2>
         <p>
           A person reads every application. If it is a fit we will email you a sign-in link and you
           will set your own rate and hours from there.
         </p>
-        <p className="bp-muted">
+        <p className="hint">
           We do not send a rejection round-robin. If you have not heard from us in two weeks, we are
           not taking anyone on in your area yet — apply again whenever you like.
         </p>
@@ -32,41 +32,41 @@ export default function ApplyForm() {
   const err = (field: string) => state.fieldErrors?.[field];
 
   return (
-    <form action={action} className="apply-form">
-      <div className="apply-row">
-        <label className="apply-field">
+    <form action={action} className="form">
+      <div className="row2">
+        <label className="f">
           <span>Your name</span>
           <input name="name" autoComplete="name" required />
-          {err("name") ? <em className="apply-err">{err("name")}</em> : null}
+          {err("name") ? <em className="err">{err("name")}</em> : null}
         </label>
-        <label className="apply-field">
+        <label className="f">
           <span>Email</span>
           <input name="email" type="email" autoComplete="email" required />
-          {err("email") ? <em className="apply-err">{err("email")}</em> : null}
+          {err("email") ? <em className="err">{err("email")}</em> : null}
         </label>
       </div>
 
-      <div className="apply-row">
-        <label className="apply-field">
+      <div className="row2">
+        <label className="f">
           <span>
             Phone <em>optional</em>
           </span>
           <input name="phone" autoComplete="tel" />
         </label>
-        <label className="apply-field">
+        <label className="f">
           <span>Years doing this</span>
           <input name="yearsExperience" type="number" min={0} max={60} required />
-          {err("yearsExperience") ? <em className="apply-err">{err("yearsExperience")}</em> : null}
+          {err("yearsExperience") ? <em className="err">{err("yearsExperience")}</em> : null}
         </label>
       </div>
 
-      <label className="apply-field">
+      <label className="f">
         <span>One line, as it would appear on your card</span>
         <input name="headline" placeholder="Portfolio audits · 9 yrs" maxLength={90} required />
-        {err("headline") ? <em className="apply-err">{err("headline")}</em> : null}
+        {err("headline") ? <em className="err">{err("headline")}</em> : null}
       </label>
 
-      <label className="apply-field">
+      <label className="f">
         <span>What you actually do in a session</span>
         <textarea
           name="bio"
@@ -74,20 +74,20 @@ export default function ApplyForm() {
           placeholder="Write it the way you would say it to someone on the call."
           required
         />
-        {err("bio") ? <em className="apply-err">{err("bio")}</em> : null}
+        {err("bio") ? <em className="err">{err("bio")}</em> : null}
       </label>
 
-      <fieldset className="apply-fieldset">
+      <fieldset className="fs">
         <legend>What you take on</legend>
-        <div className="apply-checks">
+        <div className="checks">
           {SPECIALTIES.map((s) => (
-            <label key={s.value} className="apply-check">
+            <label key={s.value} className="check">
               <input type="checkbox" name="specialties" value={s.value} />
               <span>{s.label}</span>
             </label>
           ))}
         </div>
-        {err("specialties") ? <em className="apply-err">{err("specialties")}</em> : null}
+        {err("specialties") ? <em className="err">{err("specialties")}</em> : null}
       </fieldset>
 
       {/*
@@ -96,10 +96,10 @@ export default function ApplyForm() {
         blank, and it is fairer to say so here than after someone has put in
         the work of applying.
       */}
-      <fieldset className="apply-fieldset">
+      <fieldset className="fs">
         <legend>SEBI registration</legend>
-        <div className="apply-row">
-          <label className="apply-field">
+        <div className="row2">
+          <label className="f">
             <span>Type</span>
             <select name="sebiRegType" defaultValue="none">
               <option value="none">Not registered</option>
@@ -107,40 +107,40 @@ export default function ApplyForm() {
               <option value="ra">Research Analyst (RA)</option>
             </select>
           </label>
-          <label className="apply-field">
+          <label className="f">
             <span>
               Registration number <em>if registered</em>
             </span>
             <input name="sebiRegNumber" placeholder="INA000000000" />
-            {err("sebiRegNumber") ? <em className="apply-err">{err("sebiRegNumber")}</em> : null}
+            {err("sebiRegNumber") ? <em className="err">{err("sebiRegNumber")}</em> : null}
           </label>
         </div>
-        <p className="apply-hint">
+        <p className="hint">
           Either answer is fine. Whichever you give is shown on your profile exactly as it is, and
           we check it before you go live.
         </p>
       </fieldset>
 
-      <label className="apply-field">
+      <label className="f">
         <span>
           Where your work can be seen <em>optional</em>
         </span>
         <input name="links" placeholder="A site, a newsletter, a handle — whatever is real" />
       </label>
 
-      <label className="apply-field">
+      <label className="f">
         <span>
           Anything else <em>optional</em>
         </span>
         <textarea name="note" rows={3} />
       </label>
 
-      {state.error ? <p className="bp-error">{state.error}</p> : null}
+      {state.error ? <p className="err">{state.error}</p> : null}
 
-      <button className="btn-primary apply-submit" type="submit" disabled={pending}>
+      <button className="b b-fill" type="submit" disabled={pending}>
         {pending ? "Sending…" : "Send application"}
       </button>
-      <p className="apply-fine">
+      <p className="hint">
         We keep what you send here to assess your application, and nothing else. No part of it is
         published until you are live and have approved your own profile.
       </p>

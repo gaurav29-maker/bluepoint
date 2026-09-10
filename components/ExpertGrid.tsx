@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import BookingDialog from "./BookingDialog";
+import { SLOT_MINUTES } from "@/lib/slots";
 
 export type ExpertCard = {
   slug: string;
@@ -29,52 +30,60 @@ export default function ExpertGrid({
 
   if (experts.length === 0) {
     return (
-      <div className="bp-empty">
+      <p className="band-empty">
         {dbReady || process.env.NODE_ENV === "production" ? (
           // Setup instructions are for whoever is running this locally, never
           // for a visitor on the live site.
-          <p>No experts are listed yet. Check back shortly.</p>
+          <>No experts are listed yet. Check back shortly.</>
         ) : (
-          <p>
+          <>
             <strong>No database connected.</strong> Set <code>DATABASE_URL</code> in{" "}
             <code>.env.local</code>, then run <code>npm run db:push</code> and{" "}
             <code>npm run db:seed</code>.
-          </p>
+          </>
         )}
-      </div>
+      </p>
     );
   }
 
   return (
     <>
-      <div className="expert-grid">
+      <div className="grid3">
         {experts.map((e) => (
-          <div className="expert-card" key={e.slug}>
+          <article className="xcard" key={e.slug}>
             {/*
               The card is the fast path; the profile is the considered one.
               Handing someone your portfolio off a headline and two initials
               is a lot to ask, so the name opens the page that says who they
               actually are — while "Book a call" still books in one click.
             */}
-            <Link className="expert-idlink" href={`/experts/${e.slug}`}>
-              <div className="expert-photo">{e.initials}</div>
-              <p className="expert-name">{e.displayName}</p>
+            <Link className="xlink" href={`/experts/${e.slug}`}>
+              <div className="xcard-top">
+                <div className="xav">{e.initials}</div>
+                <div>
+                  <h3>{e.displayName}</h3>
+                  <p className="xrole">{e.headline}</p>
+                </div>
+              </div>
             </Link>
-            <p className="expert-tag">{e.headline}</p>
 
             {/*
-              Laid out as a record rather than a paragraph: label on the left,
-              value on the right, figures in a mono so rates line up down the
-              column of cards. The SEBI row is always present — an expert with
-              no registration shows "Not registered" rather than the row simply
-              vanishing, which is what the terms already commit to.
+              A record rather than a paragraph: label left, value right,
+              figures in a mono so rates line up down the column of cards.
+              The SEBI row is always present — an expert with no registration
+              reads "Not registered" rather than the row simply vanishing,
+              which is what the terms already commit to.
             */}
-            <dl className="expert-fields">
+            <dl className="rec">
               <div>
                 <dt>Rate</dt>
-                <dd className="expert-rate">
-                  {rupees(e.pricePaise)} <span>/ call</span>
+                <dd className="rate">
+                  {rupees(e.pricePaise)} <small>/ call</small>
                 </dd>
+              </div>
+              <div>
+                <dt>Session</dt>
+                <dd>{SLOT_MINUTES} min, video</dd>
               </div>
               <div>
                 <dt>SEBI</dt>
@@ -84,19 +93,19 @@ export default function ExpertGrid({
                       {e.sebiRegType.toUpperCase()} · {e.sebiRegNumber}
                     </>
                   ) : (
-                    <span className="expert-none">Not registered</span>
+                    <span className="unreg">Not registered</span>
                   )}
                 </dd>
               </div>
             </dl>
 
-            <button className="expert-book" onClick={() => setBooking(e)}>
+            <button className="b b-fill" onClick={() => setBooking(e)}>
               Book a call
             </button>
-            <Link className="expert-more" href={`/experts/${e.slug}`}>
+            <Link className="xmore" href={`/experts/${e.slug}`}>
               Read more about {e.displayName.split(" ")[0]}
             </Link>
-          </div>
+          </article>
         ))}
       </div>
 
