@@ -21,6 +21,11 @@ const Body = z.object({
     .trim()
     .min(60, "A few sentences, so someone can tell whether you are right for them")
     .max(1200, "Keep it under 1200 characters"),
+  background: z
+    .string()
+    .trim()
+    .min(30, "Where you have worked — this is the part we check")
+    .max(600, "Keep it under 600 characters"),
   specialties: z.array(z.enum(["portfolio_audit", "fno_systematic"])).min(1, "Pick at least one"),
   yearsExperience: z.coerce.number().int().min(0).max(60),
   sebiRegType: z.enum(["ria", "ra", "none"]),
@@ -78,6 +83,7 @@ export async function submitApplication(
     phone: formData.get("phone") || undefined,
     headline: formData.get("headline"),
     bio: formData.get("bio"),
+    background: formData.get("background"),
     specialties: formData.getAll("specialties"),
     yearsExperience: formData.get("yearsExperience"),
     sebiRegType: formData.get("sebiRegType"),
@@ -139,6 +145,7 @@ export async function submitApplication(
       phone: data.phone ?? null,
       headline: data.headline,
       bio: data.bio,
+      background: data.background,
       specialties: data.specialties,
       yearsExperience: data.yearsExperience,
       sebiRegType: data.sebiRegType,

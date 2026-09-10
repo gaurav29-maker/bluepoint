@@ -129,7 +129,25 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
             </div>
           </header>
 
-          {expert.bio ? <p className="doc-lede">{expert.bio}</p> : null}
+          {/*
+            Background before the session description. Somebody deciding
+            whether to hand over their portfolio wants to know who this person
+            is before they read what a session is like — and it is the one
+            claim on this page a person checked before publishing it.
+          */}
+          {expert.background ? (
+            <section className="doc-sec">
+              <h2 className="doc-h2">Background</h2>
+              <p className="doc-body">{expert.background}</p>
+            </section>
+          ) : null}
+
+          {expert.bio ? (
+            <section className="doc-sec">
+              <h2 className="doc-h2">In a session</h2>
+              <p className="doc-body">{expert.bio}</p>
+            </section>
+          ) : null}
 
           {/*
             The registration line is stated for every expert, registered or

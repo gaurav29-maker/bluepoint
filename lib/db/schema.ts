@@ -78,6 +78,18 @@ export const experts = pgTable(
     initials: text("initials").notNull(),
     headline: text("headline").notNull(),
     bio: text("bio").notNull().default(""),
+
+    /**
+     * Where they have actually worked.
+     *
+     * The platform's whole claim is access to people with institutional
+     * experience, and until this field existed there was no way to tell one
+     * from a confident retail trader with a good headline. Stated in their
+     * own words, checked by a person before they go live, and — like the SEBI
+     * registration — NOT editable by the expert afterwards, because a fact
+     * somebody can rewrite after it was verified was never verified.
+     */
+    background: text("background").notNull().default(""),
     specialties: specialty("specialties").array().notNull(),
     yearsExperience: smallint("years_experience").notNull(),
     pricePaise: integer("price_paise").notNull(),
@@ -365,6 +377,8 @@ export const expertApplications = pgTable(
     phone: text("phone"),
     headline: text("headline").notNull(),
     bio: text("bio").notNull(),
+    /** Where they have worked. Required: it is the claim being assessed. */
+    background: text("background").notNull().default(""),
     specialties: specialty("specialties").array().notNull(),
     yearsExperience: smallint("years_experience").notNull(),
 

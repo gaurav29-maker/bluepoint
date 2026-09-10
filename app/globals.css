@@ -3502,3 +3502,26 @@
     .site .rung { padding: 20px; }
     .site .covers { grid-template-columns: 1fr; }
   }
+  .ops-application .ops-app-bg { max-width: 68ch; margin-top: 10px; }
+  .ops-application .ops-app-bg b { color: var(--ink-dark); }
+  .site .doc-body { font-size: 16px; line-height: 26px; color: var(--ink-body); margin: 0; }
+
+  .os .xp-bg, .site-dark .xp-bg {
+    max-width: 620px;
+    margin: 16px 0 0;
+    padding: 14px 16px;
+    border: 1px solid var(--hair);
+    border-radius: 4px;
+    font-size: 13.5px;
+    line-height: 21px;
+    color: var(--ink-dark);
+  }
+  .os .xp-bg-label, .site-dark .xp-bg-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }

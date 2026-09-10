@@ -85,10 +85,26 @@ export default async function OpsApplications() {
                     <span className="pill">
                       claims {a.sebiRegType.toUpperCase()} · {a.sebiRegNumber}
                     </span>{" "}
-                    <span className="ops-muted">verify on the SEBI register before approving</span>
+                    <span className="ops-muted">verify on the SEBI register, and check the background below, before approving</span>
                   </>
                 )}
               </p>
+
+              {/*
+                The background sits with the registration claim rather than
+                with the prose, because they are the two facts approval turns
+                on. One is checked against the SEBI register; this one is
+                checked against whatever the applicant can show you.
+              */}
+              {a.background ? (
+                <p className="ops-app-meta ops-app-bg">
+                  <b>Background</b> {a.background}
+                </p>
+              ) : (
+                <p className="ops-app-meta">
+                  <span className="pill warn">no background given</span>
+                </p>
+              )}
 
               <p className="ops-app-bio">{a.bio}</p>
               {a.links ? (

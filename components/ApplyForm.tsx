@@ -66,6 +66,21 @@ export default function ApplyForm() {
         {err("headline") ? <em className="err">{err("headline")}</em> : null}
       </label>
 
+      {/*
+        Asked before the session description, because it is the claim the
+        platform is built on and the one a reviewer actually checks.
+      */}
+      <label className="f">
+        <span>Where you have worked</span>
+        <textarea
+          name="background"
+          rows={3}
+          placeholder="Firms, desks and roles — the experience you would want someone to know about before they book you."
+          required
+        />
+        {err("background") ? <em className="err">{err("background")}</em> : null}
+      </label>
+
       <label className="f">
         <span>What you actually do in a session</span>
         <textarea

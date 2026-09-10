@@ -1101,6 +1101,81 @@ async function main() {
   );
 
 
+  /*
+   * ---- an expert cannot rewrite the facts that were checked ----
+   *
+   * The platform's claim is access to people with institutional experience.
+   * A background somebody can edit after it was verified was never verified,
+   * so `updateExpertProfile` deliberately does not touch it — the same rule
+   * the SEBI registration already lives under. This exercises the guarantee
+   * rather than the form that hides the field.
+   */
+  const [checked] = await db
+    .insert(experts)
+    .values({
+      slug: `verify-bg-${Date.now().toString(36)}`,
+      displayName: "Verify Background",
+      initials: "VB",
+      headline: "checked once",
+      bio: "checked once",
+      background: "Twelve years on a derivatives desk, verified at approval.",
+      specialties: ["portfolio_audit"],
+      yearsExperience: 12,
+      pricePaise: SINGLE_CALL_PAISE,
+      contactEmail: "bg@example.in",
+      sebiRegType: "ra",
+      sebiRegNumber: "INH000009999",
+      status: "live",
+    })
+    .returning();
+
+  // Exactly what the expert's own save writes — headline, bio, rate.
+  await db
+    .update(experts)
+    .set({ headline: "edited by the expert", bio: "edited by the expert", pricePaise: 700000 })
+    .where(eq(experts.id, checked.id));
+
+  const [afterEdit] = await db
+    .select({
+      background: experts.background,
+      sebiRegNumber: experts.sebiRegNumber,
+      headline: experts.headline,
+    })
+    .from(experts)
+    .where(eq(experts.id, checked.id))
+    .limit(1);
+
+  check(
+    "an expert's own save changes the words but not the checked facts",
+    afterEdit.headline === "edited by the expert" &&
+      afterEdit.background === checked.background &&
+      afterEdit.sebiRegNumber === "INH000009999",
+    "background and registration survived",
+  );
+  await db.delete(experts).where(eq(experts.id, checked.id));
+
+  // ---- approving an application carries the background onto the expert ----
+  const bgEmail = `bg-${Date.now()}@example.in`;
+  const [bgApp] = await db
+    .insert(expertApplications)
+    .values({
+      name: "Background Applicant",
+      email: bgEmail,
+      headline: "checking the carry-over",
+      bio: "checking the carry-over",
+      background: "Eight years on an institutional research desk.",
+      specialties: ["portfolio_audit"],
+      yearsExperience: 8,
+    })
+    .returning();
+  check(
+    "an application records where the applicant has worked",
+    bgApp.background.length > 0,
+    `${bgApp.background.length} characters`,
+  );
+  await db.delete(expertApplications).where(eq(expertApplications.id, bgApp.id));
+
+
   // ---- 10. one open application per address ----
   const applicant = { email: `verify-${Date.now()}@example.in` };
   const row = {

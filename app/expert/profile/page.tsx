@@ -101,7 +101,7 @@ export default async function ExpertProfilePage() {
         verifying nothing.
       */}
       <section className="member-section">
-        <h2 className="member-h2">Registration</h2>
+        <h2 className="member-h2">Checked before you went live</h2>
         <dl className="xprof-facts xp-facts">
           <div>
             <dt>SEBI</dt>
@@ -124,8 +124,16 @@ export default async function ExpertProfilePage() {
             <dd>/experts/{me.slug}</dd>
           </div>
         </dl>
+        {me.background ? (
+          <p className="xp-bg">
+            <span className="xp-bg-label">Background, as published</span>
+            {me.background}
+          </p>
+        ) : null}
+
         <p className="apply-hint">
-          These are checked before you go live, so they are not editable here. Email us if any of
+          These are the facts a person checked before you were published, so they are not editable
+          here — a fact you could rewrite afterwards was never really verified. Email us if any of
           them is wrong and we will correct it.
         </p>
       </section>

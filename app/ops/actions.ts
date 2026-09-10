@@ -175,6 +175,7 @@ export async function approveApplication(formData: FormData) {
       initials: initials || "??",
       headline: application.headline,
       bio: application.bio,
+      background: application.background,
       specialties: application.specialties,
       yearsExperience: application.yearsExperience,
       pricePaise: SINGLE_CALL_PAISE,
