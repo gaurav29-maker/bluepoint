@@ -298,27 +298,27 @@ export default async function Home() {
             <div className="audit-step">
               <p className="n">01</p>
               <h3>Choose your expert</h3>
-              <p>On focus, experience and rate. Every profile states all three.</p>
+              <p>Focus, experience, background, rate. All stated.</p>
             </div>
             <div className="audit-step">
               <p className="n">02</p>
               <h3>Book a time</h3>
-              <p>Live availability. Pick a slot that suits you.</p>
+              <p>Live availability, not a request.</p>
             </div>
             <div className="audit-step">
               <p className="n">03</p>
               <h3>Share your portfolio</h3>
-              <p>A short form. What you hold and in what proportion, in your own words.</p>
+              <p>What you hold, in what proportion.</p>
             </div>
             <div className="audit-step">
               <p className="n">04</p>
-              <h3>They read it first</h3>
-              <p>Before you meet, so the call starts at your question.</p>
+              <h3>They read it</h3>
+              <p>Before you meet.</p>
             </div>
             <div className="audit-step">
               <p className="n">05</p>
               <h3>You discuss it</h3>
-              <p>{SLOT_MINUTES} minutes, one to one. Then you decide what to do.</p>
+              <p>{SLOT_MINUTES} minutes. Then you decide.</p>
             </div>
           </div>
 
@@ -371,56 +371,38 @@ export default async function Home() {
               persuasive than hiding it: people who will not write down what
               they hold are people this product cannot help.
             */}
-            <p>Six steps. The only work on your side is writing down what you hold.</p>
+            <p>Six steps. One piece of work on your side.</p>
           </div>
           <div className="flow">
             <div className="flow-step">
               <p className="n">01</p>
-              <h3>You arrive with something specific</h3>
-              <p>
-                A holding you have stopped being sure about. A company you keep going back and
-                forth on. A sector you do not know well enough yet.
-              </p>
+              <h3>Your question</h3>
+              <p>A holding, a company, a sector. However it arrives.</p>
             </div>
             <div className="flow-step">
               <p className="n">02</p>
-              <h3>You choose the person</h3>
-              <p>
-                Not a matching algorithm. Every profile states what they focus on, how long they
-                have done it, where they have worked, and their SEBI registration.
-              </p>
+              <h3>Your choice of expert</h3>
+              <p>A person, not a matching algorithm.</p>
             </div>
             <div className="flow-step">
               <p className="n">03</p>
-              <h3>The time is really free</h3>
-              <p>
-                Availability is live, not a request. You take a slot and it is yours — nobody
-                emails you back with three alternatives.
-              </p>
+              <h3>A real slot</h3>
+              <p>Live availability. Nobody emails you back.</p>
             </div>
             <div className="flow-step">
               <p className="n">04</p>
-              <h3>You write down what you hold</h3>
-              <p>
-                Most people find this part useful on its own. It is also what lets the call open at
-                your question instead of at your background.
-              </p>
+              <h3>Your holdings, written down</h3>
+              <p>Five minutes. The only work on your side.</p>
             </div>
             <div className="flow-step">
               <p className="n">05</p>
-              <h3>They have already read it</h3>
-              <p>
-                {SLOT_MINUTES} minutes, one to one, with somebody who spent time on your book
-                before meeting you.
-              </p>
+              <h3>{SLOT_MINUTES} minutes</h3>
+              <p>One to one, with somebody who has read it.</p>
             </div>
             <div className="flow-step">
               <p className="n">06</p>
-              <h3>Then it stops</h3>
-              <p>
-                Nothing renews and nobody follows up to sell you anything. Come back for another,
-                or keep the same person for a quarter — if you decide to.
-              </p>
+              <h3>It stops</h3>
+              <p>Nothing renews. Nobody follows up.</p>
             </div>
           </div>
         </div>
