@@ -363,40 +363,64 @@ export default async function Home() {
           <div className="band-head">
             <span className="eyebrow">How it works</span>
             <h2>
-              Your review, <span className="said">effortlessly</span>.
+              From a question to a <span className="said">conversation</span>.
             </h2>
-            <p>Six steps in order — no back-and-forth scheduling emails.</p>
+            {/*
+              Was "your review, effortlessly", which promised ease two lines
+              above the one bit of work we ask for. Naming that work is more
+              persuasive than hiding it: people who will not write down what
+              they hold are people this product cannot help.
+            */}
+            <p>Six steps. The only work on your side is writing down what you hold.</p>
           </div>
           <div className="flow">
             <div className="flow-step">
               <p className="n">01</p>
-              <h3>Tell us what you need</h3>
-              <p>A portfolio review, a company question, a sector view, a second opinion.</p>
+              <h3>You arrive with something specific</h3>
+              <p>
+                A holding you have stopped being sure about. A company you keep going back and
+                forth on. A sector you do not know well enough yet.
+              </p>
             </div>
             <div className="flow-step">
               <p className="n">02</p>
-              <h3>Find the right expert</h3>
-              <p>Compare focus, experience, registration and rate.</p>
+              <h3>You choose the person</h3>
+              <p>
+                Not a matching algorithm. Every profile states what they focus on, how long they
+                have done it, where they have worked, and their SEBI registration.
+              </p>
             </div>
             <div className="flow-step">
               <p className="n">03</p>
-              <h3>Book a time</h3>
-              <p>Availability is live. A held slot releases itself if payment does not complete.</p>
+              <h3>The time is really free</h3>
+              <p>
+                Availability is live, not a request. You take a slot and it is yours — nobody
+                emails you back with three alternatives.
+              </p>
             </div>
             <div className="flow-step">
               <p className="n">04</p>
-              <h3>Share your portfolio</h3>
-              <p>Or just your question, if that is what you came with.</p>
+              <h3>You write down what you hold</h3>
+              <p>
+                Most people find this part useful on its own. It is also what lets the call open at
+                your question instead of at your background.
+              </p>
             </div>
             <div className="flow-step">
               <p className="n">05</p>
-              <h3>Have a real conversation</h3>
-              <p>{SLOT_MINUTES} minutes, one to one, with someone who has read it.</p>
+              <h3>They have already read it</h3>
+              <p>
+                {SLOT_MINUTES} minutes, one to one, with somebody who spent time on your book
+                before meeting you.
+              </p>
             </div>
             <div className="flow-step">
               <p className="n">06</p>
-              <h3>Continue if you want to</h3>
-              <p>Come back for one more, or keep the same people for a quarter.</p>
+              <h3>Then it stops</h3>
+              <p>
+                Nothing renews and nobody follows up to sell you anything. Come back for another,
+                or keep the same person for a quarter — if you decide to.
+              </p>
             </div>
           </div>
         </div>
