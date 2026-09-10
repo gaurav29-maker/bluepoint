@@ -83,7 +83,7 @@ export default function PassPurchase({
         name: "Bluepoint",
         description: order.description,
         prefill: order.prefill,
-        theme: { color: "#1D9BF0" },
+        theme: { color: "#3E6AE1" },
         // The webhook activates the pass; this only moves the browser on.
         handler: () => {
           window.location.href = "/member/login?sent=0&bought=1";

@@ -7,18 +7,21 @@
     --ink-dark: #1A1A1A;
     --ink-soft: #6B6B6B;
     /*
-       One brand blue across the whole site: X's verification blue.
+       One brand blue across the whole site.
        Two supporting values exist for contrast, not for variety:
-         --on-accent  text sitting ON the blue. White on #1D9BF0 is 3.0:1
-                      and fails AA; near-black is 7.0:1.
-         --blue-deep  the same hue darkened, for blue TEXT on light grounds,
-                      where #1D9BF0 itself is only 3.0:1. 5.3:1.
+         --on-accent  text sitting ON the blue. White clears #3E6AE1 at
+                      4.82:1, which is why this hue can carry a white label
+                      where the lighter blue it replaced could not (3.0:1).
+         --blue-deep  the same hue darkened, for blue TEXT on light grounds.
+                      #3E6AE1 reads 4.82:1 on white but only 4.39:1 on the
+                      #F4F4F4 band, and half the small text sits on that
+                      band. #3159C9 clears both: 6.17 and 5.61.
     */
-    --blue: #1D9BF0;
-    --blue-light: #8FCBFA;
-    --blue-tint: #E8F5FE;
-    --blue-deep: #0F6FB5;
-    --on-accent: #05080C;
+    --blue: #3E6AE1;
+    --blue-light: #A9BCF3;
+    --blue-tint: #ECF0FD;
+    --blue-deep: #3159C9;
+    --on-accent: #FFFFFF;
   }
 
   * { box-sizing: border-box; }
@@ -1134,9 +1137,10 @@
      takes this treatment, and the token names keep their meaning by role
      (--white is "the raised surface", not the literal colour).
 
-     Palette follows X's verification blue, which is apt for a product whose
-     pitch is vetted experts. Black sits on the accent, not white: white on
-     #1D9BF0 is about 2.7:1 and fails, black is roughly 8:1.
+     The accent carries a white label here: white on #3E6AE1 is 4.82:1.
+     Blue TEXT is the other way round — #3E6AE1 on this ground is only
+     3.95:1, so --blue-deep lightens rather than darkens in the dark theme.
+     Same token, opposite direction, because the ground moved.
   */
 
   .site-dark {
@@ -1147,12 +1151,12 @@
     --ink-dark:   #F3F6F9;
     --ink:        #C2CBD7;
     --ink-soft:   #798497;
-    --blue:       #1D9BF0;
-    --blue-light: #8FCBFA;
-    --blue-tint:  #0D2233;
-    --blue-deep:  #6FC1FF;
+    --blue:       #3E6AE1;
+    --blue-light: #A9BCF3;
+    --blue-tint:  #151C33;
+    --blue-deep:  #8AA5F0;
 
-    --on-accent:  #05080C;
+    --on-accent:  #FFFFFF;
     --display:    "Instrument Serif", Georgia, serif;
 
     background: var(--canvas);
@@ -2917,7 +2921,7 @@
      Measured from the reference rather than recalled: two text weights
      only (400 and 500), letter-spacing left at normal, a 4px control
      radius, a 56px nav, one elevation, and text that never sits at pure
-     black. Their accent is #3E6AE1; ours stays Bluepoint's #1D9BF0.
+     black, and the accent is #3E6AE1 throughout.
      ================================================================ */
 
   .site {
@@ -2932,9 +2936,9 @@
     --bg-alt:     #F4F4F4;
     --rule:       #E3E4E6;
     --hairline:   rgba(23, 26, 32, 0.08);
-    --accent:     #1D9BF0;
-    --accent-ink: #0F6FB5;
-    --on-accent:  #05080C;
+    --accent:     #3E6AE1;
+    --accent-ink: #3159C9;
+    --on-accent:  #FFFFFF;
     --lift: 0 8px 16px rgba(0, 0, 0, 0.16);
     --nav-bg: rgba(255, 255, 255, 0.88);
 
@@ -2956,7 +2960,7 @@
       --bg-alt:     #16191D;
       --rule:       #262A30;
       --hairline:   rgba(255, 255, 255, 0.09);
-      --accent-ink: #6FC1FF;
+      --accent-ink: #8AA5F0;
       --lift: 0 8px 16px rgba(0, 0, 0, 0.5);
       --nav-bg: rgba(14, 16, 19, 0.88);
     }
@@ -2977,7 +2981,7 @@
 
   /*
      The accent as *text* is a different problem from the accent as a
-     surface. #1D9BF0 on white is 3.00:1 — fine for a button fill, not for
+     surface. The accent on white is 4.82:1 — fine for a button fill, thin for
      a word you have to read. On the dark ground the bright blue is the
      legible one, so this follows the ground rather than being fixed.
   */
