@@ -898,6 +898,209 @@ async function main() {
   );
 
 
+  /*
+   * ---- changing the email on an account ----
+   *
+   * Email is the login identity here: there are no passwords, so whoever
+   * controls the address controls the account and everything bought with it.
+   * The change link therefore needs no session — following it IS the proof —
+   * which puts the entire weight of the thing on the token being bound to one
+   * customer AND one exact address.
+   */
+  const packEmail = (e: string) => Buffer.from(e, "utf8").toString("base64url");
+  const mintChange = (customerId: string, email: string, exp: number) => {
+    const sig = crypto
+      .createHmac("sha256", process.env.TOKEN_SECRET!)
+      .update(`email:${customerId}:${email}:${exp}`)
+      .digest("hex");
+    return `${customerId}.${exp}.${packEmail(email)}.${sig}`;
+  };
+
+  const changeExp = Date.now() + 600_000;
+  const follow2 = (token: string) =>
+    fetch(`${BASE}/api/member/profile/email?t=${token}`, { redirect: "manual" });
+
+  // A token signed for one address, re-packed to claim a different one. This
+  // is the attack the design exists to stop: intercept your own legitimate
+  // link, point it at an address you control.
+  const honest = `sandeep-new-${Date.now()}@example.in`;
+  const attacker = `attacker-${Date.now()}@example.in`;
+  const honestSig = mintChange(member.id, honest, changeExp).split(".")[3];
+  const repointed = `${member.id}.${changeExp}.${packEmail(attacker)}.${honestSig}`;
+
+  const repointRes = await follow2(repointed);
+  const [afterRepoint] = await db
+    .select({ email: customers.email })
+    .from(customers)
+    .where(eq(customers.id, member.id))
+    .limit(1);
+  check(
+    "a change link cannot be repointed at another address",
+    repointRes.headers.get("location")?.includes("error=email") === true &&
+      afterRepoint.email !== attacker,
+    `address is still ${afterRepoint.email === attacker ? "TAKEN" : "the member's own"}`,
+  );
+
+  // The same signature moved onto a different account's id.
+  const otherAccount = `${stranger.id}.${changeExp}.${packEmail(honest)}.${honestSig}`;
+  const otherRes = await follow2(otherAccount);
+  const [strangerAfter] = await db
+    .select({ email: customers.email })
+    .from(customers)
+    .where(eq(customers.id, stranger.id))
+    .limit(1);
+  check(
+    "a change link cannot be moved onto another account",
+    otherRes.headers.get("location")?.includes("error=email") === true &&
+      strangerAfter.email !== honest,
+    "the stranger's address is untouched",
+  );
+
+  const staleChange = await follow2(mintChange(member.id, honest, Date.now() - 1000));
+  check(
+    "an expired change link is refused",
+    staleChange.headers.get("location")?.includes("error=email") === true,
+    staleChange.headers.get("location") ?? "no redirect",
+  );
+
+  // Somebody else already has the address. Checked again at redemption
+  // because thirty minutes is long enough for it to have been taken.
+  const contested = await follow2(mintChange(member.id, stranger.email, changeExp));
+  check(
+    "an address already in use is refused at redemption",
+    contested.headers.get("location")?.includes("error=taken") === true,
+    contested.headers.get("location") ?? "no redirect",
+  );
+
+  // And the honest path.
+  const changed = await follow2(mintChange(member.id, honest, changeExp));
+  const [afterChange] = await db
+    .select({ email: customers.email })
+    .from(customers)
+    .where(eq(customers.id, member.id))
+    .limit(1);
+  check(
+    "a genuine change link changes the address",
+    changed.headers.get("location")?.includes("changed=1") === true && afterChange.email === honest,
+    afterChange.email,
+  );
+
+
+  /*
+   * ---- the cron endpoints, which are public URLs that change data ----
+   *
+   * Both are reachable by anyone who knows the path. The only thing between
+   * them and a stranger is CRON_SECRET, and neither the guard nor what the
+   * job does had ever been run.
+   */
+  const [lapsed] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() + 20 * 86_400_000),
+      endsAt: new Date(Date.now() + 20 * 86_400_000 + 45 * 60_000),
+      status: "held",
+      holdExpiresAt: new Date(Date.now() - 60_000),
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+
+  const [live] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() + 21 * 86_400_000),
+      endsAt: new Date(Date.now() + 21 * 86_400_000 + 45 * 60_000),
+      status: "held",
+      holdExpiresAt: new Date(Date.now() + 9 * 60_000),
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+
+  const naked = await fetch(`${BASE}/api/cron/expire-holds`);
+  check("a cron endpoint refuses an unauthenticated caller", naked.status === 401, `status ${naked.status}`);
+
+  const wrongSecret = await fetch(`${BASE}/api/cron/expire-holds`, {
+    headers: { authorization: "Bearer not-the-secret" },
+  });
+  check("a cron endpoint refuses the wrong secret", wrongSecret.status === 401, `status ${wrongSecret.status}`);
+
+  const [untouchedByStranger] = await db
+    .select({ status: bookings.status })
+    .from(bookings)
+    .where(eq(bookings.id, lapsed.id))
+    .limit(1);
+  check(
+    "neither refused call expired anything",
+    untouchedByStranger.status === "held",
+    `status ${untouchedByStranger.status}`,
+  );
+
+  const authorised = await fetch(`${BASE}/api/cron/expire-holds`, {
+    headers: { authorization: `Bearer ${process.env.CRON_SECRET}` },
+  });
+  const [afterCron] = await db
+    .select({ status: bookings.status })
+    .from(bookings)
+    .where(eq(bookings.id, lapsed.id))
+    .limit(1);
+  check(
+    "a lapsed hold is marked expired",
+    authorised.status === 200 && afterCron.status === "expired",
+    `cron ${authorised.status}, booking ${afterCron.status}`,
+  );
+
+  const [stillHolding] = await db
+    .select({ status: bookings.status })
+    .from(bookings)
+    .where(eq(bookings.id, live.id))
+    .limit(1);
+  check(
+    "a hold that has not lapsed is left alone",
+    stillHolding.status === "held",
+    `status ${stillHolding.status}`,
+  );
+
+  /*
+   * A confirmed booking with a hold time long past. Nothing should touch it:
+   * the payment landed, the hold column is simply stale. Written as a real
+   * row put through the real job, because counting expired rows would have
+   * passed whether or not the job respected status.
+   */
+  const [paidUp] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() + 22 * 86_400_000),
+      endsAt: new Date(Date.now() + 22 * 86_400_000 + 45 * 60_000),
+      status: "confirmed",
+      holdExpiresAt: new Date(Date.now() - 86_400_000),
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+
+  await fetch(`${BASE}/api/cron/expire-holds`, {
+    headers: { authorization: `Bearer ${process.env.CRON_SECRET}` },
+  });
+
+  const [paidAfter] = await db
+    .select({ status: bookings.status })
+    .from(bookings)
+    .where(eq(bookings.id, paidUp.id))
+    .limit(1);
+  check(
+    "a paid booking with a stale hold time is never expired",
+    paidAfter.status === "confirmed",
+    `status ${paidAfter.status}`,
+  );
+
+
   // ---- 10. one open application per address ----
   const applicant = { email: `verify-${Date.now()}@example.in` };
   const row = {
