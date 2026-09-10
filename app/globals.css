@@ -1,11 +1,11 @@
   :root {
     --white: #FFFFFF;
     --canvas: #FFFFFF;
-    --surface: #F7F9FC;
-    --line: #E4E8EF;
-    --ink: #424242;
-    --ink-dark: #1A1A1A;
-    --ink-soft: #6B6B6B;
+    --surface: #F4F4F4;
+    --line: #E3E4E6;
+    --ink: #393C41;
+    --ink-dark: #171A20;
+    --ink-soft: #5C5E62;
     /*
        One brand blue across the whole site.
        Two supporting values exist for contrast, not for variety:
@@ -1137,6 +1137,12 @@
      takes this treatment, and the token names keep their meaning by role
      (--white is "the raised surface", not the literal colour).
 
+     NOTE: this block is not the marketing shell any more. The public site
+     moved to `.site`; what still wraps in `.site-dark` is the member and
+     expert consoles, via their layouts. The neutrals below are the same
+     ramp `.site` uses, so a person moving between the site and their
+     console is not moving between two different greys.
+
      The accent carries a white label here: white on #3E6AE1 is 4.82:1.
      Blue TEXT is the other way round — #3E6AE1 on this ground is only
      3.95:1, so --blue-deep lightens rather than darkens in the dark theme.
@@ -1144,13 +1150,19 @@
   */
 
   .site-dark {
-    --canvas:     #0A0C10;
-    --white:      #12161D;
-    --surface:    #0F1319;
-    --line:       #1F2630;
-    --ink-dark:   #F3F6F9;
-    --ink:        #C2CBD7;
-    --ink-soft:   #798497;
+    --canvas:     #0E1013;
+    --white:      #16191D;
+    --surface:    #16191D;
+    --line:       #262A30;
+    --ink-dark:   #F5F6F7;
+    --ink:        #D3D6DA;
+    --ink-soft:   #9AA0A8;
+    /* A field's ground, pre-composited rather than a 3% white wash.
+       Three translucent surfaces in this sheet each made the contrast
+       audit report a false failure, because it cannot composite an alpha
+       layer over its parent — this one read 1.08:1 against a real 15.11.
+       Solid values are easier to reason about and stop the noise. */
+    --field-bg:   #1D2024;
     --blue:       #3E6AE1;
     --blue-light: #A9BCF3;
     --blue-tint:  #151C33;
@@ -2634,7 +2646,7 @@
   .site-dark .apply-field textarea {
     width: 100%;
     box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--field-bg, #1D2024);
     border: 1px solid var(--hair-strong);
     border-radius: 8px;
     padding: 11px 13px;
@@ -2731,7 +2743,7 @@
   .site-dark .xp-note-input {
     width: 100%;
     box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--field-bg, #1D2024);
     border: 1px solid var(--hair-strong);
     border-radius: 8px;
     padding: 10px 12px;
