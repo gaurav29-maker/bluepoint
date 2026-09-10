@@ -3525,3 +3525,37 @@
     color: var(--ink-soft);
     margin-bottom: 6px;
   }
+
+  /* ---- find an expert ---- */
+  .site .find { max-width: 1000px; }
+  .site .filters {
+    display: grid;
+    gap: 12px;
+    margin: 30px 0 28px;
+    padding: 18px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .site .filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .site .filter-row .eyebrow { min-width: 46px; }
+  .site .chip {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 6px 13px;
+    font-size: 13px;
+    color: var(--ink-body);
+    text-decoration: none;
+    transition: border-color .12s ease, color .12s ease;
+  }
+  .site .chip:hover { border-color: var(--ink-mute); color: var(--ink); }
+  .site .chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .site .find-empty { text-align: left; margin: 28px 0; }
+  .site .find-foot {
+    margin: 34px 0 0;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    font-size: 13.5px;
+    line-height: 21px;
+    color: var(--ink-mute);
+  }
+  .site .find-foot a { color: var(--accent-ink); }

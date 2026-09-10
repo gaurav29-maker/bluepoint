@@ -18,7 +18,7 @@ export default function SiteNav({ onLanding = false }: { onLanding?: boolean }) 
           blue<span>point</span>
         </Link>
         <div className="nav-mid">
-          <a href={to("#experts")}>Find an expert</a>
+          <Link href="/experts">Find an expert</Link>
           <a href={to("#audit")}>Audit my portfolio</a>
           <a href={to("#ways")}>Packages</a>
           <a href={to("#how")}>How it works</a>
@@ -27,9 +27,9 @@ export default function SiteNav({ onLanding = false }: { onLanding?: boolean }) 
           <Link className="b b-line b-sm" href="/member/login">
             Bluepoint OS
           </Link>
-          <a className="b b-fill b-sm" href={to("#experts")}>
+          <Link className="b b-fill b-sm" href="/experts">
             Find an expert
-          </a>
+          </Link>
         </div>
       </div>
     </nav>

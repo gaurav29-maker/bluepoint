@@ -10,7 +10,7 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
         <div className="foot-grid">
           <div className="foot-col">
             <h4>Navigate</h4>
-            <a href={to("#experts")}>Find an expert</a>
+            <Link href="/experts">Find an expert</Link>
             <a href={to("#audit")}>Audit my portfolio</a>
             <a href={to("#ways")}>Packages</a>
             <a href={to("#how")}>How it works</a>

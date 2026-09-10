@@ -22,9 +22,12 @@ function rupees(paise: number): string {
 export default function ExpertGrid({
   experts,
   dbReady,
+  /** Slug -> "Thu, 11 Sept, from 10:00 am". Absent on pages that do not compute it. */
+  nextAvailable,
 }: {
   experts: ExpertCard[];
   dbReady: boolean;
+  nextAvailable?: Record<string, string>;
 }) {
   const [booking, setBooking] = useState<ExpertCard | null>(null);
 
@@ -85,6 +88,12 @@ export default function ExpertGrid({
                 <dt>Session</dt>
                 <dd>{SLOT_MINUTES} min, video</dd>
               </div>
+              {nextAvailable?.[e.slug] ? (
+                <div>
+                  <dt>Next</dt>
+                  <dd>{nextAvailable[e.slug]}</dd>
+                </div>
+              ) : null}
               <div>
                 <dt>SEBI</dt>
                 <dd>
