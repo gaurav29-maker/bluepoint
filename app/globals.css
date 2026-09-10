@@ -3599,3 +3599,5 @@
   @media (max-width: 560px) {
     .site .flow { grid-template-columns: 1fr; }
   }
+
+  .member-nopass-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 4px; }

@@ -121,7 +121,12 @@ export default async function ExpertProfilePage() {
           </div>
           <div>
             <dt>Profile</dt>
-            <dd>/experts/{me.slug}</dd>
+            <dd>
+              {/* What a customer sees. An expert should be able to go and look. */}
+              <a className="ops-link" href={`/experts/${me.slug}`} target="_blank" rel="noreferrer">
+                /experts/{me.slug}
+              </a>
+            </dd>
           </div>
         </dl>
         {me.background ? (

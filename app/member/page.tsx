@@ -161,12 +161,24 @@ export default async function MemberConsole() {
         <div className="bp-panel">
           <h1>No active pass</h1>
           <p className="bp-muted">
-            Your sessions and history are below. To book without paying per call, pick up a
-            quarterly or annual pass from the pricing section.
+            Your sessions and history are below. Book a single call any time, or pick up a
+            quarterly or annual pass to stop paying per call.
           </p>
-          <a className="btn-primary" href="/#pricing">
-            See passes
-          </a>
+          {/*
+            Two routes, because somebody without a pass wants both and until
+            now had neither: this panel offered only "see passes", and pointed
+            it at /#pricing — an anchor that stopped existing when the home
+            page's packages section was renamed. It landed them at the top of
+            the home page.
+          */}
+          <div className="member-nopass-actions">
+            <a className="btn-primary" href="/experts">
+              Find an expert
+            </a>
+            <a className="ops-link" href="/#ways">
+              See the passes
+            </a>
+          </div>
         </div>
       )}
 
@@ -208,7 +220,11 @@ export default async function MemberConsole() {
         <section className="member-section">
           <h2 className="member-h2">Book a session</h2>
           <p className="bp-muted" style={{ marginBottom: 14 }}>
-            Included in your pass — any expert, as often as you like.
+            Included in your pass — any expert, as often as you like. Or{" "}
+            <a className="ops-link" href="/experts">
+              browse everyone
+            </a>{" "}
+            to compare background and availability first.
           </p>
           <MemberBooking experts={bookable} />
         </section>
