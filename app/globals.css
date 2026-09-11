@@ -1461,6 +1461,17 @@
     gap: 16px;
   }
 
+  /* The intake line under an upcoming session: pill, one sentence, one link. */
+  .member-intake {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 11px 0 0;
+    font-size: 12.5px;
+  }
+  .member-intake .bp-muted { font-size: 12.5px; }
+
   .member-manage { margin-top: 11px; }
   .member-manage-row {
     display: flex;

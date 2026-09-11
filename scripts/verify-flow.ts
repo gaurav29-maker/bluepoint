@@ -20,6 +20,7 @@ import {
 import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
 import { openSlotsFor, openSlotsForMany } from "../lib/availability";
 import { runtimeConnection } from "../lib/db/connection";
+import { verifyBookingToken } from "../lib/tokens";
 
 /**
  * Exercises the parts of the booking flow that need no Razorpay and no Resend.
@@ -1473,6 +1474,65 @@ async function main() {
     clearConn();
     for (const [k, v] of Object.entries(savedEnv)) if (v !== undefined) process.env[k] = v;
   }
+
+  /*
+   * ---- the console reaches the intake, and rebooks without charging ----
+   *
+   * Two things a paying member hits once the confirmation email is gone.
+   *
+   * The intake form was reachable only from that email. The console now
+   * mints the same signed link for the member's own upcoming sessions. The
+   * token is checked with verifyBookingToken — the function the intake API
+   * actually uses — rather than by looking at it.
+   *
+   * "Book again" on a past session has to respect what the member holds.
+   * The profile page's booking always charges the single-call price, so a
+   * pass holder sent there would pay for a session their pass covers. Sandeep
+   * has an annual pass, so his link must stay inside the console.
+   */
+  const consoleHtml = await (
+    await fetch(`${BASE}/member`, { headers: { cookie: memberCookie(member.id) } })
+  ).text();
+
+  const intakeLinks = [...consoleHtml.matchAll(/\/booking\/([0-9a-f-]{36})\/intake\?t=([0-9a-f]+)/g)];
+  const tokensValid =
+    intakeLinks.length > 0 && intakeLinks.every((m) => verifyBookingToken(m[1], m[2]));
+  const tamperedRejected =
+    intakeLinks.length > 0 && !verifyBookingToken(intakeLinks[0][1], tamper(intakeLinks[0][2]));
+  check(
+    "the console links every upcoming session to its intake with a valid token",
+    tokensValid && tamperedRejected,
+    `${intakeLinks.length} link${intakeLinks.length === 1 ? "" : "s"}, all verify, a tampered one is refused`,
+  );
+
+  const rebookLinks = [...consoleHtml.matchAll(/href="([^"]+)"[^>]*>Book [A-Za-z]+ again</g)].map(
+    (m) => m[1],
+  );
+  const insideConsole = (h: string) => h.startsWith("/member?rebook=") || h.startsWith("#bundle-");
+  check(
+    "a pass holder's Book again never leads to the paid profile page",
+    rebookLinks.length > 0 && rebookLinks.every(insideConsole),
+    rebookLinks.length > 0
+      ? `${rebookLinks.length} link${rebookLinks.length === 1 ? "" : "s"}: ${[...new Set(rebookLinks)].join(", ")}`
+      : "no Book again link rendered",
+  );
+
+  // Following the link must land with that expert already chosen.
+  const rebookSlug = rebookLinks
+    .find((h) => h.startsWith("/member?rebook="))
+    ?.match(/rebook=([^#&]+)/)?.[1];
+  const rebookHtml = rebookSlug
+    ? await (
+        await fetch(`${BASE}/member?rebook=${rebookSlug}`, {
+          headers: { cookie: memberCookie(member.id) },
+        })
+      ).text()
+    : "";
+  check(
+    "following Book again opens the booking with that expert selected",
+    /class="member-expert is-active"/.test(rebookHtml),
+    rebookSlug ? `${rebookSlug} is-active on load` : "no pass rebook link to follow",
+  );
 
 
   console.log(`\n  ${passed} passed, ${failed} failed\n`);

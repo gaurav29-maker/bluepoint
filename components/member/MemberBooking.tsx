@@ -39,14 +39,24 @@ function timeLabel(iso: string) {
 export default function MemberBooking({
   experts,
   bundleId,
+  initialSlug,
 }: {
   experts: BookableExpert[];
   bundleId?: string;
+  /**
+   * Pre-selects an expert. "Book again" on a past session lands here with the
+   * expert already chosen, because the point of booking the same person twice
+   * is that they already know the portfolio — making the member find them in
+   * a list again throws that away at the first step.
+   */
+  initialSlug?: string;
 }) {
   const [expert, setExpert] = useState<BookableExpert | null>(
     // A bundle belongs to one expert; offering a list of one is a decision
     // the member does not have to make.
-    experts.length === 1 ? experts[0] : null,
+    experts.length === 1
+      ? experts[0]
+      : (experts.find((e) => e.slug === initialSlug) ?? null),
   );
   const [slots, setSlots] = useState<Slot[] | null>(null);
   const [activeDay, setActiveDay] = useState<string | null>(null);
