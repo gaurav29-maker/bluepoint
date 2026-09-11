@@ -2,8 +2,11 @@ import { loadEnv } from "./load-env";
 loadEnv();
 
 import { eq } from "drizzle-orm";
-import { db } from "../lib/db";
+import { scriptDb } from "../lib/db";
 import { availabilityRules, experts } from "../lib/db/schema";
+
+// Resolved after loadEnv() has run, not at import time.
+let db: ReturnType<typeof scriptDb>;
 
 /**
  * Demo seed for phase 1.
@@ -64,6 +67,8 @@ const WEEKDAY_WINDOWS = [
 ];
 
 async function main() {
+  db = scriptDb();
+
   for (const e of SEED) {
     const [row] = await db
       .insert(experts)

@@ -1,7 +1,7 @@
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
-import { runtimeConnection } from "./connection";
+import { migrationConnection, runtimeConnection } from "./connection";
 
 /**
  * Lazy on purpose. `next build` imports every route module to collect page
@@ -33,3 +33,21 @@ export const db = new Proxy({} as PostgresJsDatabase<typeof schema>, {
 });
 
 export { schema };
+
+/**
+ * A database for command-line scripts — the seed, and anything else run by a
+ * person on a laptop rather than by a serverless function.
+ *
+ * `db` above refuses the direct connection on purpose: a serverless function
+ * opens a real backend per invocation and would exhaust Postgres. That
+ * reasoning does not apply to a script that runs once and exits, and the
+ * direct connection is in fact the right one for it — so the seed hit an
+ * error written for a situation it was not in.
+ *
+ * Same resolution order as migrations, for the same reason: these are the
+ * tools you point at a database deliberately.
+ */
+export function scriptDb(): PostgresJsDatabase<typeof schema> {
+  const { url } = migrationConnection();
+  return drizzle(postgres(url, { max: 1, prepare: false }), { schema });
+}
