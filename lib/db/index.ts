@@ -1,6 +1,7 @@
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
+import { runtimeConnection } from "./connection";
 
 /**
  * Lazy on purpose. `next build` imports every route module to collect page
@@ -12,8 +13,7 @@ let instance: PostgresJsDatabase<typeof schema> | null = null;
 function getDb(): PostgresJsDatabase<typeof schema> {
   if (instance) return instance;
 
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) throw new Error("DATABASE_URL is not set");
+  const { url: connectionString } = runtimeConnection();
 
   // One connection per invocation, reused across warm starts.
   const globalForDb = globalThis as unknown as { bpClient?: ReturnType<typeof postgres> };

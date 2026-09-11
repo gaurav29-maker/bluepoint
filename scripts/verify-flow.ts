@@ -19,6 +19,7 @@ import {
 } from "../lib/db/schema";
 import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
 import { openSlotsFor, openSlotsForMany } from "../lib/availability";
+import { runtimeConnection } from "../lib/db/connection";
 
 /**
  * Exercises the parts of the booking flow that need no Razorpay and no Resend.
@@ -1429,6 +1430,49 @@ async function main() {
     notRedirecting.length === 0,
     notRedirecting.length > 0 ? notRedirecting.join(", ") : `${guarded.length} paths redirect`,
   );
+
+  /*
+   * ---- the Supabase integration's variable names work ----
+   *
+   * Connecting Supabase to Vercel does not set DATABASE_URL. It injects
+   * POSTGRES_URL and POSTGRES_URL_NON_POOLING. While the app read only
+   * DATABASE_URL, a correctly connected Supabase project still rendered
+   * "No experts are listed yet" — indistinguishable from an empty database,
+   * and nothing in the product could tell you which it was.
+   *
+   * Restoring DATABASE_URL as the only accepted name would be a quiet,
+   * reasonable-looking simplification, so it is held here.
+   */
+  const savedEnv = {
+    DATABASE_URL: process.env.DATABASE_URL,
+    POSTGRES_URL: process.env.POSTGRES_URL,
+    POSTGRES_URL_NON_POOLING: process.env.POSTGRES_URL_NON_POOLING,
+  };
+  const clearConn = () => {
+    delete process.env.DATABASE_URL;
+    delete process.env.POSTGRES_URL;
+    delete process.env.POSTGRES_URL_NON_POOLING;
+  };
+
+  try {
+    clearConn();
+    process.env.POSTGRES_URL = "postgresql://u:p@pooler.example:6543/postgres";
+    const supabaseOnly = runtimeConnection();
+
+    clearConn();
+    process.env.DATABASE_URL = "postgresql://ours";
+    process.env.POSTGRES_URL = "postgresql://injected";
+    const oursWins = runtimeConnection();
+
+    check(
+      "Supabase's own variable names are accepted",
+      supabaseOnly.from === "POSTGRES_URL" && oursWins.from === "DATABASE_URL",
+      `POSTGRES_URL alone -> ${supabaseOnly.from}; both set -> ${oursWins.from} wins`,
+    );
+  } finally {
+    clearConn();
+    for (const [k, v] of Object.entries(savedEnv)) if (v !== undefined) process.env[k] = v;
+  }
 
 
   console.log(`\n  ${passed} passed, ${failed} failed\n`);
