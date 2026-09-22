@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { sitePublic } from "@/lib/launch";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { experts } from "@/lib/db/schema";
@@ -8,6 +9,9 @@ export const dynamic = "force-dynamic";
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Nothing to offer while the site is closed to crawlers. See lib/launch.ts.
+  if (!sitePublic()) return [];
+
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE, changeFrequency: "weekly", priority: 1 },
     /*

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { sitePublic } from "@/lib/launch";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -18,6 +19,17 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
  * the crawl in the first place is the stronger statement.
  */
 export default function robots(): MetadataRoute.Robots {
+  /*
+   * Closed until SITE_PUBLIC is set. Not a lock — a link still works — but
+   * a search footprint built on placeholder experts and unreviewed legal
+   * pages is the part that is expensive to undo. No sitemap is offered
+   * while closed, because pointing a crawler at a map and then asking it
+   * not to read anything is a mixed message.
+   */
+  if (!sitePublic()) {
+    return { rules: { userAgent: "*", disallow: "/" } };
+  }
+
   return {
     rules: {
       userAgent: "*",

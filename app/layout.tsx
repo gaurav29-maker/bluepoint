@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { sitePublic } from "@/lib/launch";
 
 const TITLE = "Bluepoint — book a market expert to read your portfolio";
 const DESCRIPTION =
@@ -23,8 +24,14 @@ export const metadata: Metadata = {
     locale: "en_IN",
   },
   twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
-  // The consoles set their own robots directives; this is the public default.
-  robots: { index: true, follow: true },
+  /*
+   * The consoles set their own robots directives; this is the public
+   * default — and while the site is closed it is the second layer.
+   * robots.txt is a request to a crawler; noindex is the instruction to
+   * one that fetched the page anyway, and the two disagreeing is how a
+   * page ends up indexed despite the file saying otherwise.
+   */
+  robots: sitePublic() ? { index: true, follow: true } : { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

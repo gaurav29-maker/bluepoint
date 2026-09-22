@@ -21,6 +21,7 @@ import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
 import { openSlotsFor, openSlotsForMany } from "../lib/availability";
 import { runtimeConnection } from "../lib/db/connection";
 import { verifyBookingToken } from "../lib/tokens";
+import robotsRoute from "../app/robots";
 
 /**
  * Exercises the parts of the booking flow that need no Razorpay and no Resend.
@@ -62,6 +63,23 @@ function check(name: string, ok: boolean, detail = "") {
  * first instinct on seeing it is to distrust the test, which is exactly the
  * instinct that lets a real one through.
  */
+/**
+ * Was this rejection the database enforcing a unique index, or something
+ * else entirely?
+ *
+ * The application checks used a bare `catch`, so any error read as "the
+ * database refused it" — a dropped connection included. That turned a
+ * transient blip into "someone rejected earlier can apply again: FAIL",
+ * which points at a correctness index that was working fine. Same flaw as
+ * the one tamper() exists for: a test that cannot tell being refused for
+ * the right reason from something else going wrong.
+ *
+ * 23505 is unique_violation.
+ */
+function isUniqueViolation(err: unknown): boolean {
+  return typeof err === "object" && err !== null && (err as { code?: string }).code === "23505";
+}
+
 function tamper(hex: string): string {
   const last = hex.slice(-1);
   return hex.slice(0, -1) + (last === "0" ? "1" : "0");
@@ -1195,7 +1213,9 @@ async function main() {
   try {
     // Same address in a different case: the index is on lower(email).
     await db.insert(expertApplications).values({ ...row, email: applicant.email.toUpperCase() });
-  } catch {
+  } catch (err) {
+    // Only the index counts. Anything else is a broken run, not a pass.
+    if (!isUniqueViolation(err)) throw err;
     secondRefused = true;
   }
   check("a second open application from one address is refused", secondRefused);
@@ -1208,7 +1228,10 @@ async function main() {
   let reapplyAllowed = true;
   try {
     await db.insert(expertApplications).values(row);
-  } catch {
+  } catch (err) {
+    // A connection that dropped is not the index saying no. Crash instead
+    // of reporting a correctness failure that did not happen.
+    if (!isUniqueViolation(err)) throw err;
     reapplyAllowed = false;
   }
   check("someone rejected earlier can apply again", reapplyAllowed);
@@ -1532,6 +1555,55 @@ async function main() {
     "following Book again opens the booking with that expert selected",
     /class="member-expert is-active"/.test(rebookHtml),
     rebookSlug ? `${rebookSlug} is-active on load` : "no pass rebook link to follow",
+  );
+
+  /*
+   * ---- the site stays out of search until it is deliberately opened ----
+   *
+   * The production domain is public — Vercel's deployment protection covers
+   * preview deployments, not production. Reachable is fine; indexed is not,
+   * while the experts are seed data with unverified backgrounds and the
+   * legal pages still say they have not been reviewed by a lawyer.
+   *
+   * Both halves are checked, because they fail in opposite directions. A
+   * gate that cannot be opened is as broken as one that cannot be closed,
+   * and the closed state needs BOTH robots.txt and noindex: the file is a
+   * request to a crawler, the meta tag is the instruction to one that
+   * fetched the page regardless.
+   */
+  const savedFlag = process.env.SITE_PUBLIC;
+  try {
+    delete process.env.SITE_PUBLIC;
+    const closedRules = JSON.stringify(robotsRoute().rules);
+    process.env.SITE_PUBLIC = "1";
+    const openRules = JSON.stringify(robotsRoute().rules);
+    check(
+      "SITE_PUBLIC opens and closes the door to crawlers",
+      closedRules.includes('"disallow":"/"') && !closedRules.includes('"allow"') && openRules.includes('"allow":"/"'),
+      `closed -> ${closedRules}; open -> allows /`,
+    );
+  } finally {
+    if (savedFlag === undefined) delete process.env.SITE_PUBLIC;
+    else process.env.SITE_PUBLIC = savedFlag;
+  }
+
+  // And what the running server actually serves, which is the closed state.
+  const robotsTxt = await (await fetch(`${BASE}/robots.txt`)).text();
+  const sitemapXml = await (await fetch(`${BASE}/sitemap.xml`)).text();
+  const homeMeta = (await (await fetch(`${BASE}/`)).text()).match(
+    /<meta name="robots" content="([^"]*)"/,
+  );
+  const closedToCrawlers =
+    /Disallow:\s*\/\s*$/m.test(robotsTxt) &&
+    !/^Allow:/m.test(robotsTxt) &&
+    !robotsTxt.includes("Sitemap:") &&
+    !sitemapXml.includes("<loc>") &&
+    !!homeMeta &&
+    homeMeta[1].includes("noindex");
+  check(
+    "the site is closed to search engines, in the file and in the page",
+    closedToCrawlers,
+    `robots.txt disallows all, no sitemap offered, sitemap empty, home is "${homeMeta ? homeMeta[1] : "no robots meta"}"`,
   );
 
 
