@@ -1,3 +1,5 @@
+import Wordmark from "@/components/Wordmark";
+
 /*
  * A note on where these live.
  *
@@ -19,9 +21,7 @@ export default function LoadingReceipts() {
       <span className="sk-say">Loading your receipts…</span>
 
       <div className="os-bar">
-        <a href="/" className="logo os-mark">
-          Land<span>line</span> <em>os</em>
-        </a>
+        <Wordmark className="logo os-mark" href="/" sub="os" />
         <span className="os-nav">
           <a href="/member">Console</a>
           <a href="/member/profile">Your details</a>

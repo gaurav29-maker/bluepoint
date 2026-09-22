@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { signOutExpert } from "@/app/expert/actions";
+import Wordmark from "@/components/Wordmark";
 
 /**
  * The expert console's chrome. Three pages now share it, which is one more
@@ -8,9 +9,7 @@ import { signOutExpert } from "@/app/expert/actions";
 export default function ExpertBar({ current }: { current: "schedule" | "availability" | "profile" }) {
   return (
     <div className="os-bar">
-      <Link href="/expert" className="logo os-mark">
-        Land<span>line</span> <em>experts</em>
-      </Link>
+      <Wordmark className="logo os-mark" href="/expert" sub="experts" />
       <span className="os-nav">
         {current !== "schedule" ? <Link href="/expert">Schedule</Link> : null}
         {current !== "availability" ? <Link href="/expert/availability">Availability</Link> : null}

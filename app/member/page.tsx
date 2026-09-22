@@ -13,6 +13,7 @@ import { rethrowIfNavigation } from "@/lib/nav";
 import PassPurchase from "@/components/PassPurchase";
 import ManageBooking from "@/components/member/ManageBooking";
 import { signBookingToken } from "@/lib/tokens";
+import Wordmark from "@/components/Wordmark";
 
 export const metadata: Metadata = { title: "Your console — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -108,9 +109,7 @@ export default async function MemberConsole({
     rethrowIfNavigation(err);
     return (
       <div className="wrap bp-page">
-        <div className="logo bp-page-logo">
-          Land<span>line</span>
-        </div>
+        <Wordmark className="logo bp-page-logo" as="div" />
         <div className="bp-panel">
           <h1>Not available right now</h1>
           <p className="bp-muted">We could not reach your account. Please try again shortly.</p>
@@ -142,9 +141,7 @@ export default async function MemberConsole({
   return (
     <div className="wrap bp-page member">
       <div className="os-bar">
-        <a href="/" className="logo os-mark">
-          Land<span>line</span> <em>os</em>
-        </a>
+        <Wordmark className="logo os-mark" href="/" sub="os" />
         <span className="os-nav">
           <a href="/member/receipts">Receipts</a>
           <a href="/member/profile">Your details</a>

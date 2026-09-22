@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Wordmark from "@/components/Wordmark";
 import { CONTACT_EMAIL } from "@/lib/constants";
+import { BRAND_DESCRIPTOR } from "@/lib/brand";
 
 export default function SiteFooter({ onLanding = false }: { onLanding?: boolean }) {
   const to = (hash: string) => (onLanding ? hash : `/${hash}`);
@@ -16,16 +18,21 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
           line, nothing in between — and never a claim about outcomes.
         */}
         <div className="foot-brand">
-          <span className="mark">
-            Land<span>line</span>
-          </span>
+          {/*
+            The supplied lockup sets the descriptor under the logotype, and this
+            is the only place it appears. In the nav it would read as a claim
+            Landline makes about itself; the experts are the experts, and this
+            is where you reach them.
+          */}
+          <Wordmark className="mark" size="md" />
+          <p className="foot-desc">{BRAND_DESCRIPTOR}</p>
           <p>
             A direct line to a market professional. You pick the person and you pick the time,
             and they have read your portfolio before you speak. No forwarded screenshot, no
             broadcast channel, nobody in between.
           </p>
         </div>
-                <div className="foot-grid">
+        <div className="foot-grid">
           <div className="foot-col">
             <h2 className="foot-h">Navigate</h2>
             <Link href="/experts">Find an expert</Link>

@@ -9,6 +9,7 @@ import { MEMBER_COOKIE, verifySession } from "@/lib/member-auth";
 import { receiptForCustomer } from "@/lib/receipts";
 import { istDateTime, rupees } from "@/lib/format";
 import PrintButton from "@/components/member/PrintButton";
+import Wordmark from "@/components/Wordmark";
 
 export const metadata: Metadata = { title: "Receipt — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -53,9 +54,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
       <article className="receipt">
         <header className="receipt-head">
           <div>
-            <p className="logo receipt-logo">
-              Land<span>line</span>
-            </p>
+            <Wordmark className="logo receipt-logo" as="p" />
             <p className="receipt-issuer">
               <TODO>[registered entity name]</TODO>
               <br />

@@ -6,6 +6,7 @@ import { customers } from "@/lib/db/schema";
 import { mintLink } from "@/lib/member-auth";
 import { SIGN_IN_THROTTLE_SECONDS } from "@/lib/constants";
 import { memberSignInLink, sendRaw } from "@/lib/email";
+import Wordmark from "@/components/Wordmark";
 
 export const metadata: Metadata = { title: "Sign in — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -60,9 +61,7 @@ export default async function MemberLogin({
   return (
     <div className="ops-login">
       <form action={requestLink} className="ops-login-card">
-        <p className="logo os-mark">
-          Land<span>line</span> <em>os</em>
-        </p>
+        <Wordmark className="logo os-mark" as="p" sub="os" />
         <h1>Landline OS</h1>
         <p className="ops-login-sub">
           Enter the email your pass was bought with. We will send a link — no password.

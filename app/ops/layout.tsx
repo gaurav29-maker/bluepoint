@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { OPS_COOKIE, sessionValid } from "@/lib/ops-auth";
 import { signOut } from "./actions";
+import Wordmark from "@/components/Wordmark";
 
 export const metadata: Metadata = {
   title: "Ops — Landline",
@@ -21,9 +22,7 @@ export default async function OpsLayout({ children }: { children: React.ReactNod
     <div className="ops">
       <header className="ops-bar">
         <div className="ops-bar-inner">
-          <Link href="/ops" className="logo ops-logo">
-            Land<span>line</span> <em>ops</em>
-          </Link>
+          <Wordmark className="logo ops-logo" href="/ops" sub="ops" />
           <nav className="ops-nav">
             <Link href="/ops">Overview</Link>
             <Link href="/ops/bookings">Bookings</Link>

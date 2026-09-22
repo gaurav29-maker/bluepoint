@@ -9,6 +9,7 @@ import { MEMBER_COOKIE, verifySession } from "@/lib/member-auth";
 import { receiptsForCustomer } from "@/lib/receipts";
 import { istDateTime, rupees } from "@/lib/format";
 import { rethrowIfNavigation } from "@/lib/nav";
+import Wordmark from "@/components/Wordmark";
 
 export const metadata: Metadata = { title: "Receipts — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -39,9 +40,7 @@ export default async function Receipts() {
   return (
     <div className="wrap bp-page member">
       <div className="os-bar">
-        <Link href="/member" className="logo os-mark">
-          Land<span>line</span> <em>os</em>
-        </Link>
+        <Wordmark className="logo os-mark" href="/member" sub="os" />
         <span className="os-nav">
           <span className="bp-muted">{name}</span>
         </span>

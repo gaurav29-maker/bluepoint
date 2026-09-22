@@ -3121,8 +3121,11 @@
     max-width: 1140px; margin: 0 auto; padding: 0 24px; height: 56px;
     display: flex; align-items: center; justify-content: space-between; gap: 24px;
   }
-  .site .mark { font-family: var(--font-mark); font-size: 15px; font-weight: 700; letter-spacing: 0; color: var(--ink); text-decoration: none; }
+  .site .mark { font-family: var(--font-mark); font-size: 15px; font-weight: 800; letter-spacing: 0; color: var(--ink); text-decoration: none; }
   .site .mark span { color: var(--accent); }
+  /* Only rendered when TRADEMARK_REGISTERED is true. Styled regardless, so
+     the day that flips is not the day somebody discovers it is unstyled. */
+  .mark-r { font-size: 0.5em; font-weight: 400; vertical-align: super; margin-left: 1px; color: var(--ink-faint); }
   .site .nav-mid { display: flex; gap: 28px; }
   .site .nav-mid a { font-size: 14px; font-weight: 500; color: var(--ink-body); text-decoration: none; }
   .site .nav-mid a:hover { color: var(--ink); }
@@ -3378,6 +3381,8 @@
      it is the one thing in the footer that is not a link. */
   .site .foot-brand { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); }
   .site .foot-brand .mark { font-size: 17px; }
+  /* The descriptor from the supplied lockup: quiet, and set to the mark. */
+  .site .foot-desc { margin: 4px 0 0; font-size: 12px; letter-spacing: 0.02em; color: var(--ink-faint); }
   .site .foot-brand p { margin: 12px 0 0; max-width: 62ch; font-size: 13.5px; line-height: 21px; color: var(--ink-mute); }
 
   .site .foot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 32px; }

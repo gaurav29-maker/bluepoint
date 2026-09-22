@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { WORDMARK_PARTS } from "@/lib/brand";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { experts } from "@/lib/db/schema";
@@ -77,8 +78,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         }}
       >
         <div style={{ display: "flex", fontSize: 30, fontWeight: 800, letterSpacing: -1 }}>
-          <span style={{ color: "#F3F6F9" }}>Land</span>
-          <span style={{ color: "#8AA5F0" }}>line</span>
+          <span style={{ color: "#F3F6F9" }}>{WORDMARK_PARTS[0]}</span>
+          <span style={{ color: "#8AA5F0" }}>{WORDMARK_PARTS[1]}</span>
         </div>
 
         {expert ? (

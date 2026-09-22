@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { OPS_COOKIE, mintSession, passwordMatches } from "@/lib/ops-auth";
+import Wordmark from "@/components/Wordmark";
 
 export const metadata: Metadata = { title: "Ops — Landline", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -37,9 +38,7 @@ export default async function OpsLogin({
   return (
     <div className="ops-login">
       <form action={signIn} className="ops-login-card">
-        <p className="logo">
-          Land<span>line</span>
-        </p>
+        <Wordmark className="logo" as="p" />
         <h1>Ops console</h1>
         <p className="ops-login-sub">Bookings, payments and intake forms. Staff only.</p>
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Wordmark from "@/components/Wordmark";
 
 /**
  * The public shell, shared rather than copied.
@@ -14,9 +15,7 @@ export default function SiteNav({ onLanding = false }: { onLanding?: boolean }) 
   return (
     <nav className="nav">
       <div className="nav-in">
-        <Link href="/" className="mark">
-          Land<span>line</span>
-        </Link>
+        <Wordmark className="mark" href="/" />
         <div className="nav-mid">
           <Link href="/experts">Find an expert</Link>
           <a href={to("#audit")}>Audit my portfolio</a>

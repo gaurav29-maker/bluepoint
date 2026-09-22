@@ -1295,6 +1295,49 @@ async function main() {
   );
 
   /*
+   * ---- the brand mark ----
+   *
+   * The old name survived the rebrand inside both Open Graph cards. It was
+   * written as <span>blue</span><span>point</span>, so searching the repo
+   * for the string found nothing, and those cards kept shipping the wrong
+   * brand into every link pasted into WhatsApp. It went unnoticed for two
+   * weeks because nobody looks at a share card.
+   *
+   * The mark is now drawn by components/Wordmark.tsx and nowhere else. This
+   * is the guard on that: any file that spells the wordmark out in JSX again
+   * fails here, whether it is the current name or the next one.
+   */
+  const drawnByHand: string[] = [];
+  const markPattern = /<span[^>]*>\s*[A-Za-z]{3,}\s*<\/span>\s*<span[^>]*>\s*[A-Za-z]{3,}\s*<\/span>/;
+  const sourceFiles: string[] = [];
+  const walkAll = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walkAll(full);
+      else if (entry.name.endsWith(".tsx")) sourceFiles.push(full);
+    }
+  };
+  walkAll("app");
+  walkAll("components");
+
+  for (const file of sourceFiles) {
+    // The component itself is where it is allowed to be spelled out.
+    if (file.endsWith(path.join("components", "Wordmark.tsx"))) continue;
+    const body = fs.readFileSync(file, "utf8");
+    // Either half of the name written as literal JSX text.
+    if (/>\s*[Ll]and<span>/.test(body) || markPattern.test(body)) {
+      drawnByHand.push(path.relative(".", file));
+    }
+  }
+  check(
+    "the wordmark is drawn in exactly one place",
+    drawnByHand.length === 0,
+    drawnByHand.length > 0
+      ? `spelled out by hand in ${drawnByHand.join(", ")}`
+      : `${sourceFiles.length} files scanned, all go through Wordmark`,
+  );
+
+  /*
    * ---- the batched availability read agrees with the single one ----
    *
    * /experts was issuing three queries per expert to show the next open

@@ -1,3 +1,5 @@
+import Wordmark from "@/components/Wordmark";
+
 /**
  * The expert console loads the expert, their upcoming sessions, the ones
  * still waiting to be closed out, and the ones already done.
@@ -12,9 +14,7 @@ export default function LoadingExpertConsole() {
       <span className="sk-say">Loading your console…</span>
 
       <div className="os-bar">
-        <a href="/" className="logo os-mark">
-          Land<span>line</span> <em>expert</em>
-        </a>
+        <Wordmark className="logo os-mark" href="/" sub="expert" />
         <span className="os-nav">
           <a href="/expert/availability">Hours</a>
           <a href="/expert/profile">Profile</a>

@@ -1,3 +1,5 @@
+import Wordmark from "@/components/Wordmark";
+
 /* See app/member/receipts/loading.tsx for why there is none at app/member. */
 export default function LoadingProfile() {
   return (
@@ -5,9 +7,7 @@ export default function LoadingProfile() {
       <span className="sk-say">Loading your details…</span>
 
       <div className="os-bar">
-        <a href="/" className="logo os-mark">
-          Land<span>line</span> <em>os</em>
-        </a>
+        <Wordmark className="logo os-mark" href="/" sub="os" />
         <span className="os-nav">
           <a href="/member">Console</a>
           <a href="/member/receipts">Receipts</a>
