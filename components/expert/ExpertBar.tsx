@@ -9,7 +9,7 @@ export default function ExpertBar({ current }: { current: "schedule" | "availabi
   return (
     <div className="os-bar">
       <Link href="/expert" className="logo os-mark">
-        blue<span>point</span> <em>experts</em>
+        Land<span>line</span> <em>experts</em>
       </Link>
       <span className="os-nav">
         {current !== "schedule" ? <Link href="/expert">Schedule</Link> : null}

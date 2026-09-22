@@ -11,7 +11,7 @@ import { rupees } from "@/lib/format";
 import ExpertBar from "@/components/expert/ExpertBar";
 import { setOwnPaused, updateExpertProfile } from "../actions";
 
-export const metadata: Metadata = { title: "Your profile — Bluepoint", robots: { index: false } };
+export const metadata: Metadata = { title: "Your profile — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 export default async function ExpertProfilePage() {

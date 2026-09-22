@@ -31,7 +31,7 @@ export default function GlobalError({
       {/* Replacing the document loses the root layout metadata with it, so
           without this the browser tab reads as the bare host name. */}
       <head>
-        <title>Bluepoint</title>
+        <title>Landline</title>
       </head>
       <body
         style={{
@@ -59,7 +59,7 @@ export default function GlobalError({
               fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
             }}
           >
-            Bluepoint
+            Landline
           </p>
 
           <h1
@@ -72,7 +72,7 @@ export default function GlobalError({
               letterSpacing: "-0.01em",
             }}
           >
-            Bluepoint didn&rsquo;t load.
+            Landline didn&rsquo;t load.
           </h1>
 
           <p style={{ margin: "0 0 20px" }}>
@@ -87,7 +87,7 @@ export default function GlobalError({
           */}
           <p style={{ margin: "0 0 24px" }}>
             If you were paying, the payment either completed or it did not — this page cannot
-            change that either way, and a completed one is in Bluepoint OS with its receipt.
+            change that either way, and a completed one is in Landline OS with its receipt.
           </p>
 
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
@@ -119,14 +119,14 @@ export default function GlobalError({
                 textDecoration: "none",
               }}
             >
-              Back to Bluepoint
+              Back to Landline
             </a>
           </div>
 
           <p style={{ margin: "26px 0 0", fontSize: "13.5px", color: "#5C5E62" }}>
             Telling us helps:{" "}
-            <a href="mailto:hello@bluepoint.in" style={{ color: "#3159C9" }}>
-              hello@bluepoint.in
+            <a href="mailto:hello@landline.in" style={{ color: "#3159C9" }}>
+              hello@landline.in
             </a>
             {error.digest ? (
               <>

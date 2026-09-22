@@ -13,7 +13,7 @@ import SiteFooter from "@/components/SiteFooter";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Find an expert — Bluepoint",
+  title: "Find an expert — Landline",
   description:
     "Every expert shows what they focus on, how long they have done it, where they have worked, and their SEBI registration or its absence.",
 };
@@ -185,7 +185,7 @@ export default async function FindAnExpert({
           */}
           <p className="find-foot">
             Looking for something not listed here? Email{" "}
-            <a href="mailto:hello@bluepoint.in">hello@bluepoint.in</a> and tell us what you need —
+            <a href="mailto:hello@landline.in">hello@landline.in</a> and tell us what you need —
             it tells us who to bring on next.
           </p>
         </div>

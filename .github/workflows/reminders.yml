@@ -2,7 +2,7 @@
 # cron more than once a day. GitHub Actions does it for free.
 #
 # Needs two repository secrets (Settings > Secrets and variables > Actions):
-#   SITE_URL     e.g. https://bluepoint.vercel.app  (no trailing slash)
+#   SITE_URL     e.g. https://landline.vercel.app  (no trailing slash)
 #   CRON_SECRET  the same value as the CRON_SECRET env var on Vercel
 #
 # Move this back into vercel.json if the project ever goes to a Pro plan.

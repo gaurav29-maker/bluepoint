@@ -10,7 +10,7 @@ import { receiptForCustomer } from "@/lib/receipts";
 import { istDateTime, rupees } from "@/lib/format";
 import PrintButton from "@/components/member/PrintButton";
 
-export const metadata: Metadata = { title: "Receipt — Bluepoint", robots: { index: false } };
+export const metadata: Metadata = { title: "Receipt — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 const TODO = ({ children }: { children: React.ReactNode }) => (
@@ -54,7 +54,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
         <header className="receipt-head">
           <div>
             <p className="logo receipt-logo">
-              blue<span>point</span>
+              Land<span>line</span>
             </p>
             <p className="receipt-issuer">
               <TODO>[registered entity name]</TODO>
@@ -121,7 +121,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
           <p>
             <code>{receipt.razorpayPaymentId ?? receipt.razorpayOrderId}</code>
             <br />
-            Paid through Razorpay. Bluepoint does not see or store your card, UPI or netbanking
+            Paid through Razorpay. Landline does not see or store your card, UPI or netbanking
             details.
           </p>
         </section>
@@ -129,7 +129,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
         <footer className="receipt-foot">
           <p>
             <b>This is a payment receipt, not a tax invoice.</b> A GST invoice requires a GSTIN,
-            place of supply and a sequential invoice number, none of which apply yet. When Bluepoint
+            place of supply and a sequential invoice number, none of which apply yet. When Landline
             is registered, invoices will be issued separately and this receipt does not replace one.
           </p>
         </footer>

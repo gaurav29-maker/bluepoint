@@ -6,7 +6,7 @@ export default function LoadingProfile() {
 
       <div className="os-bar">
         <a href="/" className="logo os-mark">
-          blue<span>point</span> <em>os</em>
+          Land<span>line</span> <em>os</em>
         </a>
         <span className="os-nav">
           <a href="/member">Console</a>

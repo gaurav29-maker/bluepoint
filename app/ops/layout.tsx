@@ -5,7 +5,7 @@ import { OPS_COOKIE, sessionValid } from "@/lib/ops-auth";
 import { signOut } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Ops — Bluepoint",
+  title: "Ops — Landline",
   robots: { index: false, follow: false },
 };
 
@@ -22,7 +22,7 @@ export default async function OpsLayout({ children }: { children: React.ReactNod
       <header className="ops-bar">
         <div className="ops-bar-inner">
           <Link href="/ops" className="logo ops-logo">
-            blue<span>point</span> <em>ops</em>
+            Land<span>line</span> <em>ops</em>
           </Link>
           <nav className="ops-nav">
             <Link href="/ops">Overview</Link>

@@ -7,7 +7,7 @@ import { mintLink } from "@/lib/member-auth";
 import { SIGN_IN_THROTTLE_SECONDS } from "@/lib/constants";
 import { memberSignInLink, sendRaw } from "@/lib/email";
 
-export const metadata: Metadata = { title: "Sign in — Bluepoint", robots: { index: false } };
+export const metadata: Metadata = { title: "Sign in — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 export default async function MemberLogin({
@@ -30,7 +30,7 @@ export default async function MemberLogin({
           .limit(1);
 
         // One link per minute per address. Without this, anyone who knows a
-        // member's email can have Bluepoint mail them on demand, forever.
+        // member's email can have Landline mail them on demand, forever.
         const recent =
           customer?.lastLinkSentAt &&
           Date.now() - customer.lastLinkSentAt.getTime() < SIGN_IN_THROTTLE_SECONDS * 1000;
@@ -61,16 +61,16 @@ export default async function MemberLogin({
     <div className="ops-login">
       <form action={requestLink} className="ops-login-card">
         <p className="logo os-mark">
-          blue<span>point</span> <em>os</em>
+          Land<span>line</span> <em>os</em>
         </p>
-        <h1>Bluepoint OS</h1>
+        <h1>Landline OS</h1>
         <p className="ops-login-sub">
           Enter the email your pass was bought with. We will send a link — no password.
         </p>
 
         {sent ? (
           <p className="bp-chosen" style={{ display: "block" }}>
-            If that address has a Bluepoint pass, a sign-in link is on its way. It expires in 30
+            If that address has a Landline pass, a sign-in link is on its way. It expires in 30
             minutes.
           </p>
         ) : null}

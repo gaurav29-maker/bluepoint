@@ -140,7 +140,7 @@ export default function BookingPage({ params }: { params: Promise<{ id: string }
           */}
           <p className="muted spaced">
             Everything you book lives in{" "}
-            <a href="/member/login">Bluepoint OS</a> — sign in with the address you booked with.
+            <a href="/member/login">Landline OS</a> — sign in with the address you booked with.
           </p>
 
           {data.expertNote ? (

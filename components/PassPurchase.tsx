@@ -80,7 +80,7 @@ export default function PassPurchase({
         order_id: order.orderId,
         amount: order.amountPaise,
         currency: "INR",
-        name: "Bluepoint",
+        name: "Landline",
         description: order.description,
         prefill: order.prefill,
         theme: { color: "#3E6AE1" },

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Bluepoint",
-  description: "What Bluepoint collects, who sees it, and when it is deleted.",
+  title: "Privacy Policy — Landline",
+  description: "What Landline collects, who sees it, and when it is deleted.",
 };
 
 const TODO = ({ children }: { children: React.ReactNode }) => (
@@ -19,7 +19,7 @@ export default function Privacy() {
         <b>This draft has not been reviewed by a lawyer.</b>
         It is an accurate description of what the software actually collects and deletes, written
         against the Digital Personal Data Protection Act, 2023. It still needs review, and every
-        bracketed item needs a real answer, before Bluepoint accepts real money.
+        bracketed item needs a real answer, before Landline accepts real money.
       </div>
 
       <h2>The short version</h2>
@@ -63,7 +63,7 @@ export default function Privacy() {
       <h2>3. What we never collect</h2>
       <p>
         <strong>Demat, broker or trading account credentials.</strong> There is no field for one
-        anywhere in the product or in our database. Nobody at Bluepoint will ever ask you for one.
+        anywhere in the product or in our database. Nobody at Landline will ever ask you for one.
       </p>
 
       <h2>4. Who sees your data</h2>
@@ -125,7 +125,7 @@ export default function Privacy() {
 
       <h2>8. Cookies and tracking</h2>
       <p>
-        Bluepoint currently runs <strong>no analytics and no advertising trackers</strong>. The site
+        Landline currently runs <strong>no analytics and no advertising trackers</strong>. The site
         stores nothing in your browser beyond what a page needs to work. If that changes, this
         section changes with it, and we will ask for consent where consent is required.
       </p>
@@ -139,7 +139,7 @@ export default function Privacy() {
       </p>
 
       <h2>10. Children</h2>
-      <p>Bluepoint is not for anyone under 18, and we do not knowingly collect their data.</p>
+      <p>Landline is not for anyone under 18, and we do not knowingly collect their data.</p>
 
       <h2>11. Changes</h2>
       <p>

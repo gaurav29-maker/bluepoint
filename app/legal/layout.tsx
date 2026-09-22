@@ -23,7 +23,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
             <Link href="/legal/terms">Terms &amp; Conditions</Link>
             <Link href="/legal/privacy">Privacy Policy</Link>
             <Link href="/legal/refunds">Refund Policy</Link>
-            <Link href="/">Back to Bluepoint</Link>
+            <Link href="/">Back to Landline</Link>
           </nav>
         </div>
       </div>

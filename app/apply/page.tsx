@@ -7,7 +7,7 @@ import { SINGLE_CALL_PAISE } from "@/lib/constants";
 import { SLOT_MINUTES } from "@/lib/slots";
 
 export const metadata: Metadata = {
-  title: "Take calls on Bluepoint",
+  title: "Take calls on Landline",
   description:
     "Be useful and paid, without taking on a client, a mandate or a compliance burden. Set your own rate and your own hours.",
 };
@@ -66,7 +66,7 @@ export default function Apply() {
                 that is a fair reason to say no.
               </li>
               <li>
-                <b>No tips, no targets, no personalised advice.</b> Bluepoint sessions are a review
+                <b>No tips, no targets, no personalised advice.</b> Landline sessions are a review
                 and a discussion. That is what customers are told, and it is what the terms commit
                 us to.
               </li>

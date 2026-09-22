@@ -26,7 +26,7 @@ const PORT = Number(process.env.LOCAL_DB_PORT ?? 5432);
  * OneDrive, whose syncing has already corrupted .next twice; a database
  * directory being synced mid-write is a worse version of the same problem.
  */
-const DIR = process.env.LOCAL_DB_DIR ?? path.join(os.tmpdir(), "bluepoint-pglite");
+const DIR = process.env.LOCAL_DB_DIR ?? path.join(os.tmpdir(), "landline-pglite");
 
 async function main() {
   fs.mkdirSync(DIR, { recursive: true });

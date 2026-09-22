@@ -38,7 +38,7 @@ export async function sendOnce(
 
   try {
     await resend().emails.send({
-      from: process.env.EMAIL_FROM ?? "Bluepoint <onboarding@resend.dev>",
+      from: process.env.EMAIL_FROM ?? "Landline <onboarding@resend.dev>",
       replyTo: process.env.EMAIL_REPLY_TO,
       to: message.to,
       subject: message.subject,
@@ -63,7 +63,7 @@ export async function sendOnce(
  */
 export async function sendRaw(message: { to: string; subject: string; html: string }) {
   await resend().emails.send({
-    from: process.env.EMAIL_FROM ?? "Bluepoint <onboarding@resend.dev>",
+    from: process.env.EMAIL_FROM ?? "Landline <onboarding@resend.dev>",
     replyTo: process.env.EMAIL_REPLY_TO,
     to: message.to,
     subject: message.subject,
@@ -74,7 +74,7 @@ export async function sendRaw(message: { to: string; subject: string; html: stri
 const DISCLAIMER = `
   <p style="color:#6B6B6B;font-size:12px;line-height:1.6;margin-top:28px;
             border-top:1px solid #E4E8EF;padding-top:16px">
-    Bluepoint sessions are a review and discussion of your existing portfolio and
+    Landline sessions are a review and discussion of your existing portfolio and
     approach. They are not a recommendation to buy or sell any security, and are
     not personalised investment advice. You remain responsible for your own
     decisions. Never share your demat or broker login with anyone, including us.
@@ -97,7 +97,7 @@ export function customerConfirmation(args: {
   meetingUrl: string | null;
 }) {
   return {
-    subject: `Your Bluepoint call with ${args.expertName} is confirmed`,
+    subject: `Your Landline call with ${args.expertName} is confirmed`,
     html: shell(`
       <h2 style="font-size:20px;margin:0 0 16px">You're booked in.</h2>
       <p>Hi ${args.customerName}, your session with
@@ -138,7 +138,7 @@ export function expertNotification(args: {
 
 export function intakeNudge(args: { customerName: string; startsAt: Date; bookingId: string }) {
   return {
-    subject: "Two minutes before your Bluepoint call tomorrow",
+    subject: "Two minutes before your Landline call tomorrow",
     html: shell(`
       <p>Hi ${args.customerName}, your call is at
          <strong>${istDateTime(args.startsAt)} IST</strong> and the intake form is
@@ -197,9 +197,9 @@ export function bundleSlotLost(args: {
 
 export function memberSignInLink(args: { customerName: string; url: string }) {
   return {
-    subject: "Your Bluepoint sign-in link",
+    subject: "Your Landline sign-in link",
     html: shell(`
-      <p>Hi ${args.customerName}, here is your link into the Bluepoint console.
+      <p>Hi ${args.customerName}, here is your link into the Landline console.
          It works once and expires in 30 minutes.</p>
       <p><a href="${args.url}"
             style="display:inline-block;background:#3E6AE1;color:#FFFFFF;padding:11px 20px;
@@ -211,9 +211,9 @@ export function memberSignInLink(args: { customerName: string; url: string }) {
 
 export function emailChangeConfirm(args: { customerName: string; url: string }) {
   return {
-    subject: "Confirm your new Bluepoint email",
+    subject: "Confirm your new Landline email",
     html: shell(`
-      <p>Hi ${args.customerName}, someone asked to use this address for a Bluepoint
+      <p>Hi ${args.customerName}, someone asked to use this address for a Landline
          account. Confirm it and it becomes the address you sign in with.</p>
       <p><a href="${args.url}"
             style="display:inline-block;background:#3E6AE1;color:#FFFFFF;padding:11px 20px;
@@ -225,9 +225,9 @@ export function emailChangeConfirm(args: { customerName: string; url: string }) 
 
 export function expertSignInLink(args: { expertName: string; url: string }) {
   return {
-    subject: "Your Bluepoint sign-in link",
+    subject: "Your Landline sign-in link",
     html: shell(`
-      <p>Hi ${args.expertName}, here is your link into your Bluepoint schedule.
+      <p>Hi ${args.expertName}, here is your link into your Landline schedule.
          It works once and expires in 30 minutes.</p>
       <p><a href="${args.url}"
             style="display:inline-block;background:#3E6AE1;color:#FFFFFF;padding:11px 20px;

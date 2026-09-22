@@ -1,12 +1,12 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-export const alt = "Bluepoint — book a call with a market expert";
+export const alt = "Landline — book a call with a market expert";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /**
- * The card people actually see when a Bluepoint link is pasted into WhatsApp.
+ * The card people actually see when a Landline link is pasted into WhatsApp.
  *
  * Generated rather than a checked-in PNG so it cannot drift from the site's
  * own colours, and so the wording stays in one place. Deliberately plain: it

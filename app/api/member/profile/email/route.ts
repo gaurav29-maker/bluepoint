@@ -46,8 +46,8 @@ export async function GET(req: NextRequest) {
   try {
     await sendRaw({
       to: previous,
-      subject: "Your Bluepoint email address was changed",
-      html: `<p>Hi ${me.name}, the email on your Bluepoint account was changed from
+      subject: "Your Landline email address was changed",
+      html: `<p>Hi ${me.name}, the email on your Landline account was changed from
              <strong>${previous}</strong> to <strong>${claim.email}</strong>.</p>
              <p>If that was not you, reply to this message immediately.</p>`,
     });

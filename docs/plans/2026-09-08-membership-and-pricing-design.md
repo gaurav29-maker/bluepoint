@@ -8,7 +8,7 @@
 ## The idea in one line
 
 Single calls sell fine with no account at all. A membership is what earns a
-login — so **the console is not a feature of Bluepoint, it is the shape a
+login — so **the console is not a feature of Landline, it is the shape a
 membership takes.** Someone who buys one call never sees it.
 
 ## The ladder

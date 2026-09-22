@@ -9,7 +9,7 @@ import { rethrowIfNavigation } from "@/lib/nav";
 import { addAvailability, removeAvailability } from "../actions";
 import ExpertBar from "@/components/expert/ExpertBar";
 
-export const metadata: Metadata = { title: "Availability — Bluepoint", robots: { index: false } };
+export const metadata: Metadata = { title: "Availability — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

@@ -450,7 +450,7 @@ export default async function Home() {
               <summary>Do I need to share my demat login?</summary>
               <p>
                 No. You share a summary of your holdings before the call — never login credentials.
-                There is no field anywhere on Bluepoint that accepts one.
+                There is no field anywhere on Landline that accepts one.
               </p>
             </details>
             <details>
@@ -532,7 +532,7 @@ export default async function Home() {
             nothing to sell.
           </p>
           <Link className="b b-line" href="/apply">
-            Take calls on Bluepoint
+            Take calls on Landline
           </Link>
         </div>
       </section>

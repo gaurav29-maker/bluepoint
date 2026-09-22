@@ -5,7 +5,7 @@ import { experts } from "@/lib/db/schema";
 import { SLOT_MINUTES } from "@/lib/slots";
 
 export const runtime = "nodejs";
-export const alt = "Bluepoint expert";
+export const alt = "Landline expert";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

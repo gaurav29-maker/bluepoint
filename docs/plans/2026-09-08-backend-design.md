@@ -1,9 +1,9 @@
-# Bluepoint backend — design
+# Landline backend — design
 
 **Date:** 8 September 2026
 **Status:** agreed, phase 1 in build
 
-## What Bluepoint is
+## What Landline is
 
 An expert-call marketplace for Indian retail traders. A customer picks a
 vetted expert, books a 45-minute slot, pays, and fills a short portfolio
@@ -11,7 +11,7 @@ intake form before the call. Two products today — portfolio audits and
 F&O systematic-trading sessions — priced ₹1,500–₹2,200 per call, with a
 three-call bundle at ₹3,600 and an ongoing monthly F&O tier.
 
-Bluepoint is a separate project from Ojanics. Nothing is shared between
+Landline is a separate project from Ojanics. Nothing is shared between
 them except the Vercel account.
 
 ## Shape of the work

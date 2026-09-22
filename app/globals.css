@@ -1,4 +1,18 @@
+  /*
+   * The wordmark's face, on its own so the brand can change typeface
+   * without touching the fourteen places that draw it.
+   *
+   * Korataki (the "Korakati" asked for) is a Larabie display face and is
+   * licensed for personal use only in every free distribution of it — not
+   * something to ship on a business taking payments. Until a commercial
+   * licence exists, or another face is chosen, this resolves to the body
+   * font and the wordmark looks exactly as it did.
+   *
+   * To switch: add the @font-face block, put the file in public/fonts/,
+   * and put its family name first in this list. Nothing else changes.
+   */
   :root {
+    --font-mark: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
     --white: #FFFFFF;
     --canvas: #FFFFFF;
     --surface: #F4F4F4;
@@ -55,7 +69,7 @@
     align-items: center;
     justify-content: space-between;
   }
-  .logo { font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
+  .logo { font-family: var(--font-mark); font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
   .logo span { color: var(--blue); }
   .nav-links {
     display: flex;
@@ -1366,7 +1380,7 @@
 
   /* ---------- vetted badge ---------- */
   /*
-     Bluepoint's own mark: a plain disc and tick. Deliberately NOT the
+     Landline's own mark: a plain disc and tick. Deliberately NOT the
      scalloped badge X uses — the colour is a reference, the shape is not.
   */
   .site-dark .vetted {
@@ -1769,7 +1783,7 @@
      field labels in wide uppercase, and the marquee read as a data strip.
 
      What is deliberately NOT taken: the green/red. On a terminal those carry
-     direction on live data. Bluepoint has no market data, so coloured deltas
+     direction on live data. Landline has no market data, so coloured deltas
      here would be decoration imitating information.
   */
 
@@ -1912,7 +1926,7 @@
   }
   .site-dark .footer-apply:hover { border-color: var(--blue); color: var(--blue-deep); }
 
-  /* ================= BLUEPOINT OS =================
+  /* ================= LANDLINE OS =================
      The member area, styled as a console rather than a page. It inherits the
      dark palette and terminal typography from .site-dark; everything here is
      the console-specific furniture.
@@ -2529,7 +2543,7 @@
 
   /*
      The nav pills wrapped their own labels to three lines under ~430px: the
-     nav-links are hidden by then, but the logo, "Bluepoint OS" and the CTA
+     nav-links are hidden by then, but the logo, "Landline OS" and the CTA
      still compete for the row. Pre-existing on the home page and now shared
      by every public page, so it is fixed in the one place rather than
      tolerated on more of them.
@@ -2883,7 +2897,7 @@
 
      What is taken is the restraint and the button shape. What is not is
      the layout, because Tesla's page is four fifths product photography
-     and Bluepoint sells a conversation — the honest equivalent of their
+     and Landline sells a conversation — the honest equivalent of their
      hero image is empty space, not a stock photo of somebody at a screen.
   */
 
@@ -2932,7 +2946,7 @@
   }
 
   /* ================================================================
-     THE SITE — Bluepoint in the design language measured off tesla.com
+     THE SITE — Landline in the design language measured off tesla.com
 
      Deliberately scoped to a NEW wrapper class rather than layered on
      top of `.site-dark`. Overriding 233 existing rules would have been
@@ -3046,7 +3060,7 @@
     max-width: 1140px; margin: 0 auto; padding: 0 24px; height: 56px;
     display: flex; align-items: center; justify-content: space-between; gap: 24px;
   }
-  .site .mark { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
+  .site .mark { font-family: var(--font-mark); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
   .site .mark span { color: var(--accent); }
   .site .nav-mid { display: flex; gap: 28px; }
   .site .nav-mid a { font-size: 14px; font-weight: 500; color: var(--ink-body); text-decoration: none; }

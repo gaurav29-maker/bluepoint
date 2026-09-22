@@ -506,7 +506,7 @@ async function main() {
    *
    * It is the product's whole premise: the expert arrives having already read
    * what you hold. It is also the only place a customer types their portfolio
-   * into Bluepoint, and it is guarded by a signed link rather than a login,
+   * into Landline, and it is guarded by a signed link rather than a login,
    * so the boundary deserves testing rather than reading.
    */
   const [intakeBooking] = await db

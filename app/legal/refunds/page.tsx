@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Refund Policy — Bluepoint",
-  description: "When Bluepoint refunds a session, and how long it takes.",
+  title: "Refund Policy — Landline",
+  description: "When Landline refunds a session, and how long it takes.",
 };
 
 const TODO = ({ children }: { children: React.ReactNode }) => (
@@ -18,7 +18,7 @@ export default function Refunds() {
       <div className="draft">
         <b>This draft has not been reviewed by a lawyer.</b>
         Every rule below matches what the software actually does today. It still needs review, and
-        the bracketed items need real answers, before Bluepoint accepts real money.
+        the bracketed items need real answers, before Landline accepts real money.
       </div>
 
       <h2>The short version</h2>

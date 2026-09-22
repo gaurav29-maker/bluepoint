@@ -52,7 +52,7 @@ export default function ErrorPage({
                 Try again
               </button>
               <Link className="b b-line" href="/">
-                Back to Bluepoint
+                Back to Landline
               </Link>
             </div>
           </section>
@@ -62,7 +62,7 @@ export default function ErrorPage({
             <p>
               A payment either completed or it did not; this page cannot change that either way. A
               completed one appears in{" "}
-              <Link href="/member/login">Bluepoint OS</Link> with its receipt, and the session is
+              <Link href="/member/login">Landline OS</Link> with its receipt, and the session is
               held for you there. Nothing is charged twice by reloading.
             </p>
           </section>

@@ -15,7 +15,7 @@ import {
   setMeetingLink,
 } from "./actions";
 
-export const metadata: Metadata = { title: "Your schedule — Bluepoint", robots: { index: false } };
+export const metadata: Metadata = { title: "Your schedule — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 type Intake = {
@@ -84,7 +84,7 @@ export default async function ExpertSchedule() {
    * framed here, at the point of writing, as an account of what was
    * DISCUSSED — because an expert typing "cut IT to 30%" would be putting a
    * written personalised recommendation into a customer's record, which is
-   * the one thing the terms promise Bluepoint does not do.
+   * the one thing the terms promise Landline does not do.
    */
   const noteForm = (r: (typeof upcoming)[number]) => (
     <form action={saveSessionNote} className="xp-note-form">

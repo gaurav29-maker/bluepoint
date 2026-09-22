@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { OPS_COOKIE, mintSession, passwordMatches } from "@/lib/ops-auth";
 
-export const metadata: Metadata = { title: "Ops — Bluepoint", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "Ops — Landline", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 export default async function OpsLogin({
@@ -38,7 +38,7 @@ export default async function OpsLogin({
     <div className="ops-login">
       <form action={signIn} className="ops-login-card">
         <p className="logo">
-          blue<span>point</span>
+          Land<span>line</span>
         </p>
         <h1>Ops console</h1>
         <p className="ops-login-sub">Bookings, payments and intake forms. Staff only.</p>

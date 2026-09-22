@@ -239,7 +239,7 @@ export const bookings = pgTable(
      * DISCUSSED, never what was recommended. "Discussed the concentration in
      * IT and how it got there" is an account of a conversation; "advised
      * cutting IT to 30%" is a written personalised recommendation sitting on
-     * Bluepoint's servers and delivered to the customer, which is the exact
+     * Landline's servers and delivered to the customer, which is the exact
      * thing the terms say we do not do. The expert console says so at the
      * point of writing, and the customer's view frames it the same way.
      *

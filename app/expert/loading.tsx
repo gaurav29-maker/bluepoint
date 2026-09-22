@@ -13,7 +13,7 @@ export default function LoadingExpertConsole() {
 
       <div className="os-bar">
         <a href="/" className="logo os-mark">
-          blue<span>point</span> <em>expert</em>
+          Land<span>line</span> <em>expert</em>
         </a>
         <span className="os-nav">
           <a href="/expert/availability">Hours</a>

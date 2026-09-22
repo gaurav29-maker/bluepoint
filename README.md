@@ -1,4 +1,4 @@
-# Bluepoint
+# Landline
 
 An expert-call marketplace for Indian retail traders. Customers book a
 45-minute portfolio audit or F&O session, pay through Razorpay, and fill a
@@ -245,7 +245,7 @@ weights (400 and 500), letter-spacing left at normal, a 4px control radius, a
 56px nav, one elevation, and text that never sits at pure black.
 
 What could not be carried over is the layout. Four fifths of that site is
-product photography and every panel is carried by a car; Bluepoint sells
+product photography and every panel is carried by a car; Landline sells
 forty-five minutes of somebody's attention and has nothing to photograph. Each
 band is carried instead by a piece of the product — the hero holds a real
 availability read, computed through the same helper the booking dialog uses,

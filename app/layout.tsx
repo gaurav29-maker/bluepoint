@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { sitePublic } from "@/lib/launch";
 
-const TITLE = "Bluepoint — book a market expert to read your portfolio";
+const TITLE = "Landline — book a market expert to read your portfolio";
 const DESCRIPTION =
   "Book an experienced market professional directly. They read your portfolio before you meet, and tell you what they actually see in it.";
 
@@ -15,10 +15,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: TITLE,
   description: DESCRIPTION,
-  applicationName: "Bluepoint",
+  applicationName: "Landline",
   openGraph: {
     type: "website",
-    siteName: "Bluepoint",
+    siteName: "Landline",
     title: TITLE,
     description: DESCRIPTION,
     locale: "en_IN",

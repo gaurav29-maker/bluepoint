@@ -7,7 +7,7 @@ import { CONTACT_EMAIL } from "@/lib/constants";
 export const metadata: Metadata = {
   // Next emits its own <meta name="robots" content="noindex"> on a 404;
   // repeating it here just produced two tags saying the same thing.
-  title: "Page not found — Bluepoint",
+  title: "Page not found — Landline",
 };
 
 /**
@@ -43,13 +43,13 @@ export default function NotFound() {
               </li>
               <li>
                 <b>
-                  <Link href="/member/login">Bluepoint OS</Link>
+                  <Link href="/member/login">Landline OS</Link>
                 </b>{" "}— your sessions, passes and receipts. If you followed a booking link
                 from an email and landed here, the booking itself is in there.
               </li>
               <li>
                 <b>
-                  <Link href="/apply">Take calls on Bluepoint</Link>
+                  <Link href="/apply">Take calls on Landline</Link>
                 </b>{" "}— if you are the one with the experience.
               </li>
             </ul>

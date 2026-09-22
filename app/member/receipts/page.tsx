@@ -10,7 +10,7 @@ import { receiptsForCustomer } from "@/lib/receipts";
 import { istDateTime, rupees } from "@/lib/format";
 import { rethrowIfNavigation } from "@/lib/nav";
 
-export const metadata: Metadata = { title: "Receipts — Bluepoint", robots: { index: false } };
+export const metadata: Metadata = { title: "Receipts — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 export default async function Receipts() {
@@ -40,7 +40,7 @@ export default async function Receipts() {
     <div className="wrap bp-page member">
       <div className="os-bar">
         <Link href="/member" className="logo os-mark">
-          blue<span>point</span> <em>os</em>
+          Land<span>line</span> <em>os</em>
         </Link>
         <span className="os-nav">
           <span className="bp-muted">{name}</span>

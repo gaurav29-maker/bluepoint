@@ -42,13 +42,13 @@ export async function generateMetadata({
   const { slug } = await params;
   try {
     const expert = await loadExpert(slug);
-    if (!expert) return { title: "Expert not found — Bluepoint" };
+    if (!expert) return { title: "Expert not found — Landline" };
     return {
-      title: `${expert.displayName} — Bluepoint`,
+      title: `${expert.displayName} — Landline`,
       description: expert.bio || expert.headline,
     };
   } catch {
-    return { title: "Bluepoint" };
+    return { title: "Landline" };
   }
 }
 
@@ -194,7 +194,7 @@ export default async function ExpertProfile({ params }: { params: Promise<{ slug
             {registered
               ? "Registration is shown so you know who you are speaking to. It does not change what a session is."
               : "This expert holds no SEBI registration as an investment adviser or research analyst. It is stated here rather than left out."}{" "}
-            Every Bluepoint session is a review and a discussion of what you already hold — never
+            Every Landline session is a review and a discussion of what you already hold — never
             personalised investment advice, and never a recommendation to buy or sell.
           </p>
 

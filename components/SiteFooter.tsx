@@ -15,7 +15,7 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
             <a href={to("#ways")}>Packages</a>
             <a href={to("#how")}>How it works</a>
             <a href={to("#faq")}>FAQs</a>
-            <Link href="/member/login">Bluepoint OS</Link>
+            <Link href="/member/login">Landline OS</Link>
           </div>
           {/*
             One real destination beats three that go nowhere. Instagram and
@@ -35,7 +35,7 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
           <div className="foot-col">
             <h2 className="foot-h">Are you an expert?</h2>
             <p className="foot-note">
-              Take calls on Bluepoint. You set your own rate and your own hours.
+              Take calls on Landline. You set your own rate and your own hours.
             </p>
             <Link className="b b-line b-sm" href="/apply">
               Apply now
@@ -48,11 +48,11 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
           straight on an expert's page has to meet it too.
         */}
         <p className="disclaim">
-          Bluepoint sessions are a review and discussion of your existing portfolio and approach.
+          Landline sessions are a review and discussion of your existing portfolio and approach.
           They are not a recommendation to buy or sell any security, and are not personalised
           investment advice. You remain responsible for your own decisions.
         </p>
-        <p className="copy">© 2026 Bluepoint. All rights reserved.</p>
+        <p className="copy">© 2026 Landline. All rights reserved.</p>
       </div>
     </footer>
   );

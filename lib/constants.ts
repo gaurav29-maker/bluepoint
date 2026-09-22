@@ -67,4 +67,4 @@ export const INTAKE_RETENTION_DAYS = 90;
  * change it here and the footer, and anywhere else that grows a contact
  * link, follows.
  */
-export const CONTACT_EMAIL = "hello@bluepoint.in";
+export const CONTACT_EMAIL = "hello@landline.in";

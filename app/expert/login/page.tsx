@@ -7,7 +7,7 @@ import { mintExpertLink } from "@/lib/expert-auth";
 import { expertSignInLink, sendRaw } from "@/lib/email";
 import { SIGN_IN_THROTTLE_SECONDS } from "@/lib/constants";
 
-export const metadata: Metadata = { title: "Experts — Bluepoint", robots: { index: false } };
+export const metadata: Metadata = { title: "Experts — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 export default async function ExpertLogin({
@@ -58,11 +58,11 @@ export default async function ExpertLogin({
     <div className="ops-login">
       <form action={requestLink} className="ops-login-card">
         <p className="logo os-mark">
-          blue<span>point</span> <em>experts</em>
+          Land<span>line</span> <em>experts</em>
         </p>
         <h1>Your schedule</h1>
         <p className="ops-login-sub">
-          Enter the email Bluepoint contacts you on. We will send a link — no password.
+          Enter the email Landline contacts you on. We will send a link — no password.
         </p>
 
         {sent ? (

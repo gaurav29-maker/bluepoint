@@ -14,7 +14,7 @@ import PassPurchase from "@/components/PassPurchase";
 import ManageBooking from "@/components/member/ManageBooking";
 import { signBookingToken } from "@/lib/tokens";
 
-export const metadata: Metadata = { title: "Your console — Bluepoint", robots: { index: false } };
+export const metadata: Metadata = { title: "Your console — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
 export default async function MemberConsole({
@@ -109,7 +109,7 @@ export default async function MemberConsole({
     return (
       <div className="wrap bp-page">
         <div className="logo bp-page-logo">
-          blue<span>point</span>
+          Land<span>line</span>
         </div>
         <div className="bp-panel">
           <h1>Not available right now</h1>
@@ -143,7 +143,7 @@ export default async function MemberConsole({
     <div className="wrap bp-page member">
       <div className="os-bar">
         <a href="/" className="logo os-mark">
-          blue<span>point</span> <em>os</em>
+          Land<span>line</span> <em>os</em>
         </a>
         <span className="os-nav">
           <a href="/member/receipts">Receipts</a>
@@ -364,7 +364,7 @@ export default async function MemberConsole({
       {/*
         The record. It states what was DECLARED and what was DISCUSSED — never
         what was recommended, and never that a change followed advice. The terms
-        say Bluepoint does not give personalised advice, and this has to agree.
+        say Landline does not give personalised advice, and this has to agree.
       */}
       {record.movements.length > 0 ? (
         <section className="member-section">

@@ -12,7 +12,7 @@ import { SINGLE_CALL_PAISE } from "@/lib/constants";
  * recommended, and never implies a change followed advice — "discussed: IT
  * concentration; then 45%, now 31%" is a conversation and a fact, whereas
  * "flagged too high, now reduced" is a recommendation trail. The terms say
- * Bluepoint does not give personalised advice; the record has to agree.
+ * Landline does not give personalised advice; the record has to agree.
  */
 
 /** One line a member wrote in their intake. Percentages are their estimate. */

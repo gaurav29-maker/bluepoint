@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions — Bluepoint",
-  description: "The terms on which Bluepoint sessions are booked and delivered.",
+  title: "Terms & Conditions — Landline",
+  description: "The terms on which Landline sessions are booked and delivered.",
 };
 
 const TODO = ({ children }: { children: React.ReactNode }) => (
@@ -17,21 +17,21 @@ export default function Terms() {
 
       <div className="draft">
         <b>This draft has not been reviewed by a lawyer.</b>
-        It describes what Bluepoint actually does today and is written to be accurate, not to be
+        It describes what Landline actually does today and is written to be accurate, not to be
         sufficient. Every bracketed item needs a real answer, and the whole document needs review
-        by someone qualified in Indian securities and consumer law before Bluepoint accepts real
+        by someone qualified in Indian securities and consumer law before Landline accepts real
         money. Delete this notice once that has happened.
       </div>
 
       <h2>1. Who we are</h2>
       <p>
-        Bluepoint is operated by <TODO>[registered entity name, CIN and address]</TODO> (&ldquo;Bluepoint&rdquo;,
+        Landline is operated by <TODO>[registered entity name, CIN and address]</TODO> (&ldquo;Landline&rdquo;,
         &ldquo;we&rdquo;, &ldquo;us&rdquo;). You can reach us at <TODO>[support email]</TODO>.
       </p>
 
-      <h2>2. What Bluepoint is</h2>
+      <h2>2. What Landline is</h2>
       <p>
-        Bluepoint is a marketplace. We introduce you to independent experts and handle scheduling
+        Landline is a marketplace. We introduce you to independent experts and handle scheduling
         and payment for the session. The session itself is between you and that expert.
       </p>
       <p>
@@ -40,11 +40,11 @@ export default function Terms() {
         describe how they would think about a problem. That is the product.
       </p>
 
-      <h2>3. What Bluepoint is not</h2>
+      <h2>3. What Landline is not</h2>
       <p>These points are the substance of this agreement, not boilerplate:</p>
       <ul>
         <li>
-          Nothing said on a Bluepoint call is <strong>personalised investment advice</strong>, and
+          Nothing said on a Landline call is <strong>personalised investment advice</strong>, and
           nothing is a recommendation to buy, sell or hold any specific security.
         </li>
         <li>Experts do not give tips, targets, or trade calls.</li>
@@ -53,11 +53,11 @@ export default function Terms() {
           can exceed the amount you put in.
         </li>
         <li>
-          Bluepoint does not handle, hold, manage or have any access to your money or your
+          Landline does not handle, hold, manage or have any access to your money or your
           securities.
         </li>
         <li>
-          Bluepoint itself is <TODO>[confirm: not registered with SEBI in any capacity — state the
+          Landline itself is <TODO>[confirm: not registered with SEBI in any capacity — state the
           actual position here]</TODO>. Where an individual expert holds a SEBI registration as an
           Investment Adviser or Research Analyst, that registration number is shown on their
           profile. Where no number is shown, no registration is claimed.
@@ -96,8 +96,8 @@ export default function Terms() {
       <h2>6. Never share your login</h2>
       <p>
         <strong>We will never ask for your demat, broker or trading account credentials</strong>, and
-        neither will an expert. There is no field anywhere on Bluepoint that accepts one. If anyone
-        claiming to be from Bluepoint asks for a login, an OTP, or remote access to your device,
+        neither will an expert. There is no field anywhere on Landline that accepts one. If anyone
+        claiming to be from Landline asks for a login, an OTP, or remote access to your device,
         it is not us — stop, and tell us at <TODO>[support email]</TODO>.
       </p>
 
@@ -111,7 +111,7 @@ export default function Terms() {
       <h2>8. Your conduct</h2>
       <p>
         Sessions are for your own use. Do not record a call without the expert&rsquo;s consent, resell
-        or redistribute what happens on one, or use Bluepoint to solicit business from experts
+        or redistribute what happens on one, or use Landline to solicit business from experts
         outside the platform.
       </p>
 

@@ -45,7 +45,7 @@ static-IPv4 registration rule, effective April 2026.
 
 **The India-native one is the more dangerous of the two**, which is the
 opposite of what its name suggests. A BUY/SELL/HOLD verdict on a holding is a
-personalised recommendation on a security. Bluepoint's terms say a session is
+personalised recommendation on a security. Landline's terms say a session is
 "a review and a discussion… not a recommendation to buy or sell any
 security" — that output contradicts the promise in our own footer, and it is
 precisely the activity that needs IA or RA registration. Its own README
@@ -64,7 +64,7 @@ turns a positioning problem into a credibility one.
 
 **Execution stays off in both cases.** Placing trades for clients is a
 different business under a different licence, and turning it on changes what
-Bluepoint *is* under SEBI, not merely what it can do.
+Landline *is* under SEBI, not merely what it can do.
 
 ## The one idea worth building toward: cost drag
 
