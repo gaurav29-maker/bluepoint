@@ -954,6 +954,9 @@
 
   /* --- actions --- */
   .ops-actions { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+  /* The Calendar hand-off sits with the link form, not under it. */
+  .xp-cal { font-size: 12.5px; white-space: nowrap; }
+
   .ops-inline { display: flex; gap: 7px; align-items: center; }
   .ops-btn {
     border: 1px solid var(--line);

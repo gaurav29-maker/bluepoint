@@ -22,6 +22,7 @@ import { openSlotsFor, openSlotsForMany } from "../lib/availability";
 import { runtimeConnection } from "../lib/db/connection";
 import { verifyBookingToken } from "../lib/tokens";
 import robotsRoute from "../app/robots";
+import { googleCalendarTemplateUrl } from "../lib/meet";
 
 /**
  * Exercises the parts of the booking flow that need no Razorpay and no Resend.
@@ -1604,6 +1605,36 @@ async function main() {
     "the site is closed to search engines, in the file and in the page",
     closedToCrawlers,
     `robots.txt disallows all, no sitemap offered, sitemap empty, home is "${homeMeta ? homeMeta[1] : "no robots meta"}"`,
+  );
+
+  /*
+   * ---- the Calendar hand-off points at the right moment in time ----
+   *
+   * An expert cannot be handed a Meet link by URL, so the console opens a
+   * pre-filled Google Calendar event instead. Calendar wants basic-format
+   * UTC — 20260923T103000Z — and it does not complain about a malformed
+   * range, it simply opens on the wrong day. A silent failure that lands
+   * on the expert, so it is worth pinning.
+   */
+  const calStart = new Date("2026-09-23T10:30:00.000Z");
+  const calEnd = new Date("2026-09-23T11:15:00.000Z");
+  const calUrl = new URL(
+    googleCalendarTemplateUrl({
+      customerName: "Sandeep Rao",
+      startsAt: calStart,
+      endsAt: calEnd,
+    }),
+  );
+  const calDates = calUrl.searchParams.get("dates");
+  check(
+    "the Calendar hand-off carries the session time, in the format Calendar reads",
+    calUrl.origin === "https://calendar.google.com" &&
+      calUrl.searchParams.get("action") === "TEMPLATE" &&
+      calDates === "20260923T103000Z/20260923T111500Z" &&
+      (calUrl.searchParams.get("text") ?? "").includes("Sandeep Rao") &&
+      // A customer's address is not the expert console's to hand out.
+      !calUrl.search.includes("%40"),
+    `dates=${calDates}`,
   );
 
 

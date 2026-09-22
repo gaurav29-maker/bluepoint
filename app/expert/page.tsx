@@ -8,6 +8,7 @@ import { EXPERT_COOKIE, verifyExpertSession } from "@/lib/expert-auth";
 import { istDateTime } from "@/lib/format";
 import ExpertBar from "@/components/expert/ExpertBar";
 import { rethrowIfNavigation } from "@/lib/nav";
+import { googleCalendarTemplateUrl } from "@/lib/meet";
 import {
   markCompleted,
   markNoShow,
@@ -183,6 +184,30 @@ export default async function ExpertSchedule() {
               {r.booking.meetingUrl ? "Update link" : "Add link"}
             </button>
           </form>
+
+          {/*
+            A Meet link cannot be made from a URL, so this opens Calendar with
+            the session already filled in: tick Google Meet, save, copy the
+            link back into the field above. It also puts the session in the
+            expert’s own calendar, which is where they will actually notice it.
+
+            Only offered while a link is missing — once there is one, this is
+            an invitation to create a second room nobody is in.
+          */}
+          {!r.booking.meetingUrl ? (
+            <a
+              className="ops-link xp-cal"
+              href={googleCalendarTemplateUrl({
+                customerName: r.customerName,
+                startsAt: r.booking.startsAt,
+                endsAt: r.booking.endsAt,
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Make one in Google Calendar ↗
+            </a>
+          ) : null}
 
           {opts.closable ? (
             <>
