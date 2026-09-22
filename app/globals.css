@@ -60,6 +60,17 @@
     --blue-light: #A9BCF3;
     --blue-tint: #ECF0FD;
     --blue-deep: #3159C9;
+
+    /*
+     * The glass accent. These are LIGHT, not ink — they only ever appear as
+     * glow inside a panel or a rim on its edge, never as a text colour.
+     * --blue above stays the brand's working colour and is unchanged.
+     */
+    --glow-blue: #5FA0FF;
+    --glow-lav: #968CFF;
+    --glow-deep: #1960EB;
+    --glow-core: #053CD2;
+    --edge-light: #46A0FF;
     --on-accent: #FFFFFF;
   }
 
@@ -3147,11 +3158,106 @@
   .site .hero-band h1 { max-width: 18ch; margin: 0 auto 18px; }
   .site .hero-sub { max-width: 56ch; margin: 0 auto 30px; font-size: 17px; line-height: 26px; color: var(--ink-mute); }
 
+  /* ------------------------------------------------------------ glass
+     An accent, not a theme.
+
+     The site is flat by design — 4px corners, hairline rules, white
+     grounds — and that stays. This treatment is spent on the two surfaces
+     where being a physical object means something: the availability
+     instrument, which is the one thing on the page reading live data, and
+     the expert avatars, which already carried the accent colour and appear
+     on every card across the site.
+
+     Everything else keeps its hairline border. Glass on every panel would
+     stop being an accent and start being a different site.
+  */
+  .site .glassy {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.55);
+    -webkit-backdrop-filter: blur(18px) saturate(132%);
+    backdrop-filter: blur(18px) saturate(132%);
+    border: 0;
+    box-shadow:
+      /* white rim, brighter top-left, cooler grey-blue bottom-right */
+      inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.95),
+      inset -1.5px -1.5px 1px -1px rgba(150, 165, 195, 0.45),
+      /* what it casts on the page, and the blue light just beneath it */
+      0 18px 40px rgba(20, 30, 60, 0.10),
+      0 8px 22px rgba(110, 170, 255, 0.20);
+  }
+
+  /* Haze bleeding in from the left, and a deep core on the right. */
+  .site .glassy::before {
+    content: "";
+    position: absolute;
+    inset: -25%;
+    z-index: -2;
+    background:
+      radial-gradient(48% 74% at 1% 34%, rgba(95, 160, 255, 0.40) 0%, rgba(95, 160, 255, 0) 70%),
+      radial-gradient(40% 56% at 12% 88%, rgba(150, 140, 255, 0.30) 0%, rgba(150, 140, 255, 0) 74%),
+      radial-gradient(40% 58% at 96% 62%, rgba(25, 96, 235, 0.30) 0%, rgba(5, 60, 210, 0) 72%);
+    filter: blur(20px);
+  }
+
+  /* A faint diagonal sheen, and the thin blue line of light along the base. */
+  .site .glassy::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(126deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.08) 100%),
+      linear-gradient(to top, rgba(70, 160, 255, 0.55) 0px, rgba(70, 160, 255, 0) 7px);
+  }
+
+  /*
+   * glassy dark.
+   *
+   * A 55% white base is right on paper and wrong on a dark ground, where it
+   * stops being glass and becomes a grey slab. On dark the panel is barely
+   * tinted and the depth comes from the glow and the rim instead.
+   */
+  @media (prefers-color-scheme: dark) {
+    .site .glassy {
+      background: rgba(255, 255, 255, 0.045);
+      -webkit-backdrop-filter: blur(20px) saturate(125%);
+      backdrop-filter: blur(20px) saturate(125%);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+        inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.20),
+        inset -1.5px -1.5px 1px -1px rgba(10, 16, 28, 0.55),
+        0 18px 44px rgba(0, 0, 0, 0.45),
+        0 8px 24px rgba(40, 110, 220, 0.20);
+    }
+    .site .glassy::before {
+      background:
+        radial-gradient(48% 74% at 1% 34%, rgba(95, 160, 255, 0.30) 0%, rgba(95, 160, 255, 0) 70%),
+        radial-gradient(40% 56% at 12% 88%, rgba(150, 140, 255, 0.24) 0%, rgba(150, 140, 255, 0) 74%),
+        radial-gradient(40% 58% at 96% 62%, rgba(25, 96, 235, 0.34) 0%, rgba(5, 60, 210, 0) 72%);
+    }
+    .site .glassy::after {
+      background:
+        linear-gradient(126deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.04) 100%),
+        linear-gradient(to top, rgba(70, 160, 255, 0.45) 0px, rgba(70, 160, 255, 0) 7px);
+    }
+    .site .inst .inst-top,
+    .site .inst .inst-cell { border-color: rgba(150, 180, 240, 0.16); }
+  }
+
+
   /* The instrument that stands where the reference puts a photograph. */
   .site .inst {
     margin: 52px auto 0; max-width: 760px; text-align: left;
-    border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); overflow: hidden;
+    /* 16px, not the site's usual 4: a pane of acrylic has a real edge. */
+    border-radius: 16px; overflow: hidden;
   }
+  /* On glass the hairline rules read as scratches, so they soften. */
+  .site .inst .inst-top,
+  .site .inst .inst-cell { border-color: rgba(120, 145, 195, 0.28); }
   .site .inst-top {
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
     padding: 12px 16px; border-bottom: 1px solid var(--rule);
@@ -3177,7 +3283,25 @@
   .site .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
   .site .xcard { border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); padding: 24px; display: flex; flex-direction: column; }
   .site .xcard-top { display: flex; align-items: center; gap: 14px; }
-  .site .xav { width: 46px; height: 46px; flex: 0 0 46px; border-radius: 999px; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-family: var(--mono); font-size: 14px; font-weight: 500; }
+  /*
+   * Deep acrylic rather than flat blue. The depth is the gradient and the
+   * rim only — no white wash across the face, because a highlight there
+   * lands on the initials and measured 2.52:1 at its peak. The gradient
+   * alone runs 5.37 to 8.13, better than the 4.82 of the flat colour it
+   * replaced.
+   */
+  .site .xav {
+    width: 46px; height: 46px; flex: 0 0 46px; border-radius: 999px;
+    background: linear-gradient(150deg, var(--glow-deep) 0%, var(--glow-core) 100%);
+    color: var(--on-accent);
+    display: grid; place-items: center;
+    font-family: var(--mono); font-size: 14px; font-weight: 500;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+      inset 1px 1px 1px -0.5px rgba(255, 255, 255, 0.62),
+      0 6px 14px rgba(20, 40, 110, 0.22),
+      0 3px 10px rgba(70, 160, 255, 0.28);
+  }
   .site .xrole { font-size: 13px; color: var(--ink-mute); margin-top: 2px; }
   .site .rec { margin: 20px 0 0; padding: 16px 0 4px; border-top: 1px solid var(--rule); display: grid; gap: 10px; }
   .site .rec > div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }

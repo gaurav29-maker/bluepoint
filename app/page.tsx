@@ -147,7 +147,7 @@ export default async function Home() {
           </div>
 
           {preview && preview.days.length > 0 ? (
-            <div className="inst">
+            <div className="inst glassy">
               <div className="inst-top">
                 <span className="eyebrow">Next available · {preview.name}</span>
                 <span className="live">
