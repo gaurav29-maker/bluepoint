@@ -1,18 +1,40 @@
   /*
+   * One file for both weights. `font-weight: 700 800` declares the range
+   * it answers for, so a single Korataki Bold serves the bold wordmark on
+   * the light site and the extra-bold one in the consoles — rather than
+   * the site needing two files that may not both have been licensed.
+   *
+   * local() comes first so anyone with Korataki installed sees it without
+   * a download; the url is the fallback and is simply skipped, quietly,
+   * while the file is absent.
+   */
+  @font-face {
+    font-family: 'Korataki';
+    src: local('Korataki Bold'), local('Korataki'), url('/fonts/Korataki-Bold.woff2') format('woff2');
+    font-weight: 700 800;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /*
    * The wordmark's face, on its own so the brand can change typeface
    * without touching the fourteen places that draw it.
    *
-   * Korataki (the "Korakati" asked for) is a Larabie display face and is
-   * licensed for personal use only in every free distribution of it — not
-   * something to ship on a business taking payments. Until a commercial
-   * licence exists, or another face is chosen, this resolves to the body
-   * font and the wordmark looks exactly as it did.
+   * Korataki (Larabie / Typodermic), bold and extra-bold.
    *
-   * To switch: add the @font-face block, put the file in public/fonts/,
-   * and put its family name first in this list. Nothing else changes.
+   * The file is NOT in this repo. Free distributions of Korataki are
+   * licensed personal-use-only, and a licence to use a font is not a
+   * licence to redistribute it — so buying one does not make it ours to
+   * commit. public/fonts/README.md says what to drop in.
+   *
+   * Until it is there the browser skips a face it cannot find and the
+   * wordmark renders in Inter, exactly as it did before. Nothing breaks
+   * and nothing needs changing on the day the file arrives.
+   *
+   * A display face: the wordmark only, never reading type.
    */
   :root {
-    --font-mark: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-mark: 'Korataki', 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
     --white: #FFFFFF;
     --canvas: #FFFFFF;
     --surface: #F4F4F4;
@@ -69,7 +91,8 @@
     align-items: center;
     justify-content: space-between;
   }
-  .logo { font-family: var(--font-mark); font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
+  /* 15px matches .ops-logo, the only other place this base size is seen. */
+  .logo { font-family: var(--font-mark); font-weight: 800; font-size: 15px; letter-spacing: 0; }
   .logo span { color: var(--blue); }
   .nav-links {
     display: flex;
@@ -3060,7 +3083,7 @@
     max-width: 1140px; margin: 0 auto; padding: 0 24px; height: 56px;
     display: flex; align-items: center; justify-content: space-between; gap: 24px;
   }
-  .site .mark { font-family: var(--font-mark); font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
+  .site .mark { font-family: var(--font-mark); font-size: 15px; font-weight: 700; letter-spacing: 0; color: var(--ink); text-decoration: none; }
   .site .mark span { color: var(--accent); }
   .site .nav-mid { display: flex; gap: 28px; }
   .site .nav-mid a { font-size: 14px; font-weight: 500; color: var(--ink-body); text-decoration: none; }
