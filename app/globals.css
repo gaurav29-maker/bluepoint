@@ -3341,6 +3341,65 @@
   .site .alloc-note { padding: 13px 16px; background: var(--bg-alt); font-size: 12.5px; line-height: 19px; color: var(--ink-mute); }
 
   /* ---- rejection block ---- */
+  /* ---- worth knowing ---- */
+  /*
+     Five principles, no borders and no cards. They are statements, not
+     products, and boxing each one would give it the weight of something on
+     sale two sections up. A hairline above each is enough separation.
+  */
+  /*
+     Three, then one. auto-fit gave two columns in the middle of the range,
+     and five items in two columns leaves the last one sitting alone in its
+     own row. Three fills the first row and pairs the rest; one stacks them.
+  */
+  .site .prins {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 34px;
+  }
+  .site .prin { padding: 22px 0 24px; border-top: 1px solid var(--rule); }
+  .site .prin h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    line-height: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .site .prin p { margin: 0; font-size: 14.5px; line-height: 22px; color: var(--ink-mute); }
+
+  /* The one figure in the section. It is the only number here, so it carries
+     the accent without competing with anything. */
+  .site .prin-fig {
+    margin-top: 14px !important;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint) !important;
+  }
+  .site .prin-fig b {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .site .prin-close {
+    margin-top: 34px;
+    padding-top: 26px;
+    border-top: 1px solid var(--rule);
+    font-size: 17px;
+    line-height: 26px;
+    color: var(--ink);
+  }
+  .site .prin-close a { color: var(--accent); text-decoration: none; }
+  .site .prin-close a:hover { text-decoration: underline; }
+
+  @media (max-width: 900px) {
+    .site .prins { grid-template-columns: 1fr; }
+  }
+
   .site .nots { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; }
   .site .not { display: flex; gap: 12px; }
   .site .not::before { content: "\2014"; color: var(--ink-faint); }
@@ -3384,6 +3443,7 @@
   /* The descriptor from the supplied lockup: quiet, and set to the mark. */
   .site .foot-desc { margin: 4px 0 0; font-size: 12px; letter-spacing: 0.02em; color: var(--ink-faint); }
   .site .foot-brand p { margin: 12px 0 0; max-width: 62ch; font-size: 13.5px; line-height: 21px; color: var(--ink-mute); }
+  .site .foot-brand p b { font-weight: 500; color: var(--ink); }
 
   .site .foot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 32px; }
   .site .foot-col .foot-h { margin: 0 0 14px; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }

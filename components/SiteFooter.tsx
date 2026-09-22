@@ -26,10 +26,17 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
           */}
           <Wordmark className="mark" size="md" />
           <p className="foot-desc">{BRAND_DESCRIPTOR}</p>
+          {/*
+            The campaign line, in the campaign's words. What followed it was my
+            paraphrase of the same idea, written before the artwork existed;
+            keeping both would have said it twice. The second sentence stays,
+            because "direct line" is a claim and that sentence is what makes it
+            checkable.
+          */}
           <p>
-            A direct line to a market professional. You pick the person and you pick the time,
-            and they have read your portfolio before you speak. No forwarded screenshot, no
-            broadcast channel, nobody in between.
+            <b>Your direct line to a financial expert.</b> You pick the person and you pick the
+            time, and they have read your portfolio before you speak. No forwarded screenshot,
+            no broadcast channel, nobody in between.
           </p>
         </div>
         <div className="foot-grid">
@@ -39,6 +46,7 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
             <a href={to("#audit")}>Audit my portfolio</a>
             <a href={to("#ways")}>Packages</a>
             <a href={to("#how")}>How it works</a>
+            <a href={to("#basics")}>Worth knowing</a>
             <a href={to("#faq")}>FAQs</a>
             <Link href="/member/login">Landline OS</Link>
           </div>
