@@ -957,6 +957,15 @@
   /* The Calendar hand-off sits with the link form, not under it. */
   .xp-cal { font-size: 12.5px; white-space: nowrap; }
 
+  /* What Google said when the expert came back. Its own name: .xp-note is
+     already the expert’s note on a session, and reusing it would have them
+     fighting over the same element. */
+  .xp-gcal-msg { font-size: 13px; margin: 0 0 14px; color: var(--ink-soft); }
+  .xp-gcal-msg.ok { color: #2E7D5B; }
+  .xp-gcal-msg.bad { color: #B3261E; }
+  .os .xp-gcal-msg.ok { color: #6FD39B; }
+  .os .xp-gcal-msg.bad { color: #F2B8B5; }
+
   .ops-inline { display: flex; gap: 7px; align-items: center; }
   .ops-btn {
     border: 1px solid var(--line);

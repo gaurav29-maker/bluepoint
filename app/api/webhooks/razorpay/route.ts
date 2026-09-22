@@ -22,6 +22,7 @@ import {
 } from "@/lib/email";
 import { memberConsoleUrl } from "@/lib/member-auth";
 import { MEMBERSHIP_TIERS } from "@/lib/constants";
+import { ensureMeetingLink } from "@/lib/google";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -220,13 +221,24 @@ async function handleCapture(entity: Record<string, unknown>) {
         .where(eq(bundles.id, bundle.id));
     }
 
+    /*
+     * The session's Meet link, if the expert has connected a calendar.
+     * Before the email, because the email carries it.
+     *
+     * Fails soft by design: this booking is already confirmed — money
+     * moved or a credit was spent — and a calendar that did not answer
+     * must never undo that. A null here just means the expert pastes a
+     * link from their schedule, as they did before any of this existed.
+     */
+    const meetingUrl = (await ensureMeetingLink(booking.id)) ?? booking.meetingUrl;
+
     const conf = customerConfirmation({
       customerName: customer.name,
       expertName: expert.displayName,
       startsAt: booking.startsAt,
       amountPaise: booking.amountPaise,
       bookingId: booking.id,
-      meetingUrl: booking.meetingUrl,
+      meetingUrl,
     });
     await sendOnce(booking.id, "booking_confirmed_customer", { to: customer.email, ...conf });
 

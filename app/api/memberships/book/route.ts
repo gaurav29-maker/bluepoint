@@ -17,6 +17,7 @@ import { DISCLAIMER_VERSION } from "@/lib/constants";
 import { occupiesSlot, releaseStaleHold } from "@/lib/bookings";
 import { MEMBER_COOKIE, verifySession } from "@/lib/member-auth";
 import { customerConfirmation, expertNotification, sendOnce } from "@/lib/email";
+import { ensureMeetingLink } from "@/lib/google";
 
 export const dynamic = "force-dynamic";
 
@@ -145,13 +146,24 @@ export async function POST(req: NextRequest) {
     userAgent: req.headers.get("user-agent") ?? null,
   });
 
+  /*
+   * The session's Meet link, if the expert has connected a calendar.
+   * Before the email, because the email carries it.
+   *
+   * Fails soft by design: this booking is already confirmed — money
+   * moved or a credit was spent — and a calendar that did not answer
+   * must never undo that. A null here just means the expert pastes a
+   * link from their schedule, as they did before any of this existed.
+   */
+  const meetingUrl = (await ensureMeetingLink(booking.id)) ?? booking.meetingUrl;
+
   const conf = customerConfirmation({
     customerName: customer.name,
     expertName: expert.displayName,
     startsAt: booking.startsAt,
     amountPaise: 0,
     bookingId: booking.id,
-    meetingUrl: booking.meetingUrl,
+    meetingUrl,
   });
   await sendOnce(booking.id, "booking_confirmed_customer", { to: customer.email, ...conf });
 

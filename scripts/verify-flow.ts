@@ -23,6 +23,8 @@ import { runtimeConnection } from "../lib/db/connection";
 import { verifyBookingToken } from "../lib/tokens";
 import robotsRoute from "../app/robots";
 import { googleCalendarTemplateUrl } from "../lib/meet";
+import { signState, verifyState, ensureMeetingLink } from "../lib/google";
+import { seal, open as unseal } from "../lib/secretbox";
 
 /**
  * Exercises the parts of the booking flow that need no Razorpay and no Resend.
@@ -1635,6 +1637,81 @@ async function main() {
       // A customer's address is not the expert console's to hand out.
       !calUrl.search.includes("%40"),
     `dates=${calDates}`,
+  );
+
+  /*
+   * ---- the Google connection: the parts that do not need Google ----
+   *
+   * The live handshake cannot run here — it needs a Cloud project, a
+   * consent screen and a human clicking Allow. What CAN be pinned is
+   * everything that decides whether the handshake is safe, and those are
+   * the parts that fail quietly.
+   */
+
+  // The state parameter is the only thing tying a callback to the expert
+  // who started it. Forgeable state means attaching YOUR calendar to
+  // somebody else's account, so it is signed and it expires.
+  const stateExpert = "11111111-2222-4333-8444-555555555555";
+  const goodState = signState(stateExpert, Date.now() + 60_000);
+  const expiredState = signState(stateExpert, Date.now() - 1_000);
+  const forgedState = `${stateExpert}.${Date.now() + 60_000}.${"0".repeat(64)}`;
+  const swappedState = goodState.replace(stateExpert, "99999999-2222-4333-8444-555555555555");
+  check(
+    "a forged OAuth state cannot attach a calendar to someone else's account",
+    verifyState(goodState) === stateExpert &&
+      verifyState(expiredState) === null &&
+      verifyState(forgedState) === null &&
+      verifyState(swappedState) === null &&
+      verifyState(null) === null,
+    "valid passes; expired, forged, swapped-id and missing all refused",
+  );
+
+  // A refresh token works until revoked, so it is encrypted at rest.
+  // Tampering must fail to open rather than opening to something else.
+  const secretValue = "1//04-a-refresh-token-shaped-string";
+  const sealed = seal(secretValue);
+  let tamperedOpened = true;
+  try {
+    const parts = sealed.split(".");
+    unseal([parts[0], parts[1], parts[2], tamper(parts[3])].join("."));
+  } catch {
+    tamperedOpened = false;
+  }
+  check(
+    "a stored Google refresh token is encrypted, and tampering breaks it",
+    unseal(sealed) === secretValue && !sealed.includes(secretValue) && !tamperedOpened,
+    "round-trips, ciphertext does not contain the token, an edited one will not open",
+  );
+
+  /*
+   * The part that matters most on the day Google is down: a booking is
+   * confirmed by money moving, and nothing about a calendar may undo that.
+   * With no credentials configured this returns null rather than throwing,
+   * which is the same path a failed API call takes.
+   */
+  const [softBooking] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() + 5 * 86_400_000),
+      endsAt: new Date(Date.now() + 5 * 86_400_000 + 45 * 60_000),
+      status: "confirmed",
+      product: "membership_call",
+      amountPaise: 0,
+    })
+    .returning();
+
+  const softLink = await ensureMeetingLink(softBooking.id);
+  const [afterSoft] = await db
+    .select({ status: bookings.status, meetingUrl: bookings.meetingUrl })
+    .from(bookings)
+    .where(eq(bookings.id, softBooking.id))
+    .limit(1);
+  check(
+    "a booking survives Google being unavailable",
+    softLink === null && afterSoft.status === "confirmed" && afterSoft.meetingUrl === null,
+    "no link, still confirmed, expert can paste one",
   );
 
 

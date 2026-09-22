@@ -427,8 +427,37 @@ export const expertApplications = pgTable(
   ],
 );
 
+/**
+ * An experts Google connection, so Landline can create the Meet link for a
+ * session instead of asking them to paste one.
+ *
+ * Its own table rather than four nullable columns on experts: disconnecting
+ * is then deleting a row, which cannot leave a half-cleared state behind, and
+ * a table nobody has connected to is simply empty.
+ *
+ * The refresh token is the long-lived one — it keeps working until revoked,
+ * so it is stored encrypted rather than in the clear. See lib/secretbox.ts.
+ * The access token is short-lived and re-fetched from it.
+ */
+export const googleAccounts = pgTable("google_accounts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  /** One connection per expert; reconnecting replaces it. */
+  expertId: uuid("expert_id")
+    .notNull()
+    .unique()
+    .references(() => experts.id, { onDelete: "cascade" }),
+  /** Shown back to the expert so they can see WHICH account is connected. */
+  googleEmail: text("google_email").notNull(),
+  refreshTokenEnc: text("refresh_token_enc").notNull(),
+  accessToken: text("access_token"),
+  accessTokenExpiresAt: timestamp("access_token_expires_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export type Expert = typeof experts.$inferSelect;
 export type Membership = typeof memberships.$inferSelect;
 export type Booking = typeof bookings.$inferSelect;
 export type Customer = typeof customers.$inferSelect;
 export type ExpertApplication = typeof expertApplications.$inferSelect;
+export type GoogleAccount = typeof googleAccounts.$inferSelect;

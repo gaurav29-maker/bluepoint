@@ -6,6 +6,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { availabilityRules, bookings, experts } from "@/lib/db/schema";
 import { EXPERT_COOKIE, verifyExpertSession } from "@/lib/expert-auth";
+import { disconnect as disconnectGoogleAccount } from "@/lib/google";
 
 /**
  * Server actions are POST endpoints in their own right, so each one re-checks
@@ -16,6 +17,19 @@ async function requireExpert(): Promise<string> {
   const id = await verifyExpertSession((await cookies()).get(EXPERT_COOKIE)?.value);
   if (!id) throw new Error("Not signed in");
   return id;
+}
+
+/**
+ * Forgetting an expert's Google connection, and telling Google too.
+ *
+ * Sessions already carrying a Meet link keep it — the event exists on
+ * their calendar and the customer may already have the link. Removing it
+ * here would break calls that are going to happen.
+ */
+export async function disconnectGoogle() {
+  const expertId = await requireExpert();
+  await disconnectGoogleAccount(expertId);
+  revalidatePath("/expert/profile");
 }
 
 export async function signOutExpert() {

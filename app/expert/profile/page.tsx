@@ -9,12 +9,18 @@ import { EXPERT_COOKIE, verifyExpertSession } from "@/lib/expert-auth";
 import { rethrowIfNavigation } from "@/lib/nav";
 import { rupees } from "@/lib/format";
 import ExpertBar from "@/components/expert/ExpertBar";
-import { setOwnPaused, updateExpertProfile } from "../actions";
+import { disconnectGoogle, setOwnPaused, updateExpertProfile } from "../actions";
+import { googleConfigured, isConnected } from "@/lib/google";
 
 export const metadata: Metadata = { title: "Your profile — Landline", robots: { index: false } };
 export const dynamic = "force-dynamic";
 
-export default async function ExpertProfilePage() {
+export default async function ExpertProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ google?: string }>;
+}) {
+  const { google: googleResult } = await searchParams;
   const expertId = await verifyExpertSession((await cookies()).get(EXPERT_COOKIE)?.value);
   if (!expertId) redirect("/expert/login");
 
@@ -35,6 +41,8 @@ export default async function ExpertProfilePage() {
   }
 
   const registered = me.sebiRegType !== "none" && me.sebiRegNumber;
+  const configured = googleConfigured();
+  const connected = configured ? await isConnected(me.id) : null;
 
   return (
     <div className="wrap bp-page member">
@@ -141,6 +149,66 @@ export default async function ExpertProfilePage() {
           here — a fact you could rewrite afterwards was never really verified. Email us if any of
           them is wrong and we will correct it.
         </p>
+      </section>
+
+      {/*
+        Connecting a calendar is optional and says so. An expert who never
+        does keeps the manual paste on their schedule, which is why that
+        was built first — this removes a step, it is not load-bearing.
+      */}
+      <section className="member-section">
+        <h2 className="member-h2">Google Calendar</h2>
+
+        {googleResult === "connected" ? (
+          <p className="xp-gcal-msg ok">Connected. New bookings will get a Meet link automatically.</p>
+        ) : null}
+        {googleResult === "cancelled" ? (
+          <p className="xp-gcal-msg">No problem — nothing changed. You can still paste links yourself.</p>
+        ) : null}
+        {googleResult === "failed" ? (
+          <p className="xp-gcal-msg bad">That did not complete. Try again, or just paste links yourself.</p>
+        ) : null}
+        {googleResult === "unconfigured" ? (
+          <p className="xp-gcal-msg bad">Not available yet — Landline has not finished setting this up.</p>
+        ) : null}
+
+        {!configured ? (
+          <p className="bp-muted">
+            Not available yet. Until it is, add each session&rsquo;s join link yourself from your
+            schedule — there is a one-click Calendar shortcut next to the field.
+          </p>
+        ) : connected ? (
+          <div className="xp-pause">
+            <p className="bp-muted">
+              Connected as <b>{connected.email}</b>. Every new booking gets its own Meet link and
+              lands in your calendar, so there is nothing to paste.
+            </p>
+            <form action={disconnectGoogle}>
+              <button className="ops-btn" type="submit">
+                Disconnect
+              </button>
+            </form>
+            <p className="apply-hint">
+              Sessions that already have a link keep it — those events exist on your calendar and
+              the customer may already have the link.
+            </p>
+          </div>
+        ) : (
+          <div className="xp-pause">
+            <p className="bp-muted">
+              Connect your calendar and Landline creates the Meet link for each session, on your
+              own calendar, the moment it is booked. You stop pasting links.
+            </p>
+            <a className="ops-btn" href="/api/expert/google/connect">
+              Connect Google Calendar
+            </a>
+            <p className="apply-hint">
+              Landline can create and update events, and read the address of the account you
+              connect. It cannot read your existing events, your contacts, or anything else.
+              Disconnect whenever you like.
+            </p>
+          </div>
+        )}
       </section>
 
       <section className="member-section">
