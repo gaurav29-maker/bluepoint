@@ -3374,6 +3374,12 @@
 
   /* ---- footer ---- */
   .site .foot { border-top: 1px solid var(--rule); background: var(--bg-alt); padding: 52px 0 34px; }
+  /* The brand statement sits above the columns, divided from them, because
+     it is the one thing in the footer that is not a link. */
+  .site .foot-brand { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); }
+  .site .foot-brand .mark { font-size: 17px; }
+  .site .foot-brand p { margin: 12px 0 0; max-width: 62ch; font-size: 13.5px; line-height: 21px; color: var(--ink-mute); }
+
   .site .foot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 32px; }
   .site .foot-col .foot-h { margin: 0 0 14px; font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
   .site .foot-col a { display: block; margin-bottom: 9px; font-size: 13.5px; color: var(--ink-mute); text-decoration: none; }

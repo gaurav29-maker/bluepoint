@@ -7,7 +7,25 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
   return (
     <footer className="foot">
       <div className="wrap">
-        <div className="foot-grid">
+        {/*
+          The site has never said why it is called Landline. A brand name
+          nobody explains is just a word, and this is the one place a visitor
+          has already come looking for who we are.
+        
+          It stays a statement about the shape of the thing — one person, one
+          line, nothing in between — and never a claim about outcomes.
+        */}
+        <div className="foot-brand">
+          <span className="mark">
+            Land<span>line</span>
+          </span>
+          <p>
+            A direct line to a market professional. You pick the person and you pick the time,
+            and they have read your portfolio before you speak. No forwarded screenshot, no
+            broadcast channel, nobody in between.
+          </p>
+        </div>
+                <div className="foot-grid">
           <div className="foot-col">
             <h2 className="foot-h">Navigate</h2>
             <Link href="/experts">Find an expert</Link>

@@ -33,8 +33,8 @@ export default function Image() {
         }}
       >
         <div style={{ display: "flex", fontSize: 34, fontWeight: 800, letterSpacing: -1 }}>
-          <span style={{ color: "#F3F6F9" }}>blue</span>
-          <span style={{ color: "#8AA5F0" }}>point</span>
+          <span style={{ color: "#F3F6F9" }}>Land</span>
+          <span style={{ color: "#8AA5F0" }}>line</span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>

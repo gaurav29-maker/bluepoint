@@ -77,8 +77,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         }}
       >
         <div style={{ display: "flex", fontSize: 30, fontWeight: 800, letterSpacing: -1 }}>
-          <span style={{ color: "#F3F6F9" }}>blue</span>
-          <span style={{ color: "#8AA5F0" }}>point</span>
+          <span style={{ color: "#F3F6F9" }}>Land</span>
+          <span style={{ color: "#8AA5F0" }}>line</span>
         </div>
 
         {expert ? (

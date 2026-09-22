@@ -498,6 +498,20 @@ export default async function Home() {
                 will arrange a follow-up or a refund, case by case.
               </p>
             </details>
+            {/*
+              Last, not first. Somebody scanning this list wants to know about
+              their demat login before they want the brand story — but the name
+              is the promise, and nowhere else on the site explains it.
+            */}
+            <details>
+              <summary>Why is it called Landline?</summary>
+              <p>
+                Because a landline is the opposite of how market advice usually reaches you: no
+                forwarded screenshot, no broadcast channel, no algorithm choosing who you hear
+                from. One person on the other end who has read what you hold, for {SLOT_MINUTES}
+                minutes. Then it hangs up &mdash; nothing renews and nobody follows up.
+              </p>
+            </details>
           </div>
         </div>
       </section>
