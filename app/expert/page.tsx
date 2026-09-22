@@ -9,6 +9,8 @@ import { istDateTime } from "@/lib/format";
 import ExpertBar from "@/components/expert/ExpertBar";
 import { rethrowIfNavigation } from "@/lib/nav";
 import { googleCalendarTemplateUrl } from "@/lib/meet";
+import { totalsForExpert } from "@/lib/payouts";
+import { rupees } from "@/lib/format";
 import {
   markCompleted,
   markNoShow,
@@ -57,8 +59,10 @@ export default async function ExpertSchedule() {
       .orderBy(asc(bookings.startsAt));
 
     const now = new Date();
+    const earnings = await totalsForExpert(expertId);
     data = {
       expert,
+      earnings,
       upcoming: rows.filter((r) => r.booking.status === "confirmed" && r.booking.startsAt >= now),
       toClose: rows.filter((r) => r.booking.status === "confirmed" && r.booking.startsAt < now),
       done: rows
@@ -78,7 +82,7 @@ export default async function ExpertSchedule() {
     );
   }
 
-  const { expert, upcoming, toClose, done } = data;
+  const { expert, upcoming, toClose, done, earnings } = data;
 
   /*
    * The note is what the customer is left holding after the call. It is
@@ -245,7 +249,46 @@ export default async function ExpertSchedule() {
           {upcoming.length} upcoming
           {toClose.length > 0 ? ` · ${toClose.length} to close` : ""}
         </span>
+        {earnings.sessions > 0 ? (
+          <>
+            <span className="os-status-sep">/</span>
+            <span className="os-status-days">{rupees(earnings.pendingPaise)} owed</span>
+          </>
+        ) : null}
       </div>
+
+      {/*
+        What is owed, stated plainly, because an expert should never have to
+        ask. Only once something has been earned — a row of zeroes on a
+        console with no sessions yet is noise.
+
+        Landline does not transfer money automatically, so this says what the
+        ledger knows and not when it will arrive. Promising a date the
+        software cannot keep is worse than saying nothing.
+      */}
+      {earnings.sessions > 0 ? (
+        <section className="member-section">
+          <h2 className="member-h2">Earnings</h2>
+          <dl className="xp-earn">
+            <div>
+              <dt>Owed</dt>
+              <dd>{rupees(earnings.pendingPaise)}</dd>
+            </div>
+            <div>
+              <dt>Paid</dt>
+              <dd>{rupees(earnings.paidPaise)}</dd>
+            </div>
+            <div>
+              <dt>Sessions</dt>
+              <dd>{earnings.sessions}</dd>
+            </div>
+          </dl>
+          <p className="apply-hint">
+            A session counts once it is closed out, and a no-show counts too &mdash; the slot
+            was held and your intake was read. Refunded sessions do not.
+          </p>
+        </section>
+      ) : null}
 
       {/*
         Sessions that have already happened come first. They are the only

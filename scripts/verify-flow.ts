@@ -16,6 +16,7 @@ import {
   memberships,
   payments,
   webhookEvents,
+  expertPayouts,
 } from "../lib/db/schema";
 import { MEMBERSHIP_TIERS, SINGLE_CALL_PAISE } from "../lib/constants";
 import { openSlotsFor, openSlotsForMany } from "../lib/availability";
@@ -25,6 +26,7 @@ import robotsRoute from "../app/robots";
 import { googleCalendarTemplateUrl } from "../lib/meet";
 import { signState, verifyState, ensureMeetingLink } from "../lib/google";
 import { seal, open as unseal } from "../lib/secretbox";
+import { recordPayout, voidPayout, totalsForExpert } from "../lib/payouts";
 
 /**
  * Exercises the parts of the booking flow that need no Razorpay and no Resend.
@@ -81,6 +83,23 @@ function check(name: string, ok: boolean, detail = "") {
  */
 function isUniqueViolation(err: unknown): boolean {
   return typeof err === "object" && err !== null && (err as { code?: string }).code === "23505";
+}
+
+/**
+ * Change a base64url value by exactly one BYTE.
+ *
+ * tamper() above flips the last character, which is right for hex and wrong
+ * here: in base64 the final character often carries only two or four
+ * significant bits, so flipping it can decode to the very same bytes. The
+ * sealed value then opens perfectly and the check reports that tampering was
+ * not detected — measured at 17 runs in 200 before this existed.
+ *
+ * Flipping a bit in the decoded buffer has no such ambiguity.
+ */
+function tamperBase64(b64url: string): string {
+  const buf = Buffer.from(b64url, "base64url");
+  buf[Math.floor(buf.length / 2)] ^= 0xff;
+  return buf.toString("base64url");
 }
 
 function tamper(hex: string): string {
@@ -1673,7 +1692,7 @@ async function main() {
   let tamperedOpened = true;
   try {
     const parts = sealed.split(".");
-    unseal([parts[0], parts[1], parts[2], tamper(parts[3])].join("."));
+    unseal([parts[0], parts[1], parts[2], tamperBase64(parts[3])].join("."));
   } catch {
     tamperedOpened = false;
   }
@@ -1713,6 +1732,124 @@ async function main() {
     softLink === null && afterSoft.status === "confirmed" && afterSoft.meetingUrl === null,
     "no link, still confirmed, expert can paste one",
   );
+
+  /*
+   * ---- the expert payout ledger ----
+   *
+   * Closing a session is reachable from the expert console AND from ops. If
+   * both close the same booking, or one is double-clicked, an expert must
+   * not be paid twice for one call. That is enforced by a unique index
+   * rather than by the code being careful, so this pushes on the index.
+   */
+  const [payBooking] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() - 3 * 86_400_000),
+      endsAt: new Date(Date.now() - 3 * 86_400_000 + 45 * 60_000),
+      status: "completed",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+
+  const firstRecord = await recordPayout(payBooking.id);
+  const secondRecord = await recordPayout(payBooking.id);
+  const thirdRecord = await recordPayout(payBooking.id);
+  const payRows = await db
+    .select()
+    .from(expertPayouts)
+    .where(eq(expertPayouts.bookingId, payBooking.id));
+  check(
+    "one session can never be paid twice",
+    payRows.length === 1 && firstRecord !== null && secondRecord === null && thirdRecord === null,
+    `3 attempts, ${payRows.length} row, worth ${payRows[0]?.amountPaise}`,
+  );
+
+  /*
+   * A refunded session earned nothing. Getting this wrong means paying an
+   * expert out of money that went back to the customer — the ledger and the
+   * bank would disagree and the bank would be right.
+   */
+  await voidPayout(payBooking.id, "booking refunded: test");
+  const [voided] = await db
+    .select()
+    .from(expertPayouts)
+    .where(eq(expertPayouts.bookingId, payBooking.id))
+    .limit(1);
+  // And recording again must not revive it.
+  await recordPayout(payBooking.id);
+  const [stillVoid] = await db
+    .select()
+    .from(expertPayouts)
+    .where(eq(expertPayouts.bookingId, payBooking.id))
+    .limit(1);
+  check(
+    "a refunded session pays nothing, and cannot be revived",
+    voided.status === "void" && stillVoid.status === "void" && voided.note !== null,
+    `status ${stillVoid.status} after a re-record`,
+  );
+
+  /*
+   * A no-show earns. The refund policy tells the customer they are not
+   * refunded because the expert held the slot and read the intake — if the
+   * ledger disagreed, one of the two documents would be lying.
+   */
+  const [noShowBooking] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() - 4 * 86_400_000),
+      endsAt: new Date(Date.now() - 4 * 86_400_000 + 45 * 60_000),
+      status: "no_show",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+  const noShowEarned = await recordPayout(noShowBooking.id);
+
+  // A booking nobody attended and that never happened earns nothing.
+  const [cancelledBooking] = await db
+    .insert(bookings)
+    .values({
+      expertId: expert.id,
+      customerId: member.id,
+      startsAt: new Date(Date.now() + 6 * 86_400_000),
+      endsAt: new Date(Date.now() + 6 * 86_400_000 + 45 * 60_000),
+      status: "cancelled",
+      product: "single",
+      amountPaise: SINGLE_CALL_PAISE,
+    })
+    .returning();
+  const cancelledEarned = await recordPayout(cancelledBooking.id);
+
+  check(
+    "a no-show earns and a cancellation does not",
+    noShowEarned !== null && cancelledEarned === null,
+    `no-show ${noShowEarned}, cancelled ${cancelledEarned}`,
+  );
+
+  /*
+   * The amount is captured on the row when it is earned, never recomputed.
+   * Changing the split next quarter must not rewrite what somebody was owed
+   * last quarter — the same reason bookings carry amountPaise.
+   */
+  const savedRate = process.env.EXPERT_PAYOUT_PAISE;
+  const beforeTotals = await totalsForExpert(expert.id);
+  try {
+    process.env.EXPERT_PAYOUT_PAISE = "999999";
+    const afterTotals = await totalsForExpert(expert.id);
+    check(
+      "changing the rate does not rewrite what was already earned",
+      afterTotals.pendingPaise === beforeTotals.pendingPaise && beforeTotals.pendingPaise > 0,
+      `${beforeTotals.pendingPaise} paise before and after the rate moved`,
+    );
+  } finally {
+    if (savedRate === undefined) delete process.env.EXPERT_PAYOUT_PAISE;
+    else process.env.EXPERT_PAYOUT_PAISE = savedRate;
+  }
 
 
   console.log(`\n  ${passed} passed, ${failed} failed\n`);

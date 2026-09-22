@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { availabilityRules, bookings, experts } from "@/lib/db/schema";
 import { EXPERT_COOKIE, verifyExpertSession } from "@/lib/expert-auth";
 import { disconnect as disconnectGoogleAccount } from "@/lib/google";
+import { recordPayout } from "@/lib/payouts";
 
 /**
  * Server actions are POST endpoints in their own right, so each one re-checks
@@ -100,6 +101,10 @@ export async function markCompleted(formData: FormData) {
       ),
     );
 
+  // The session happened, so it earned. Idempotent — ops can close the same
+  // booking and neither path pays twice.
+  await recordPayout(bookingId);
+
   revalidatePath("/expert");
 }
 
@@ -122,6 +127,11 @@ export async function markNoShow(formData: FormData) {
         eq(bookings.status, "confirmed"),
       ),
     );
+
+  // A no-show still earns. The refund policy does not refund the customer,
+  // because the slot was held and the intake was read; the ledger has to
+  // agree with that document rather than contradict it.
+  await recordPayout(bookingId);
 
   revalidatePath("/expert");
 }

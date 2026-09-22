@@ -455,9 +455,57 @@ export const googleAccounts = pgTable("google_accounts", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const payoutStatus = pgEnum("payout_status", ["pending", "paid", "void"]);
+
+/**
+ * What an expert has earned, one row per session.
+ *
+ * The amount is captured HERE rather than computed from a rate when you look
+ * at it. A payout is a fact about a session that already happened; changing
+ * the split next quarter must not silently rewrite what somebody was owed
+ * last quarter. Same reason bookings carry amountPaise instead of reading a
+ * price list.
+ *
+ * A row exists for a completed session and for a no_show — on a no-show the
+ * customer is not refunded, because the expert held the slot and prepared
+ * from the intake, so the expert is still owed. Refunding a booking voids the
+ * payout instead of deleting it: what happened stays visible.
+ */
+export const expertPayouts = pgTable(
+  "expert_payouts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    expertId: uuid("expert_id")
+      .notNull()
+      .references(() => experts.id, { onDelete: "cascade" }),
+    bookingId: uuid("booking_id")
+      .notNull()
+      .references(() => bookings.id, { onDelete: "cascade" }),
+    /** Paise, as earned on the day. Never recomputed. */
+    amountPaise: integer("amount_paise").notNull(),
+    status: payoutStatus("status").notNull().default("pending"),
+    /** Bank reference or UTR, so a payment can be traced afterwards. */
+    reference: text("reference"),
+    note: text("note"),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    /*
+     * One payout per session, ever. Not a convention — the database refuses.
+     * Completing a booking twice, or ops and the expert both closing it, must
+     * never pay somebody twice for one call.
+     */
+    uniqueIndex("expert_payouts_one_per_booking").on(t.bookingId),
+    index("expert_payouts_expert_idx").on(t.expertId, t.status),
+  ],
+);
+
 export type Expert = typeof experts.$inferSelect;
 export type Membership = typeof memberships.$inferSelect;
 export type Booking = typeof bookings.$inferSelect;
 export type Customer = typeof customers.$inferSelect;
 export type ExpertApplication = typeof expertApplications.$inferSelect;
 export type GoogleAccount = typeof googleAccounts.$inferSelect;
+export type ExpertPayout = typeof expertPayouts.$inferSelect;

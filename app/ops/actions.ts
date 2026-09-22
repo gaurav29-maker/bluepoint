@@ -5,13 +5,14 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { bookings, bundles, expertApplications, experts, payments } from "@/lib/db/schema";
+import { bookings, bundles, expertApplications, experts, payments, expertPayouts } from "@/lib/db/schema";
 import { OPS_COOKIE, sessionValid } from "@/lib/ops-auth";
 import { refundPayment } from "@/lib/razorpay";
 import { uniqueSlug } from "@/lib/slug";
 import { SINGLE_CALL_PAISE } from "@/lib/constants";
 import { expertSignInLink, sendRaw } from "@/lib/email";
 import { mintExpertLink } from "@/lib/expert-auth";
+import { recordPayout, voidPayout } from "@/lib/payouts";
 
 /**
  * Server actions are POST endpoints in their own right, so the middleware guard
@@ -35,6 +36,10 @@ export async function markComplete(formData: FormData) {
     .update(bookings)
     .set({ status: "completed" })
     .where(and(eq(bookings.id, id), eq(bookings.status, "confirmed")));
+
+  // The same call the expert console makes. Whichever closes it first records
+  // the payout; the second is a no-op.
+  await recordPayout(id);
 
   revalidatePath(`/ops/bookings/${id}`);
   revalidatePath("/ops/bookings");
@@ -91,6 +96,12 @@ export async function refundBooking(formData: FormData) {
   if (booking.bundleId) {
     await db.update(bundles).set({ status: "refunded" }).where(eq(bundles.id, booking.bundleId));
   }
+
+  // The customer got their money back, so this session earned nothing. Voided
+  // rather than deleted — a row that says why it is worth nothing beats one
+  // that quietly disappeared. A payout already marked paid is left alone,
+  // because that money has gone.
+  await voidPayout(id, `booking refunded: ${reason}`);
 
   revalidatePath(`/ops/bookings/${id}`);
   revalidatePath("/ops/bookings");
@@ -229,4 +240,28 @@ export async function rejectApplication(formData: FormData) {
     .where(and(eq(expertApplications.id, id), eq(expertApplications.status, "new")));
 
   revalidatePath("/ops/applications");
+}
+
+/**
+ * Records that an expert has been paid everything outstanding.
+ *
+ * Settles all their pending rows at once, because that is how the bank
+ * transfer actually happens — one payment covering many sessions — and the
+ * reference is what ties the ledger back to it.
+ *
+ * Only touches `pending`. A voided payout stays void and a paid one keeps its
+ * original reference; re-running this must never rewrite history.
+ */
+export async function markPayoutsPaid(formData: FormData) {
+  await requireOps();
+  const expertId = String(formData.get("expertId"));
+  const reference = String(formData.get("reference") ?? "").trim();
+  if (!reference) throw new Error("A payment reference is required");
+
+  await db
+    .update(expertPayouts)
+    .set({ status: "paid", reference, paidAt: new Date(), updatedAt: new Date() })
+    .where(and(eq(expertPayouts.expertId, expertId), eq(expertPayouts.status, "pending")));
+
+  revalidatePath("/ops/payouts");
 }
