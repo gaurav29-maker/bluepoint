@@ -3069,10 +3069,8 @@
       inset -1.5px -1.5px 1px -1px rgba(146, 174, 224, 0.42),
       0 14px 32px rgba(24, 42, 96, 0.10),
       0 6px 18px rgba(74, 144, 255, 0.18);
-    --glass-strength-default: 0.82;
-    --inst-strength: 0.11;
-    --glass-halo-mult: 1;
     --glass-edge-a: 0.90;
+    --glass-tint-scale: 1;
     --glass-sheen: linear-gradient(126deg, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 44%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.20) 100%);
     --inst-rule: rgba(120, 145, 195, 0.28);
 
@@ -3130,10 +3128,8 @@
         0 8px 24px rgba(40, 110, 220, 0.20);
       /* Core up, halo down: on a dark ground the halo lifts the panel
          TOWARDS the text. 0.44 is where the card body clears 4.5:1. */
-      --glass-strength-default: 0.62;
-      --inst-strength: 0.34;
-      --glass-halo-mult: 0.44;
       --glass-edge-a: 0.70;
+      --glass-tint-scale: 0.42;
       --glass-sheen: linear-gradient(126deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.05) 100%);
       --inst-rule: rgba(150, 180, 240, 0.16);
     }
@@ -3165,10 +3161,8 @@
       0 8px 24px rgba(40, 110, 220, 0.20);
     /* Core up, halo down: on a dark ground the halo lifts the panel
        TOWARDS the text. 0.44 is where the card body clears 4.5:1. */
-    --glass-strength-default: 0.62;
-    --inst-strength: 0.34;
-    --glass-halo-mult: 0.44;
     --glass-edge-a: 0.70;
+    --glass-tint-scale: 0.42;
     --glass-sheen: linear-gradient(126deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.05) 100%);
     --inst-rule: rgba(150, 180, 240, 0.16);
   }
@@ -3344,60 +3338,42 @@
   }
 
   /*
-     One light source, not three.
+     An even tint, not a light source.
 
-     The campaign panels have a single saturated core with a wide pale halo
-     around it, both centred on the same point. Three washes spread across a
-     panel is a gradient; one core with a halo is a light behind glass, and
-     that difference is the whole look.
+     The reference is a disc washed smoothly from pale blue on one side to
+     near-white on the other, with no hotspot anywhere in it. That is a
+     simpler object than what was here, and it takes a lot of machinery out
+     with it: the core radius, the halo radius, the x/y placement, the
+     per-surface strength, the mirrored glow on alternate cards, and the
+     68% cap that kept card text from wrapping under the core.
 
-     --glass-strength lets a surface dial the core down without redeclaring
-     any of this. The default is the campaign's; the hero instrument turns it
-     down, because that one has small text sitting over it.
+     All of that existed to keep a bright spot away from words. An even
+     wash has no bright spot, so the worst case is simply its deepest
+     corner and one measurement covers every panel on the site.
   */
   .site .glassy {
-    --glass-strength: var(--glass-strength-default);
-
     /*
-       Positions are on the ::before box, which is inset -20% and therefore
-       140% of the panel. A point P across the panel is (P + 20) / 1.4 here,
-       so 86% of the panel is 76% of this box. Worth writing down: 94% looks
-       like the right edge and is actually 111% — off the panel entirely.
+       How blue the deep corner gets. Measured rather than chosen: this is
+       where the smallest text on glass still clears 4.5:1 against the
+       deepest part of the wash.
     */
-    --glass-x: 76%;
-    --glass-y: 56%;
-
-    /*
-       Fixed radii, not percentages. As a percentage the core scaled with the
-       panel: 63px on a 348px card and 96px on a 530px one, which put the
-       saturated centre straight through the wider cards' body copy. The
-       light is a physical size; it should not grow because the panel did.
-    */
-    --glass-core-r: 62px;
-    --glass-halo-r: 150px;
-
-    /*
-       The halo's alpha, capped by measurement rather than taste.
-
-       At the campaign's 0.58 the body copy on a card measured 3.92:1 —
-       under the 4.5:1 floor for normal text. Solving for the alpha that
-       clears it gives 0.422. That is the number, so that is the value.
-    */
-    --glass-halo-a: 0.42;
+    --glass-tint: 0.52;
   }
   .site .glassy::before {
     content: "";
     position: absolute;
-    inset: -20%;
+    inset: 0;
     z-index: -2;
-    background:
-      /* the halo */
-      radial-gradient(var(--glass-halo-r) var(--glass-halo-r) at var(--glass-x) var(--glass-y),
-        rgba(var(--glass-halo), calc(var(--glass-halo-a) * var(--glass-halo-mult))) 0%, rgba(var(--glass-halo), 0) 73%),
-      /* the core, tight and saturated */
-      radial-gradient(var(--glass-core-r) var(--glass-core-r) at var(--glass-x) var(--glass-y),
-        rgba(var(--glass-core), var(--glass-strength)) 0%, rgba(var(--glass-core), 0) 77%);
-    filter: blur(15px);
+    /*
+       118deg lays the blue along the lower-left and lets it fall to nothing
+       around two thirds across, which is the sweep in the reference. The
+       middle stop is what keeps it smooth — a straight two-stop fade reads
+       as a seam down the panel at this size.
+    */
+    background: linear-gradient(118deg,
+      rgba(var(--glass-halo), calc(var(--glass-tint) * var(--glass-tint-scale))) 0%,
+      rgba(var(--glass-halo), calc(var(--glass-tint) * var(--glass-tint-scale) * 0.52)) 34%,
+      rgba(var(--glass-halo), 0) 72%);
   }
 
   /* A faint diagonal sheen, and the thin blue line of light along the base. */
@@ -3536,35 +3512,13 @@
   .site .prin:nth-child(5) { grid-column: span 3; }
 
   /* The glass comes from .glassy; this is only the box it needs. */
-  /*
-     prin-text-guard.
-
-     In the campaign posts the blob sits beside the words, never under them —
-     the type is huge and black and the light is off to one side. These cards
-     are a fraction of that size, so with the core at its default the deep
-     centre landed directly on 14px body copy. The light moves to the right
-     edge and the text stops short of it. Checked geometrically, not by eye.
-  */
-  .site .prin.glassy {
-    --glass-x: 74%;        /* 84% across the card */
-    --glass-y: 58%;
-    --glass-core-r: 52px;
-    --glass-halo-r: 128px;
-  }
-  .site .prin h3,
-  .site .prin p { max-width: 68%; }
+  /* The cards need no override now: the wash is the same on every panel. */
   .site .prins .prin {
     padding: 22px 22px 24px;
     border-radius: 14px;
     border-top: 0;
   }
 
-  /*
-     Five copies of one glow reads as a repeated texture rather than five
-     objects, so the light is flipped rather than redeclared. Mirroring the
-     pseudo-element costs nothing and moves the bright edge and the deep core
-     to the opposite corners.
-  */
   /*
      The hero instrument carries 11px mono over the glass, so its core comes
      down and moves to the far edge, away from the columns. The cards keep
@@ -3580,21 +3534,16 @@
      down, and the times move up from --ink-faint to --ink-mute, which is
      a legibility gain on live data regardless of any glass behind it.
   */
-  .site .inst.glassy {
-    /* 0.116 is where the times hit 4.5:1 over the core; 0.11 leaves a hair. */
-    --glass-strength: var(--inst-strength);
-    --glass-x: 78%;        /* 89% across the panel, past the last column */
-    --glass-y: 56%;
-    --glass-core-r: 74px;
-    --glass-halo-r: 200px;
-    --glass-halo-a: 0.22;
-  }
+  /*
+     The instrument keeps one thing from all that: its times were
+     --ink-faint, which could not survive any tint at all. Everything else
+     it used to override went with the core.
+  */
   .site .inst-cell span,
-  .site .inst-foot { color: var(--ink-mute); }
+  .site .inst-foot,
+  .site .inst .eyebrow,
+  .site .inst .live { color: var(--ink-body); }
 
-  .site .prin:nth-child(even)::before { transform: scaleX(-1); }
-  .site .prin:nth-child(3)::before { transform: scaleY(-1); }
-  .site .prin:nth-child(5)::before { transform: scale(-1, -1); }
   .site .prin h3 {
     margin: 0 0 8px;
     font-size: 17px;
@@ -3603,7 +3552,12 @@
     letter-spacing: -0.01em;
     color: var(--ink);
   }
-  .site .prin p { margin: 0; font-size: 14.5px; line-height: 22px; color: var(--ink-mute); }
+  /*
+     --ink-body, not --ink-mute. In the reference the type on the tint is
+     near-black, and that is what lets the tint be as blue as it is: the
+     muted grey is what capped the old wash at 0.42.
+  */
+  .site .prin p { margin: 0; font-size: 14.5px; line-height: 22px; color: var(--ink-body); }
 
   /* The one figure in the section. It is the only number here, so it carries
      the accent without competing with anything. */
