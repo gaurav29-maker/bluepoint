@@ -46,7 +46,6 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
             <a href={to("#audit")}>Audit my portfolio</a>
             <a href={to("#ways")}>Packages</a>
             <a href={to("#how")}>How it works</a>
-            <a href={to("#basics")}>Worth knowing</a>
             <a href={to("#faq")}>FAQs</a>
             <Link href="/member/login">Landline OS</Link>
           </div>

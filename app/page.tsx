@@ -425,66 +425,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/*
-        Placed between "What this is not" and the FAQ on purpose. The claims we
-        refuse to make come first, then the few things we will say out loud,
-        then the questions. General money principles ahead of the rejection
-        line would read as a teaser for advice.
-
-        The lede names what this is. These are generic principles that hold for
-        everybody, not a view on anyone's holdings — the distinction the footer
-        disclaimer and the terms both turn on, so it is stated here rather than
-        left to be inferred two screens further down.
-      */}
-      <section className="band" id="basics">
-        <div className="wrap">
-          <div className="band-head">
-            <span className="eyebrow">Worth knowing</span>
-            <h2>
-              What&rsquo;s the one money question you keep{" "}
-              <span className="said">putting off</span>?
-            </h2>
-            <p>
-              Usually it is one of these. General principles, not a view on your portfolio
-              &mdash; nobody here knows what you hold until you tell them.
-            </p>
-          </div>
-          <div className="prins">
-            <div className="prin glassy">
-              <h3>Clarity before returns.</h3>
-              <p>Understand it before you invest in it.</p>
-            </div>
-            <div className="prin glassy">
-              <h3>Emergency fund first.</h3>
-              <p>
-                Before you invest, keep a buffer of your expenses somewhere safe and liquid.
-              </p>
-              <p className="prin-fig">
-                <b>3&ndash;6</b> months of expenses
-              </p>
-            </div>
-            <div className="prin glassy">
-              <h3>Diversify.</h3>
-              <p>No single bet should be able to sink you.</p>
-            </div>
-            <div className="prin glassy">
-              <h3>Inflation.</h3>
-              <p>
-                Money that sits still buys a little less every year. Idle cash isn&rsquo;t safe
-                cash.
-              </p>
-            </div>
-            <div className="prin glassy">
-              <h3>Time.</h3>
-              <p>Compounding rewards patience. Start early, stay consistent.</p>
-            </div>
-          </div>
-          <p className="prin-close">
-            Money questions deserve a direct line.{" "}
-            <Link href="/experts">Find an expert</Link>
-          </p>
-        </div>
-      </section>
       <section className="band" id="faq">
         <div className="wrap">
           <div className="band-head">
