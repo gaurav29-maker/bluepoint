@@ -246,7 +246,6 @@ export default async function Home() {
             <div className="rung">
               <p className="rung-step">One-time</p>
               <h3>Individual call</h3>
-              <p className="rung-line">One question. One expert. One meaningful conversation.</p>
               <p className="rung-price">{rupees(SINGLE_CALL_PAISE)}</p>
               <p className="rung-per">a session, {SLOT_MINUTES} minutes</p>
               <ul>
@@ -269,7 +268,6 @@ export default async function Home() {
             <div className="rung">
               <p className="rung-step">Ongoing</p>
               <h3>{MEMBERSHIP_TIERS.quarterly.label}</h3>
-              <p className="rung-line">Ongoing access and periodic portfolio review.</p>
               <p className="rung-price">{rupees(MEMBERSHIP_TIERS.quarterly.pricePaise)}</p>
               <p className="rung-per">{MEMBERSHIP_TIERS.quarterly.days} days, unlimited calls</p>
               <ul>
@@ -292,9 +290,6 @@ export default async function Home() {
             <div className="rung deepest">
               <p className="rung-step">Long term</p>
               <h3>{MEMBERSHIP_TIERS.annual.label}</h3>
-              <p className="rung-line">
-                A long-term relationship with people who know your portfolio.
-              </p>
               <p className="rung-price">{rupees(MEMBERSHIP_TIERS.annual.pricePaise)}</p>
               <p className="rung-per">{MEMBERSHIP_TIERS.annual.days} days, unlimited calls</p>
               <ul>
@@ -315,11 +310,6 @@ export default async function Home() {
             </div>
           </div>
 
-          <p className="progression">
-            Start with <b>one conversation</b>. If it is useful, keep the same people across a{" "}
-            <b>quarter</b>. If it keeps being useful, make it the <b>year</b>. Nothing renews on its
-            own — you decide each time.
-          </p>
         </div>
       </section>
 
