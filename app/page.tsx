@@ -58,7 +58,27 @@ const PREVIEW_CELLS = 4;
 
 type Preview = { name: string; total: number; days: { day: string; first: Date; count: number }[] };
 
-async function load(): Promise<{ experts: ExpertCard[]; dbReady: boolean; preview: Preview | null }> {
+/**
+ * The credential above the headline, counted rather than claimed.
+ *
+ * Landline has taken no sessions, so there is no "10,000 delivered" to put
+ * here and there will not be one for a while. What it does have is a panel,
+ * and the panel's experience is a real number in a real column — summed from
+ * years_experience, the same figure each expert card already prints beside
+ * the name, so the two can never disagree.
+ *
+ * Null when no expert is live or the database is unreachable. A credential
+ * with nothing behind it is worse than no credential, so the line disappears
+ * rather than falling back to anything.
+ */
+type Panel = { experts: number; years: number };
+
+async function load(): Promise<{
+  experts: ExpertCard[];
+  dbReady: boolean;
+  preview: Preview | null;
+  panel: Panel | null;
+}> {
   try {
     const rows = await db
       .select({
@@ -71,12 +91,19 @@ async function load(): Promise<{ experts: ExpertCard[]; dbReady: boolean; previe
         pricePaise: expertsTable.pricePaise,
         sebiRegType: expertsTable.sebiRegType,
         sebiRegNumber: expertsTable.sebiRegNumber,
+        yearsExperience: expertsTable.yearsExperience,
       })
       .from(expertsTable)
       .where(eq(expertsTable.status, "live"))
       .orderBy(asc(expertsTable.pricePaise));
 
-    const experts: ExpertCard[] = rows.map(({ id: _id, timezone: _tz, ...card }) => card);
+    const experts: ExpertCard[] = rows.map(
+      ({ id: _id, timezone: _tz, yearsExperience: _yrs, ...card }) => card,
+    );
+
+    const panel: Panel | null = rows.length
+      ? { experts: rows.length, years: rows.reduce((n, r) => n + r.yearsExperience, 0) }
+      : null;
 
     /*
      * The hero carries a real availability read where a reference design would
@@ -110,15 +137,15 @@ async function load(): Promise<{ experts: ExpertCard[]; dbReady: boolean; previe
       };
     }
 
-    return { experts, dbReady: true, preview };
+    return { experts, dbReady: true, preview, panel };
   } catch {
     // No database yet. Render the page rather than a stack trace.
-    return { experts: [], dbReady: false, preview: null };
+    return { experts: [], dbReady: false, preview: null, panel: null };
   }
 }
 
 export default async function Home() {
-  const { experts, dbReady, preview } = await load();
+  const { experts, dbReady, preview, panel } = await load();
 
   return (
     <div className="site">
@@ -126,6 +153,17 @@ export default async function Home() {
 
       <header className="hero-band">
         <div className="wrap">
+          {/*
+            Counted, not claimed. Every figure here comes out of the database,
+            and the whole line is absent when there is nothing to count.
+          */}
+          {panel ? (
+            <p className="hero-badge">
+              <i aria-hidden />
+              {panel.experts} expert{panel.experts === 1 ? "" : "s"} &middot; {panel.years} year
+              {panel.years === 1 ? "" : "s"} of market experience
+            </p>
+          ) : null}
           <p className="reject">
             <span>Not a tip service</span>
             <span>Not a Telegram group</span>

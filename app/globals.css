@@ -3282,6 +3282,45 @@
 
   /* ---- hero ---- */
   .site .hero-band { padding: 76px 0 64px; text-align: center; }
+  /*
+     The credential above the headline.
+
+     Accent ink and a dot, in the register of the reference — but the dot does
+     NOT blink. A pulsing dot is the universal sign for "this is happening
+     right now", and a count of years is not. It blinks on the instrument
+     below instead, where the data genuinely is live; borrowing the signal for
+     a static number is a small lie told in animation.
+  */
+  .site .hero-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+  .site .hero-badge i {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+  /*
+     At 375 the line ran about ten pixels long and wrapped, which left the dot
+     stranded beside the first of two lines. The tracking gives that back
+     rather than the words: uppercase mono at this size can lose 0.04em and
+     still read as a label.
+  */
+  @media (max-width: 460px) {
+    .site .hero-badge { font-size: 10px; letter-spacing: 0.1em; gap: 7px; }
+  }
+
   .site .reject { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 22px; }
   .site .reject span {
     font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
@@ -3416,6 +3455,19 @@
   .site .inst-top .eyebrow { color: var(--ink-mute); }
   .site .live { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mute); }
   .site .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--accent); }
+  /*
+     This one does blink, because this one is live: the panel beside it is read
+     from the database on every request. Slow and shallow — it should read as a
+     pulse somebody notices once, not a blinking cursor.
+  */
+  @keyframes landline-live {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.78); }
+  }
+  .site .live .dot { animation: landline-live 2.6s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .site .live .dot { animation: none; }
+  }
   .site .inst-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
   .site .inst-cell { padding: 14px 16px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
   .site .inst-cell:last-child { border-right: 0; }
