@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { WORDMARK_PARTS } from "@/lib/brand";
+import { WORDMARK_PARTS, BRAND_DESCRIPTOR, TRADEMARK_REGISTERED } from "@/lib/brand";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { experts } from "@/lib/db/schema";
@@ -70,17 +70,50 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          background: "#08090B",
-          padding: "72px 80px",
+          background: "#E8E9EC",
+          padding: 56,
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", fontSize: 30, fontWeight: 800, letterSpacing: -1 }}>
-          <span style={{ color: "#F3F6F9" }}>{WORDMARK_PARTS[0]}</span>
-          <span style={{ color: "#8AA5F0" }}>{WORDMARK_PARTS[1]}</span>
-        </div>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            borderRadius: 20,
+            padding: "52px 60px",
+            backgroundColor: "#FBFCFE",
+            backgroundImage:
+              "radial-gradient(52% 78% at 20% 52%, rgba(43, 79, 224, 0.50) 0%, rgba(43, 79, 224, 0.15) 42%, rgba(43, 79, 224, 0) 70%)",
+            border: "1px solid rgba(255, 255, 255, 0.92)",
+            boxShadow: "0 24px 60px rgba(28, 40, 88, 0.16)",
+          }}
+        >
+          {/* The lockup, set the way the printed card sets it. */}
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                fontSize: 40,
+                fontWeight: 800,
+                letterSpacing: -1.4,
+                color: "#0B0C0E",
+              }}
+            >
+              <span>{WORDMARK_PARTS[0]}</span>
+              <span>{WORDMARK_PARTS[1]}</span>
+              {TRADEMARK_REGISTERED ? (
+                <span style={{ fontSize: 15, fontWeight: 500, marginTop: 4, marginLeft: 4 }}>
+                  &reg;
+                </span>
+              ) : null}
+            </div>
+            <div style={{ display: "flex", fontSize: 18, color: "#2A2D33", marginTop: 2 }}>
+              {BRAND_DESCRIPTOR}
+            </div>
+          </div>
 
         {expert ? (
           <div style={{ display: "flex", alignItems: "center", gap: 36 }}>
@@ -90,7 +123,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
                 width: 148,
                 height: 148,
                 borderRadius: 999,
-                background: "#3E6AE1",
+                background: "#2B4FE0",
                 color: "#FFFFFF",
                 alignItems: "center",
                 justifyContent: "center",
@@ -106,16 +139,16 @@ export default async function Image({ params }: { params: Promise<{ slug: string
                   display: "flex",
                   fontSize: 62,
                   fontWeight: 600,
-                  color: "#F3F6F9",
+                  color: "#0B0C0E",
                   letterSpacing: -2.2,
                 }}
               >
                 {expert.displayName}
               </div>
-              <div style={{ display: "flex", fontSize: 30, color: "#798497", marginTop: 12 }}>
+              <div style={{ display: "flex", fontSize: 30, color: "#3A3E46", marginTop: 12 }}>
                 {expert.headline}
               </div>
-              <div style={{ display: "flex", fontSize: 28, color: "#F3F6F9", marginTop: 18 }}>
+              <div style={{ display: "flex", fontSize: 28, color: "#0B0C0E", marginTop: 18 }}>
                 {SLOT_MINUTES} minutes, one to one
               </div>
             </div>
@@ -126,7 +159,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
               display: "flex",
               fontSize: 56,
               fontWeight: 600,
-              color: "#F3F6F9",
+              color: "#0B0C0E",
               letterSpacing: -2,
             }}
           >
@@ -134,7 +167,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           </div>
         )}
 
-        <div style={{ display: "flex", fontSize: 24, color: "#798497" }}>{footer}</div>
+          <div style={{ display: "flex", fontSize: 24, color: "#3A3E46" }}>{footer}</div>
+        </div>
       </div>
     ),
     size,
