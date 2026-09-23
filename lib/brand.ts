@@ -36,7 +36,19 @@ export const BRAND_DESCRIPTOR = "financial expert";
  * brand cold and nowhere else: the two share cards, and the header of every
  * email. Repeating it down the page would turn a promise into a slogan.
  */
-export const BRAND_TAGLINE = "Your direct line to a financial expert.";
+/**
+ * Split where the headline breaks it.
+ *
+ * Every heading on this site sets its last phrase in the italic serif, and
+ * the hero is now the tagline, so the tagline has to be splittable. Parts
+ * rather than a second hard-coded copy: BRAND_TAGLINE is built from these,
+ * so the hero, the footer, the share card and every email still move
+ * together when the words change.
+ */
+export const BRAND_TAGLINE_PARTS = ["Your direct line to a ", "financial expert", "."] as const;
+
+/** The tagline as one string, for every place that is not the headline. */
+export const BRAND_TAGLINE = BRAND_TAGLINE_PARTS.join("");
 
 /**
  * Whether to set the ® on the mark.

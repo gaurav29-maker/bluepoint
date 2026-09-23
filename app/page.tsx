@@ -18,7 +18,7 @@ import ExpertGrid, { type ExpertCard } from "@/components/ExpertGrid";
 import PassPurchase from "@/components/PassPurchase";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
-import { BRAND_TAGLINE } from "@/lib/brand";
+import { BRAND_TAGLINE_PARTS } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -131,17 +131,20 @@ export default async function Home() {
             <span>Not a Telegram group</span>
             <span>Not a distributor</span>
           </p>
-          <h1>
-            Real experts. Real work. <span className="said">Real conversations.</span>
-          </h1>
           {/*
-            The tagline sits between the headline and the explanation, which is
-            where the sub used to open with "Book an experienced market
-            professional directly" — the same sentence in duller words. Two
-            near-identical claims stacked would have weakened both, so the sub
-            starts at the part the tagline does not already say.
+            The tagline IS the headline now, so it is read from the same parts
+            every other place reads — nothing here restates the words.
+
+            "Real experts. Real work. Real conversations." is not gone: it is
+            still the line on both share cards, which is where somebody meets
+            this cold. It stopped earning the top of the page once the tagline
+            sat directly underneath saying the same thing more plainly.
           */}
-          <p className="hero-tag">{BRAND_TAGLINE}</p>
+          <h1>
+            {BRAND_TAGLINE_PARTS[0]}
+            <span className="said">{BRAND_TAGLINE_PARTS[1]}</span>
+            {BRAND_TAGLINE_PARTS[2]}
+          </h1>
           <p className="hero-sub">
             They read your portfolio before you meet, and tell you what they actually see in
             it. No pitch at the end of the call.
