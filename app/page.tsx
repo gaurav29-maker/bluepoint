@@ -301,39 +301,13 @@ export default async function Home() {
           </div>
 
           {/*
-            The order here is the order the software actually works in. The
-            expert is chosen and the time is booked before the portfolio is
-            shared, because the intake form is reached after payment — showing
-            "share portfolio" first would describe a flow that does not exist.
-          */}
-          <div className="audit-steps">
-            <div className="audit-step">
-              <p className="n">01</p>
-              <h3>Choose your expert</h3>
-              <p>Focus, experience, background, rate. All stated.</p>
-            </div>
-            <div className="audit-step">
-              <p className="n">02</p>
-              <h3>Book a time</h3>
-              <p>Live availability, not a request.</p>
-            </div>
-            <div className="audit-step">
-              <p className="n">03</p>
-              <h3>Share your portfolio</h3>
-              <p>What you hold, in what proportion.</p>
-            </div>
-            <div className="audit-step">
-              <p className="n">04</p>
-              <h3>They read it</h3>
-              <p>Before you meet.</p>
-            </div>
-            <div className="audit-step">
-              <p className="n">05</p>
-              <h3>You discuss it</h3>
-              <p>{SLOT_MINUTES} minutes. Then you decide.</p>
-            </div>
-          </div>
+            The five steps that stood here were the six in "How it works"
+            again, a thousand pixels apart, down to "Live availability"
+            appearing verbatim in both. One process, told once.
 
+            The section stays: the hero's second button points at #audit, and
+            what a review actually looks at exists nowhere else on the page.
+          */}
           <p className="eyebrow" style={{ marginBottom: 16 }}>
             What a review looks at
           </p>
