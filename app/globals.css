@@ -3722,8 +3722,9 @@
   }
   @media (max-width: 460px) {
     .site .b { min-width: 0; width: 100%; }
-    .site .b-pair { flex-direction: column; }
     .site .b-sm { width: auto; }
+
+    .site .b-pair { flex-direction: column; }
     .site .hero-band { padding: 48px 0 44px; }
     .site .row2 { grid-template-columns: 1fr; }
     .site .doc-head { gap: 14px; }
@@ -3742,6 +3743,35 @@
     .site .nav-end .b-fill { display: none; }
     .site .nav-end { gap: 6px; }
     .site .b-sm { white-space: nowrap; }
+  }
+
+  /*
+     Side by side on a phone rather than stacked — but only where they fit.
+
+     A row puts both choices in one glance, and it needs the labels to hold on
+     one line each. They do not at the desktop padding: "Audit my portfolio"
+     wants about 118px of text, half of a 375px screen's column leaves 157,
+     and 22px of padding each side pushes it to 162. So the padding comes in
+     to 10px here, and flex: 1 1 0 with min-width: 0 makes the two equal
+     whatever their labels say rather than each sizing to its own text.
+
+     The floor is 360px, measured rather than assumed. At 320 the column is
+     272 and each button gets 131 — "Audit my portfolio" wrapped to two lines
+     and the pair went 60px tall. Below 360 they stack, which is what the
+     smallest phones get and it is the right answer for them.
+  */
+  @media (min-width: 360px) and (max-width: 460px) {
+    .site .b-pair { flex-direction: row; gap: 10px; }
+    .site .b-pair .b { flex: 1 1 0; min-width: 0; padding-left: 10px; padding-right: 10px; }
+  }
+
+  /*
+     At 320 the credential line wraps, and the dot — a flex item — stayed on
+     the first line on its own. It is decorative and aria-hidden, so on the
+     smallest screens it goes rather than sitting orphaned.
+  */
+  @media (max-width: 359px) {
+    .site .hero-badge i { display: none; }
   }
 
   .site .band-empty { text-align: center; color: var(--ink-mute); font-size: 15px; }
