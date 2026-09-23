@@ -18,6 +18,7 @@ import ExpertGrid, { type ExpertCard } from "@/components/ExpertGrid";
 import PassPurchase from "@/components/PassPurchase";
 import SiteNav from "@/components/SiteNav";
 import SiteFooter from "@/components/SiteFooter";
+import { BRAND_TAGLINE } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -133,9 +134,17 @@ export default async function Home() {
           <h1>
             Real experts. Real work. <span className="said">Real conversations.</span>
           </h1>
+          {/*
+            The tagline sits between the headline and the explanation, which is
+            where the sub used to open with "Book an experienced market
+            professional directly" — the same sentence in duller words. Two
+            near-identical claims stacked would have weakened both, so the sub
+            starts at the part the tagline does not already say.
+          */}
+          <p className="hero-tag">{BRAND_TAGLINE}</p>
           <p className="hero-sub">
-            Book an experienced market professional directly. They read your portfolio before you
-            meet, and tell you what they actually see in it. No pitch at the end of the call.
+            They read your portfolio before you meet, and tell you what they actually see in
+            it. No pitch at the end of the call.
           </p>
           <div className="b-pair">
             <Link className="b b-fill" href="/experts">
