@@ -32,6 +32,13 @@ export const WORDMARK_HEIGHT = { sm: 15, md: 17, lg: 22 } as const;
 export const BRAND_DESCRIPTOR = "financial expert";
 
 /**
+ * The campaign line. It is the promise, so it goes where somebody meets the
+ * brand cold and nowhere else: the two share cards, and the header of every
+ * email. Repeating it down the page would turn a promise into a slogan.
+ */
+export const BRAND_TAGLINE = "Your direct line to a financial expert.";
+
+/**
  * Whether to set the ® on the mark.
  *
  * FALSE deliberately, and it is not a styling choice. Under section 107 of

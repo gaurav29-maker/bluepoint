@@ -4,6 +4,7 @@ import { notifications } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { istDateTime, rupees } from "@/lib/format";
 import { intakeUrl } from "@/lib/tokens";
+import { BRAND_TAGLINE } from "@/lib/brand";
 
 type Kind = (typeof notifications.kind.enumValues)[number];
 
@@ -80,9 +81,24 @@ const DISCLAIMER = `
     decisions. Never share your demat or broker login with anyone, including us.
   </p>`;
 
+/*
+ * Every email opened straight into "Hi {name}" with no mark on it at all —
+ * a transactional mail that looks like it came from nowhere. This is the
+ * lockup from the artwork, in system faces because no email client can be
+ * relied on to fetch a webfont, and as text rather than an image because
+ * most clients block remote images by default and a logo nobody can see is
+ * worse than none.
+ */
+const MASTHEAD = `
+  <div style="border-bottom:1px solid #E4E8EF;padding-bottom:15px;margin-bottom:24px">
+    <div style="font-size:18px;font-weight:800;letter-spacing:-0.02em;color:#1A1A1A">land<span style="color:#3E6AE1">line</span></div>
+    <div style="font-size:12px;color:#6B6B6B;margin-top:4px">${BRAND_TAGLINE}</div>
+  </div>`;
+
 function shell(body: string): string {
   return `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;
                       color:#1A1A1A;max-width:520px;line-height:1.65">
+    ${MASTHEAD}
     ${body}
     ${DISCLAIMER}
   </div>`;

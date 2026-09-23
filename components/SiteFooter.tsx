@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Wordmark from "@/components/Wordmark";
 import { CONTACT_EMAIL } from "@/lib/constants";
-import { BRAND_DESCRIPTOR } from "@/lib/brand";
+import { BRAND_DESCRIPTOR, BRAND_TAGLINE } from "@/lib/brand";
 
 export default function SiteFooter({ onLanding = false }: { onLanding?: boolean }) {
   const to = (hash: string) => (onLanding ? hash : `/${hash}`);
@@ -34,7 +34,7 @@ export default function SiteFooter({ onLanding = false }: { onLanding?: boolean 
             checkable.
           */}
           <p>
-            <b>Your direct line to a financial expert.</b> You pick the person and you pick the
+            <b>{BRAND_TAGLINE}</b> You pick the person and you pick the
             time, and they have read your portfolio before you speak. No forwarded screenshot,
             no broadcast channel, nobody in between.
           </p>
