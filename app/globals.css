@@ -3321,20 +3321,31 @@
     .site .hero-badge { font-size: 10px; letter-spacing: 0.1em; gap: 7px; }
   }
 
-  .site .reject { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 22px; }
+  /* Sits under the headline now, so its margin is the gap to the buttons. */
+  .site .reject { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
   .site .reject span {
     font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
     text-transform: uppercase; color: var(--ink-faint);
   }
   .site .reject span + span::before { content: "\00B7"; margin-right: 10px; color: var(--rule); }
   /*
+     The separator belongs between two items on one line. When the three wrap
+     — which they do from about 560px down — it travelled with the item below
+     and started that line with a dangling "·". Below the wrap point the flex
+     gap does the separating on its own.
+  */
+  @media (max-width: 560px) {
+    .site .reject { gap: 6px 18px; }
+    .site .reject span + span::before { content: none; margin-right: 0; }
+  }
+  /*
      21ch, not 18. The old headline was three short sentences and broke
      anywhere; this one is a single clause and 18ch pushed it to three lines.
 
-     The margin below carries the gap the sub used to hold: the headline now
-     sits directly above the buttons, so 18px would put them almost touching.
+     18px below, not 30: the rejection line moved underneath and the gap to
+     the buttons is now that line's to hold, not the headline's.
   */
-  .site .hero-band h1 { max-width: 21ch; margin: 0 auto 30px; }
+  .site .hero-band h1 { max-width: 21ch; margin: 0 auto 18px; }
 
   /* ------------------------------------------------------------ glass
      An accent, not a theme.

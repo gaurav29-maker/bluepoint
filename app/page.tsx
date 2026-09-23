@@ -164,11 +164,6 @@ export default async function Home() {
               {panel.years === 1 ? "" : "s"} of market experience
             </p>
           ) : null}
-          <p className="reject">
-            <span>Not a tip service</span>
-            <span>Not a Telegram group</span>
-            <span>Not a distributor</span>
-          </p>
           {/*
             The tagline IS the headline now, so it is read from the same parts
             every other place reads — nothing here restates the words.
@@ -183,6 +178,23 @@ export default async function Home() {
             <span className="said">{BRAND_TAGLINE_PARTS[1]}</span>
             {BRAND_TAGLINE_PARTS[2]}
           </h1>
+          {/*
+            Below the headline, not above it. It sat over the top and made two
+            small-caps lines in a row under the badge, and it opened the page
+            on three things Landline is NOT — a denial arriving before the
+            claim it denies, which invites the doubt it exists to kill.
+
+            It stays on the page because the prior it kills is real: in Indian
+            retail, "book a market expert" usually does mean a tip group or a
+            distributor on commission. "What this is not" says it again with
+            room to explain, but that section is seven screens down and this
+            reader may not get there.
+          */}
+          <p className="reject">
+            <span>Not a tip service</span>
+            <span>Not a Telegram group</span>
+            <span>Not a distributor</span>
+          </p>
           <div className="b-pair">
             <Link className="b b-fill" href="/experts">
               Find an expert
