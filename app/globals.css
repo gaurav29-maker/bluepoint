@@ -3254,41 +3254,6 @@
   .site .mark span { color: var(--accent); }
 
   /*
-     The mark on glass.
-
-     It carries the tint the cards gave up, which is the split the whole
-     accent rests on now: the brand mark and the live instrument are made
-     of the material, and everything else is flat.
-
-     inline-flex rather than the .mark default of block, or the badge
-     stretches to the nav column and the glass becomes a bar.
-  */
-  .site .mark-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 7px 14px;
-    border-radius: 999px;
-    /* The wash runs the short way across a wide, shallow box. */
-    --glass-x: 12%;
-  }
-  .site .mark-badge::before { background: linear-gradient(104deg,
-    rgba(var(--glass-halo), calc(var(--glass-tint) * var(--glass-tint-scale))) 0%,
-    rgba(var(--glass-halo), calc(var(--glass-tint) * var(--glass-tint-scale) * 0.5)) 38%,
-    rgba(var(--glass-halo), 0) 78%); }
-
-  /*
-     On glass the mark is all ink, which is how the artwork sets it — the
-     disc has a blue tint and a wholly black wordmark. It is also the only
-     way it works: the accent blue on the blue wash measured 3.07:1, and
-     solving for a tint that would clear 4.5:1 with it gives 0.057, which is
-     no tint at all. So the blue moves from the letters to the material.
-
-     Off the glass — the footer lockup, the consoles — the mark keeps its
-     two-tone treatment, because there is no wash there to fight.
-  */
-  .site .mark-badge span { color: var(--ink); }
-
-  /*
      The theme button. Sized to the small pill buttons beside it so the
      nav row keeps one baseline, but drawn as a bare icon: it changes how
      the page looks, not where you go, and giving it a border would put it
