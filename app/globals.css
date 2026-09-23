@@ -3685,6 +3685,40 @@
     .site .nav-mid { display: none; }
     .site h1 { font-size: 32px; line-height: 39px; }
     .site .band { padding: 60px 0; }
+
+    /*
+       ---- touch: things you tap ----
+
+       44px, which is the floor Apple's guidance and the WCAG target-size rule
+       both land on, and roughly the pad of an adult fingertip. Measured on a
+       375px screen before this: page buttons 42, nav buttons 36, the theme
+       toggle 32, the logo 23, "Read more about Rhea" 20, and every footer
+       link 20 with a 9px gap between them.
+
+       At 860 rather than 460 because a tablet in portrait is a finger too,
+       and nothing here costs anything on a narrow desktop window. Mouse-sized
+       targets stay mouse-sized above it — a pointer does not need 44px.
+    */
+    .site .b { min-height: 44px; }
+    .site .b-sm { min-height: 44px; }
+    .site .theme-btn { width: 44px; height: 44px; }
+    .site .mark { display: inline-flex; align-items: center; min-height: 44px; }
+    .site .xmore {
+      display: block;
+      min-height: 44px;
+      padding: 12px 8px 0;
+      margin-top: 2px;
+    }
+    /*
+       The margin becomes padding, so the gap between two footer links is
+       inside the targets rather than dead space between them.
+    */
+    .site .foot-col a {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      margin-bottom: 0;
+    }
   }
   @media (max-width: 460px) {
     .site .b { min-width: 0; width: 100%; }
@@ -3693,6 +3727,21 @@
     .site .hero-band { padding: 48px 0 44px; }
     .site .row2 { grid-template-columns: 1fr; }
     .site .doc-head { gap: 14px; }
+
+    /*
+       The nav had a logo, a theme toggle and TWO buttons in 327px of usable
+       width, so both buttons broke their labels across two lines — 54px tall,
+       and the first thing anybody saw.
+
+       "Find an expert" goes, not "Landline OS". The CTA has a full-width twin
+       150px below that nobody can miss; sign-in has no other home above the
+       footer, and a returning member should not have to scroll a whole page
+       to reach their console. nowrap on what is left, so a longer label can
+       never bring the two-line nav back.
+    */
+    .site .nav-end .b-fill { display: none; }
+    .site .nav-end { gap: 6px; }
+    .site .b-sm { white-space: nowrap; }
   }
 
   .site .band-empty { text-align: center; color: var(--ink-mute); font-size: 15px; }
