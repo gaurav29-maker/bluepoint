@@ -539,7 +539,36 @@ export default async function Home() {
       <section className="band alt closer">
         <div className="wrap">
           <h2>One call. One honest read.</h2>
-          <p className="triple">You book. They look. You decide.</p>
+          {/*
+            Was "You book. They look. You decide."
+
+            "Look" was the problem. Every other line on this site says READ —
+            the audit section, step 05, the page title — because reading the
+            portfolio before the call is the whole product. "Look" is a glance,
+            and it was the last verb before the two buttons.
+
+            "You book" and "You decide" described the process for the fourth
+            time on one page, after the six steps and the FAQ have both covered
+            it. Somebody who has read this far does not need the order of
+            events again; they need the last objection answered. So the second
+            clause answers it: no, this is not a sales call. That promise fell
+            off the hero when the sub-headline went, and it does more work here
+            than it ever did there.
+
+            Two clauses, not three. The first draft kept the triple and ran to
+            67 characters, which wrapped as "You talk it / through" — a line
+            that breaks inside a clause is worse than a line that is short.
+          */}
+          {/*
+            A span per sentence so the only place this can break is between
+            them. Left to itself it wrapped as "They read it first. Nobody /
+            sells you anything." at 375 — measured, not guessed: the two line
+            boxes came back 196px and 147px, and the first sentence is the
+            shorter of the two, so the break could not have been at the stop.
+          */}
+          <p className="closer-line">
+            <span>They read it first.</span> <span>Nobody sells you anything.</span>
+          </p>
           <div className="b-pair">
             <Link className="b b-fill" href="/experts">
               Find an expert

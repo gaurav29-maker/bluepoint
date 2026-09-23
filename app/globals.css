@@ -3575,7 +3575,29 @@
   /* ---- closer ---- */
   .site .closer { text-align: center; }
   .site .closer h2 { margin-bottom: 10px; }
-  .site .triple { font-family: "Instrument Serif", Georgia, serif; font-size: 22px; font-style: italic; color: var(--ink-mute); margin-bottom: 28px; }
+  /*
+     Renamed from .triple, which stopped being true when the third clause
+     came out. One caller, so the old name was not worth keeping around to
+     mislead the next person who greps for it.
+
+     The measure is set so the line holds on one row at desktop width and
+     breaks at the full stop rather than inside a clause when it cannot.
+  */
+  .site .closer-line {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: 22px;
+    font-style: italic;
+    line-height: 32px;
+    color: var(--ink-mute);
+    max-width: 48ch;
+    margin: 0 auto 28px;
+  }
+  /*
+     Each sentence is one unbreakable unit, so the line either holds on one
+     row or splits at the full stop. Both fit inside a 320px screen's text
+     column at this size, so nowrap cannot push the page sideways.
+  */
+  .site .closer-line span { display: inline-block; white-space: nowrap; }
 
   /* ---- footer ---- */
   .site .foot { border-top: 1px solid var(--rule); background: var(--bg-alt); padding: 52px 0 34px; }
