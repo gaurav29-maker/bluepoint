@@ -3051,6 +3051,30 @@
     --lift: 0 8px 16px rgba(0, 0, 0, 0.16);
     --nav-bg: rgba(255, 255, 255, 0.88);
     --notice-bg: #F1F5FD;
+    --err:        #C0392B;
+
+    /*
+       Every light/dark difference on the public site is a token, and they
+       all live in these two lists. Before this the dark theme was three
+       @media blocks containing real rules, so a manual toggle would have
+       meant a second copy of each of them — the same shape of mistake as
+       a wordmark pasted into fifteen files.
+    */
+    --glass-sheet-1: rgba(250, 252, 255, 0.94);
+    --glass-sheet-2: rgba(232, 239, 252, 0.90);
+    --glass-blur: blur(14px) saturate(140%);
+    --glass-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.92),
+      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 1),
+      inset -1.5px -1.5px 1px -1px rgba(146, 174, 224, 0.42),
+      0 14px 32px rgba(24, 42, 96, 0.10),
+      0 6px 18px rgba(74, 144, 255, 0.18);
+    --glass-strength-default: 0.82;
+    --inst-strength: 0.11;
+    --glass-halo-mult: 1;
+    --glass-edge-a: 0.90;
+    --glass-sheen: linear-gradient(126deg, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 44%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.20) 100%);
+    --inst-rule: rgba(120, 145, 195, 0.28);
 
     background: var(--bg);
     color: var(--ink-body);
@@ -3060,8 +3084,26 @@
     line-height: 20px;
   }
 
+
+
+  /* ================================================================ DARK TOKENS
+
+     Three states, not two.
+
+       - no data-theme on <html>  ->  follow the operating system
+       - data-theme="dark"        ->  dark whatever the system says
+       - data-theme="light"       ->  light whatever the system says
+
+     Which is why the media query is scoped :not([data-theme="light"]):
+     without that, a visitor on a dark OS who chooses light would keep
+     getting dark, and the toggle would look broken rather than absent.
+
+     The two lists below MUST stay identical. scripts/verify-flow.ts
+     compares them on every run, because a difference here is invisible
+     until somebody happens to be on the OS that exposes it.
+  */
   @media (prefers-color-scheme: dark) {
-    .site {
+    :root:not([data-theme="light"]) .site {
       --ink:        #F5F6F7;
       --ink-body:   #D3D6DA;
       --ink-mute:   #9AA0A8;
@@ -3071,10 +3113,64 @@
       --rule:       #262A30;
       --hairline:   rgba(255, 255, 255, 0.09);
       --accent-ink: #8AA5F0;
+      --err:        #F2B8B5;
       --lift: 0 8px 16px rgba(0, 0, 0, 0.5);
       --nav-bg: rgba(14, 16, 19, 0.88);
       --notice-bg: #111621;
+
+      /* The panel is barely tinted here; the depth comes from the core. */
+      --glass-sheet-1: rgba(190, 212, 255, 0.070);
+      --glass-sheet-2: rgba(150, 180, 240, 0.035);
+      --glass-blur: blur(20px) saturate(125%);
+      --glass-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+        inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.20),
+        inset -1.5px -1.5px 1px -1px rgba(10, 16, 28, 0.55),
+        0 18px 44px rgba(0, 0, 0, 0.45),
+        0 8px 24px rgba(40, 110, 220, 0.20);
+      /* Core up, halo down: on a dark ground the halo lifts the panel
+         TOWARDS the text. 0.44 is where the card body clears 4.5:1. */
+      --glass-strength-default: 0.62;
+      --inst-strength: 0.34;
+      --glass-halo-mult: 0.44;
+      --glass-edge-a: 0.70;
+      --glass-sheen: linear-gradient(126deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.05) 100%);
+      --inst-rule: rgba(150, 180, 240, 0.16);
     }
+  }
+  :root[data-theme="dark"] .site {
+    --ink:        #F5F6F7;
+    --ink-body:   #D3D6DA;
+    --ink-mute:   #9AA0A8;
+    --ink-faint:  #8B929B;
+    --bg:         #0E1013;
+    --bg-alt:     #16191D;
+    --rule:       #262A30;
+    --hairline:   rgba(255, 255, 255, 0.09);
+    --accent-ink: #8AA5F0;
+    --err:        #F2B8B5;
+    --lift: 0 8px 16px rgba(0, 0, 0, 0.5);
+    --nav-bg: rgba(14, 16, 19, 0.88);
+    --notice-bg: #111621;
+
+    /* The panel is barely tinted here; the depth comes from the core. */
+    --glass-sheet-1: rgba(190, 212, 255, 0.070);
+    --glass-sheet-2: rgba(150, 180, 240, 0.035);
+    --glass-blur: blur(20px) saturate(125%);
+    --glass-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.20),
+      inset -1.5px -1.5px 1px -1px rgba(10, 16, 28, 0.55),
+      0 18px 44px rgba(0, 0, 0, 0.45),
+      0 8px 24px rgba(40, 110, 220, 0.20);
+    /* Core up, halo down: on a dark ground the halo lifts the panel
+       TOWARDS the text. 0.44 is where the card body clears 4.5:1. */
+    --glass-strength-default: 0.62;
+    --inst-strength: 0.34;
+    --glass-halo-mult: 0.44;
+    --glass-edge-a: 0.70;
+    --glass-sheen: linear-gradient(126deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.05) 100%);
+    --inst-rule: rgba(150, 180, 240, 0.16);
   }
 
   .site h1, .site h2, .site h3 {
@@ -3134,6 +3230,37 @@
   }
   .site .mark { font-family: var(--font-mark); font-size: 15px; font-weight: 800; letter-spacing: 0; color: var(--ink); text-decoration: none; }
   .site .mark span { color: var(--accent); }
+
+  /*
+     The theme button. Sized to the small pill buttons beside it so the
+     nav row keeps one baseline, but drawn as a bare icon: it changes how
+     the page looks, not where you go, and giving it a border would put it
+     in the same class as "Find an expert".
+  */
+  .site .theme-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink-mute);
+    cursor: pointer;
+    transition: color 120ms ease, background-color 120ms ease;
+  }
+  .site .theme-btn:hover { color: var(--ink); background: var(--hairline); }
+  .site .theme-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  /* The placeholder before mount: same box, nothing drawn in it. */
+  .site .theme-btn-ghost { pointer-events: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site .theme-btn { transition: none; }
+  }
   /* Only rendered when TRADEMARK_REGISTERED is true. Styled regardless, so
      the day that flips is not the day somebody discovers it is unstyled. */
   .mark-r { font-size: 0.5em; font-weight: 400; vertical-align: super; margin-left: 1px; color: var(--ink-faint); }
@@ -3209,20 +3336,11 @@
        campaign are barely transparent — the depth comes from the core and
        the rim, not from the page showing through.
     */
-    background: linear-gradient(152deg,
-      rgba(var(--glass-top), 0.94) 0%,
-      rgba(var(--glass-bot), 0.90) 100%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
-    backdrop-filter: blur(14px) saturate(140%);
+    background: linear-gradient(152deg, var(--glass-sheet-1) 0%, var(--glass-sheet-2) 100%);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
     border: 0;
-    box-shadow:
-      /* white rim, brightest top-left, cool blue-grey bottom-right */
-      inset 0 0 0 1px rgba(255, 255, 255, 0.92),
-      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 1),
-      inset -1.5px -1.5px 1px -1px rgba(146, 174, 224, 0.42),
-      /* what it casts on the page, and the blue light just beneath it */
-      0 14px 32px rgba(24, 42, 96, 0.10),
-      0 6px 18px rgba(var(--glass-edge), 0.18);
+    box-shadow: var(--glass-shadow);
   }
 
   /*
@@ -3238,7 +3356,7 @@
      down, because that one has small text sitting over it.
   */
   .site .glassy {
-    --glass-strength: 0.82;
+    --glass-strength: var(--glass-strength-default);
 
     /*
        Positions are on the ::before box, which is inset -20% and therefore
@@ -3275,10 +3393,10 @@
     background:
       /* the halo */
       radial-gradient(var(--glass-halo-r) var(--glass-halo-r) at var(--glass-x) var(--glass-y),
-        rgba(var(--glass-halo), var(--glass-halo-a)) 0%, rgba(var(--glass-halo), 0) 72%),
+        rgba(var(--glass-halo), calc(var(--glass-halo-a) * var(--glass-halo-mult))) 0%, rgba(var(--glass-halo), 0) 73%),
       /* the core, tight and saturated */
       radial-gradient(var(--glass-core-r) var(--glass-core-r) at var(--glass-x) var(--glass-y),
-        rgba(var(--glass-core), var(--glass-strength)) 0%, rgba(var(--glass-core), 0) 76%);
+        rgba(var(--glass-core), var(--glass-strength)) 0%, rgba(var(--glass-core), 0) 77%);
     filter: blur(15px);
   }
 
@@ -3290,8 +3408,8 @@
     z-index: -1;
     pointer-events: none;
     background:
-      linear-gradient(126deg, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 44%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.20) 100%),
-      linear-gradient(to top, rgba(var(--glass-edge), 0.90) 0px, rgba(var(--glass-edge), 0) 6px);
+      var(--glass-sheen),
+      linear-gradient(to top, rgba(var(--glass-edge), var(--glass-edge-a)) 0px, rgba(var(--glass-edge), 0) 6px);
   }
 
   /*
@@ -3301,53 +3419,7 @@
    * stops being glass and becomes a grey slab. On dark the panel is barely
    * tinted and the depth comes from the glow and the rim instead.
    */
-  @media (prefers-color-scheme: dark) {
-    .site .glassy {
-      background: linear-gradient(152deg,
-        rgba(190, 212, 255, 0.070) 0%,
-        rgba(150, 180, 240, 0.035) 100%);
-      -webkit-backdrop-filter: blur(20px) saturate(125%);
-      backdrop-filter: blur(20px) saturate(125%);
-      box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.10),
-        inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.20),
-        inset -1.5px -1.5px 1px -1px rgba(10, 16, 28, 0.55),
-        0 18px 44px rgba(0, 0, 0, 0.45),
-        0 8px 24px rgba(40, 110, 220, 0.20);
-    }
-    /*
-       Same one-core structure as the light panel, but the core has to carry
-       the panel here rather than sit on top of a bright field, so it comes UP
-       while the halo comes down. A pale halo on a dark ground is just haze.
-    */
-    .site .glassy { /* --glass-dark-done */
-      /*
-         0.44, not 0.62. Dark runs the opposite way to light: the halo LIFTS a
-         dark panel towards the text rather than away from it, so the same
-         wash that was safe on paper took the card body to 3.89:1 here.
-         Solving against the real ground — rgb(14,16,19) from .site, not the
-         body element, which stays white in both schemes — gives 0.453.
-      */
-      --glass-strength: 0.62;
-    }
-    .site .glassy::before {
-      background:
-        radial-gradient(var(--glass-halo-r) var(--glass-halo-r) at var(--glass-x) var(--glass-y),
-          rgba(var(--glass-halo), calc(var(--glass-halo-a) * 0.44)) 0%, rgba(var(--glass-halo), 0) 74%),
-        radial-gradient(var(--glass-core-r) var(--glass-core-r) at var(--glass-x) var(--glass-y),
-          rgba(var(--glass-core), var(--glass-strength)) 0%, rgba(var(--glass-core), 0) 78%);
-    }
-    .site .glassy::after {
-      background:
-        linear-gradient(126deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.05) 100%),
-        linear-gradient(to top, rgba(var(--glass-edge), 0.70) 0px, rgba(var(--glass-edge), 0) 6px);
-    }
-    /* The instrument still turns its core down; 0.30 of a dimmer core is too
-       little to see, so it gets its own dark value rather than inheriting. */
-    .site .inst.glassy { --glass-strength: 0.34; }
-    .site .inst .inst-top,
-    .site .inst .inst-cell { border-color: rgba(150, 180, 240, 0.16); }
-  }
+
 
 
   /* The instrument that stands where the reference puts a photograph. */
@@ -3358,7 +3430,7 @@
   }
   /* On glass the hairline rules read as scratches, so they soften. */
   .site .inst .inst-top,
-  .site .inst .inst-cell { border-color: rgba(120, 145, 195, 0.28); }
+  .site .inst .inst-cell { border-color: var(--inst-rule); }
   .site .inst-top {
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
     padding: 12px 16px; border-bottom: 1px solid var(--rule);
@@ -3510,7 +3582,7 @@
   */
   .site .inst.glassy {
     /* 0.116 is where the times hit 4.5:1 over the core; 0.11 leaves a hair. */
-    --glass-strength: 0.11;
+    --glass-strength: var(--inst-strength);
     --glass-x: 78%;        /* 89% across the panel, past the last column */
     --glass-y: 56%;
     --glass-core-r: 74px;
@@ -3665,7 +3737,7 @@
   .site .f textarea { resize: vertical; }
   .site .f input:focus, .site .f select:focus, .site .f textarea:focus { outline: none; border-color: var(--accent); }
   .site .f input::placeholder, .site .f textarea::placeholder { color: var(--ink-faint); }
-  .site .err { font-style: normal; font-size: 12.5px; color: #C0392B; }
+  .site .err { font-style: normal; font-size: 12.5px; color: var(--err); }
   .site fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; }
   .site legend { font-size: 13px; color: var(--ink); font-weight: 500; padding: 0; margin-bottom: 4px; }
   .site .checks { display: flex; gap: 18px; flex-wrap: wrap; }
@@ -3720,9 +3792,7 @@
     line-height: 20px;
     color: #B3261E;
   }
-  @media (prefers-color-scheme: dark) {
-    .site .err { color: #F2B8B5; }
-  }
+
   .site .notice {
     border-left: 2px solid var(--accent);
     background: var(--notice-bg);

@@ -45,7 +45,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {/*
+          Runs before the first paint, which is the whole point. Anything that
+          waits for React has already let the browser draw the light page, and
+          a visitor who chose dark watches it flash white on every navigation.
+
+          No stored choice leaves the attribute off entirely, so the CSS media
+          query decides — the toggle adds a third state rather than replacing
+          the system preference.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              `try{var t=localStorage.getItem('landline:theme');` +
+              `if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}`,
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

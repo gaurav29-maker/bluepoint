@@ -1338,6 +1338,69 @@ async function main() {
   );
 
   /*
+   * ---- the theme toggle ----
+   *
+   * The dark palette is declared twice: once behind the media query for
+   * visitors following their OS, once behind [data-theme="dark"] for the
+   * ones who pressed the button. There is no way to write it once — a
+   * media query and an attribute selector cannot be the same rule.
+   *
+   * So the risk is drift: change a colour in one list, and half the
+   * visitors keep the old one. Nobody would notice, because seeing it
+   * requires being on the OS that exposes the copy you did not edit.
+   * This compares them declaration for declaration.
+   */
+  const css = fs.readFileSync("app/globals.css", "utf8");
+  const declsIn = (startPattern: RegExp): string[] => {
+    const at = css.search(startPattern);
+    if (at === -1) return [];
+    const open = css.indexOf("{", at);
+    let depth = 0;
+    let end = open;
+    for (let i = open; i < css.length; i++) {
+      if (css[i] === "{") depth++;
+      else if (css[i] === "}") { depth--; if (depth === 0) { end = i; break; } }
+    }
+    return css
+      .slice(open + 1, end)
+      .replace(/\/\*[\s\S]*?\*\//g, "")   // comments differ on purpose
+      .split(";")
+      .map((d) => d.replace(/\s+/g, " ").trim())
+      .filter(Boolean);
+  };
+
+  const systemDark = declsIn(/:root:not\(\[data-theme="light"\]\) \.site/);
+  const chosenDark = declsIn(/:root\[data-theme="dark"\] \.site/);
+  const onlyIn = (a: string[], b: string[]) => a.filter((d) => !b.includes(d));
+  const drift = [
+    ...onlyIn(systemDark, chosenDark).map((d) => `only when following the OS: ${d}`),
+    ...onlyIn(chosenDark, systemDark).map((d) => `only when chosen: ${d}`),
+  ];
+  check(
+    "both dark themes declare exactly the same tokens",
+    systemDark.length > 0 && drift.length === 0,
+    drift.length > 0
+      ? drift.slice(0, 3).join(" | ")
+      : `${systemDark.length} declarations, identical in both`,
+  );
+
+  /*
+   * A toggle that cannot be reached is not a toggle. The nav renders it
+   * client-side, so this asserts the markup that makes that possible: the
+   * pre-paint script, and a button carrying an accessible name.
+   */
+  const layout = fs.readFileSync("app/layout.tsx", "utf8");
+  const toggle = fs.readFileSync("components/ThemeToggle.tsx", "utf8");
+  check(
+    "the theme survives a reload without flashing the wrong one",
+    layout.includes("landline:theme") &&
+      layout.includes("data-theme") &&
+      layout.indexOf("<script") < layout.indexOf("{children}") &&
+      toggle.includes("aria-label"),
+    "pre-paint script set before children, choice stored, button is labelled",
+  );
+
+  /*
    * ---- the batched availability read agrees with the single one ----
    *
    * /experts was issuing three queries per expert to show the next open

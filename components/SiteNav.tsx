@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ThemeToggle from "@/components/ThemeToggle";
 import Wordmark from "@/components/Wordmark";
 
 /**
@@ -23,6 +24,8 @@ export default function SiteNav({ onLanding = false }: { onLanding?: boolean }) 
           <a href={to("#how")}>How it works</a>
         </div>
         <div className="nav-end">
+          {/* Before the two buttons: it is a setting, not a call to action. */}
+          <ThemeToggle />
           <Link className="b b-line b-sm" href="/member/login">
             Landline OS
           </Link>
