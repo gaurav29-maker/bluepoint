@@ -183,10 +183,6 @@ export default async function Home() {
             <span className="said">{BRAND_TAGLINE_PARTS[1]}</span>
             {BRAND_TAGLINE_PARTS[2]}
           </h1>
-          <p className="hero-sub">
-            They read your portfolio before you meet, and tell you what they actually see in
-            it. No pitch at the end of the call.
-          </p>
           <div className="b-pair">
             <Link className="b b-fill" href="/experts">
               Find an expert
