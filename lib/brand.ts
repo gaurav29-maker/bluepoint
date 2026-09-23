@@ -53,16 +53,19 @@ export const BRAND_TAGLINE = BRAND_TAGLINE_PARTS.join("");
 /**
  * Whether to set the ® on the mark.
  *
- * FALSE deliberately, and it is not a styling choice. Under section 107 of
- * the Trade Marks Act 1999, representing a mark as registered in India when
- * it is not is an offence. The supplied artwork carries an ®, but designers
- * add that symbol as a matter of habit, and I have no evidence of a
- * registration for this mark.
+ * TRUE from 24 September 2026, asked for directly, and the supplied artwork
+ * carries the symbol.
  *
- * Flip this to true once there is a registration number for "landline" in
- * the relevant class — and record the number here when you do.
+ * What it asserts is worth writing down where the value lives: under section
+ * 107 of the Trade Marks Act 1999, representing a mark as registered in India
+ * when it is not is an offence. So this is a claim about a fact, not a styling
+ * choice. The registration number is NOT recorded here because it has not been
+ * given to me — if "landline" is not in fact registered in the relevant class,
+ * set this back to false. One line, every surface at once.
+ *
+ * TODO: write the registration number and class into this comment.
  */
-export const TRADEMARK_REGISTERED = false;
+export const TRADEMARK_REGISTERED = true;
 
 /**
  * The name as it is written in a sentence.

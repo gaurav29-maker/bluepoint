@@ -3236,9 +3236,26 @@
   @media (prefers-reduced-motion: reduce) {
     .site .theme-btn { transition: none; }
   }
-  /* Only rendered when TRADEMARK_REGISTERED is true. Styled regardless, so
-     the day that flips is not the day somebody discovers it is unstyled. */
-  .mark-r { font-size: 0.5em; font-weight: 400; vertical-align: super; margin-left: 1px; color: var(--ink-faint); }
+  /*
+     The registered mark. Rendered only when TRADEMARK_REGISTERED is true.
+
+     currentColor, not a grey: in the artwork the symbol is the same ink as
+     the wordmark, and inheriting means it follows the mark into dark, into
+     the consoles, and onto anything else the component lands on without a
+     second colour to keep in step.
+
+     0.56em rather than the browser's default for <sup>, which is far too
+     large next to an 800-weight logotype, and a hair of letter-spacing so it
+     does not touch the final "e".
+  */
+  .mark-r {
+    font-size: 0.56em;
+    font-weight: 500;
+    vertical-align: super;
+    margin-left: 1.5px;
+    letter-spacing: 0;
+    color: currentColor;
+  }
   .site .nav-mid { display: flex; gap: 28px; }
   .site .nav-mid a { font-size: 14px; font-weight: 500; color: var(--ink-body); text-decoration: none; }
   .site .nav-mid a:hover { color: var(--ink); }
