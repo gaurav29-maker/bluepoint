@@ -3340,6 +3340,44 @@
      Everything else keeps its hairline border. Glass on every panel would
      stop being an accent and start being a different site.
   */
+  /*
+     Three levels of glass, and the level is the meaning.
+
+       2 — glass with the blue wash. The hero instrument, and only that:
+           the one panel on the page reading live data.
+       1 — glass, no wash. Panels that stand for a thing you can act on:
+           the three packages, the expert cards, the principle cards.
+       0 — flat, hairline, 4px. Everything that explains rather than
+           offers: the flow steps, the audit steps, what-this-is-not,
+           the FAQ, the broker strip, the footer.
+
+     Kept deliberately narrow. Glass on every panel is not an accent, it
+     is a texture, and then the instrument has nothing left to say.
+
+     Level 1 skips backdrop-filter on purpose. These sit on flat bands
+     with nothing moving behind them, so the blur has nothing to blur —
+     it would cost a compositing layer per card and look identical. The
+     nav keeps its blur, because the page genuinely scrolls under it.
+  */
+  .site .rung,
+  .site .xcard {
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(152deg, var(--glass-sheet-1) 0%, var(--glass-sheet-2) 100%);
+    box-shadow: var(--card-shadow);
+  }
+
+  /*
+     The featured tier used a blue 1px border, which glass has no border
+     to carry. It becomes a blue rim in the shadow stack instead — first in
+     the list so it sits above the white one. This is the accent doing work
+     rather than decorating: it is the only thing marking which of the
+     three is recommended.
+  */
+  .site .rung.deepest {
+    box-shadow: inset 0 0 0 1px var(--accent), var(--card-shadow);
+  }
+
   .site .glassy {
     position: relative;
     isolation: isolate;
@@ -3449,7 +3487,7 @@
 
   /* ---- expert cards ---- */
   .site .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-  .site .xcard { border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); padding: 24px; display: flex; flex-direction: column; }
+  .site .xcard { padding: 24px; display: flex; flex-direction: column; }
   .site .xcard-top { display: flex; align-items: center; gap: 14px; }
   /*
    * Deep acrylic rather than flat blue. The depth is the gradient and the
@@ -3896,15 +3934,12 @@
   /* ---- the three ways to work with us, as a progression ---- */
 
   .site .ladder { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: stretch; }
+  /* Border, radius and background now come from the glass rule above. */
   .site .rung {
-    border: 1px solid var(--rule);
-    border-radius: 4px;
-    background: var(--bg);
     padding: 26px 24px;
     display: flex;
     flex-direction: column;
   }
-  .site .rung.deepest { border-color: var(--accent); box-shadow: var(--lift); }
   .site .rung-step {
     font-family: var(--mono);
     font-size: 10px;
