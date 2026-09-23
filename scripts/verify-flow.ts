@@ -1396,8 +1396,13 @@ async function main() {
     layout.includes("landline:theme") &&
       layout.includes("data-theme") &&
       layout.indexOf("<script") < layout.indexOf("{children}") &&
-      toggle.includes("aria-label"),
-    "pre-paint script set before children, choice stored, button is labelled",
+      toggle.includes("aria-label") &&
+      // Setting the attribute outside React is a deliberate mismatch, and
+      // without this React reports it on every load for every visitor who
+      // has ever chosen a theme. It shipped that way and was caught in the
+      // browser console rather than by anything here; now it is caught here.
+      /<html[^>]*suppressHydrationWarning/.test(layout),
+    "pre-paint script set before children, choice stored, button labelled, mismatch suppressed",
   );
 
   /*

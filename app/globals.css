@@ -3071,6 +3071,13 @@
       0 6px 18px rgba(74, 144, 255, 0.18);
     --glass-edge-a: 0.90;
     --glass-tint-scale: 1;
+    /* The cards' shadow, with the blue taken out of it. */
+    --card-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.92),
+      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 1),
+      inset -1.5px -1.5px 1px -1px rgba(160, 168, 182, 0.38),
+      0 14px 32px rgba(28, 32, 42, 0.09),
+      0 6px 18px rgba(28, 32, 42, 0.05);
     --glass-sheen: linear-gradient(126deg, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 44%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.20) 100%);
     --inst-rule: rgba(120, 145, 195, 0.28);
 
@@ -3130,6 +3137,20 @@
          TOWARDS the text. 0.44 is where the card body clears 4.5:1. */
       --glass-edge-a: 0.70;
       --glass-tint-scale: 0.42;
+    /* Near-white insets vanish on a dark ground, so dark restates it. */
+    --card-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.20),
+      inset -1.5px -1.5px 1px -1px rgba(10, 14, 20, 0.55),
+      0 18px 44px rgba(0, 0, 0, 0.45),
+      0 8px 24px rgba(0, 0, 0, 0.22);
+      /* Near-white insets vanish on a dark ground, so dark restates it. */
+      --card-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+        inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.20),
+        inset -1.5px -1.5px 1px -1px rgba(10, 14, 20, 0.55),
+        0 18px 44px rgba(0, 0, 0, 0.45),
+        0 8px 24px rgba(0, 0, 0, 0.22);
       --glass-sheen: linear-gradient(126deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.05) 100%);
       --inst-rule: rgba(150, 180, 240, 0.16);
     }
@@ -3163,6 +3184,13 @@
        TOWARDS the text. 0.44 is where the card body clears 4.5:1. */
     --glass-edge-a: 0.70;
     --glass-tint-scale: 0.42;
+    /* Near-white insets vanish on a dark ground, so dark restates it. */
+    --card-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.20),
+      inset -1.5px -1.5px 1px -1px rgba(10, 14, 20, 0.55),
+      0 18px 44px rgba(0, 0, 0, 0.45),
+      0 8px 24px rgba(0, 0, 0, 0.22);
     --glass-sheen: linear-gradient(126deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.05) 100%);
     --inst-rule: rgba(150, 180, 240, 0.16);
   }
@@ -3503,7 +3531,26 @@
   .site .prin:nth-child(5) { grid-column: span 3; }
 
   /* The glass comes from .glassy; this is only the box it needs. */
-  /* The cards need no override now: the wash is the same on every panel. */
+  /*
+     The principle cards carry no blue.
+
+     Three places had it, not one, and leaving any of them would have made
+     "remove the blue" only mostly true: the wash across the panel, the lit
+     line along the bottom edge, and a blue cast inside the shadow the card
+     throws. All three are off here.
+
+     What is left is the glass itself — the near-white sheet, the backdrop
+     blur, the white rim, a neutral shadow — so these read as plain acrylic
+     rather than tinted acrylic.
+
+     The hero instrument is untouched and keeps the tint. It is the one
+     panel on the page reading live data, which is what the accent was for.
+  */
+  .site .prin.glassy {
+    --glass-tint: 0;
+    --glass-edge-a: 0;
+    --glass-shadow: var(--card-shadow);
+  }
   .site .prins .prin {
     padding: 22px 22px 24px;
     border-radius: 14px;

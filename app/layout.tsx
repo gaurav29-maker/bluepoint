@@ -34,9 +34,21 @@ export const metadata: Metadata = {
   robots: sitePublic() ? { index: true, follow: true } : { index: false, follow: false },
 };
 
+/*
+ * suppressHydrationWarning on <html> is required here, not cosmetic.
+ *
+ * The inline script below stamps data-theme on that element before React
+ * runs, which is the entire point of it — waiting for React means a visitor
+ * who chose dark watches the page flash white. React then compares the server
+ * HTML (no attribute) against the DOM it finds (one attribute) and reports a
+ * mismatch it will not patch up.
+ *
+ * The suppression covers THIS element only, which is exactly the scope of the
+ * deliberate difference. Anything nested inside it still warns normally.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
