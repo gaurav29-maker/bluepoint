@@ -473,11 +473,11 @@ export default async function Home() {
             </p>
           </div>
           <div className="prins">
-            <div className="prin">
+            <div className="prin glassy">
               <h3>Clarity before returns.</h3>
               <p>Understand it before you invest in it.</p>
             </div>
-            <div className="prin">
+            <div className="prin glassy">
               <h3>Emergency fund first.</h3>
               <p>
                 Before you invest, keep a buffer of your expenses somewhere safe and liquid.
@@ -486,18 +486,18 @@ export default async function Home() {
                 <b>3&ndash;6</b> months of expenses
               </p>
             </div>
-            <div className="prin">
+            <div className="prin glassy">
               <h3>Diversify.</h3>
               <p>No single bet should be able to sink you.</p>
             </div>
-            <div className="prin">
+            <div className="prin glassy">
               <h3>Inflation.</h3>
               <p>
                 Money that sits still buys a little less every year. Idle cash isn&rsquo;t safe
                 cash.
               </p>
             </div>
-            <div className="prin">
+            <div className="prin glassy">
               <h3>Time.</h3>
               <p>Compounding rewards patience. Start early, stay consistent.</p>
             </div>

@@ -71,6 +71,17 @@
     --glow-deep: #1960EB;
     --glow-core: #053CD2;
     --edge-light: #46A0FF;
+
+    /*
+     * The tint, taken off the campaign panels rather than invented. Those
+     * read as near-white acrylic with ONE concentrated deep core and a wide
+     * pale halo around it — not a grey sheet with light spread across it.
+     */
+    --glass-top: 250, 252, 255;   /* the lit corner */
+    --glass-bot: 232, 239, 252;   /* the cool corner */
+    --glass-halo: 122, 166, 245;  /* the wide soft ring */
+    --glass-core: 29, 78, 216;    /* the saturated centre */
+    --glass-edge: 74, 144, 255;   /* the bright line along the base */
     --on-accent: #FFFFFF;
   }
 
@@ -3193,31 +3204,82 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.55);
-    -webkit-backdrop-filter: blur(18px) saturate(132%);
-    backdrop-filter: blur(18px) saturate(132%);
+    /*
+       A cool near-white sheet rather than 55% white. The panels in the
+       campaign are barely transparent — the depth comes from the core and
+       the rim, not from the page showing through.
+    */
+    background: linear-gradient(152deg,
+      rgba(var(--glass-top), 0.94) 0%,
+      rgba(var(--glass-bot), 0.90) 100%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
     border: 0;
     box-shadow:
-      /* white rim, brighter top-left, cooler grey-blue bottom-right */
-      inset 0 0 0 1px rgba(255, 255, 255, 0.85),
-      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 0.95),
-      inset -1.5px -1.5px 1px -1px rgba(150, 165, 195, 0.45),
+      /* white rim, brightest top-left, cool blue-grey bottom-right */
+      inset 0 0 0 1px rgba(255, 255, 255, 0.92),
+      inset 1.5px 1.5px 1px -1px rgba(255, 255, 255, 1),
+      inset -1.5px -1.5px 1px -1px rgba(146, 174, 224, 0.42),
       /* what it casts on the page, and the blue light just beneath it */
-      0 18px 40px rgba(20, 30, 60, 0.10),
-      0 8px 22px rgba(110, 170, 255, 0.20);
+      0 14px 32px rgba(24, 42, 96, 0.10),
+      0 6px 18px rgba(var(--glass-edge), 0.18);
   }
 
-  /* Haze bleeding in from the left, and a deep core on the right. */
+  /*
+     One light source, not three.
+
+     The campaign panels have a single saturated core with a wide pale halo
+     around it, both centred on the same point. Three washes spread across a
+     panel is a gradient; one core with a halo is a light behind glass, and
+     that difference is the whole look.
+
+     --glass-strength lets a surface dial the core down without redeclaring
+     any of this. The default is the campaign's; the hero instrument turns it
+     down, because that one has small text sitting over it.
+  */
+  .site .glassy {
+    --glass-strength: 0.82;
+
+    /*
+       Positions are on the ::before box, which is inset -20% and therefore
+       140% of the panel. A point P across the panel is (P + 20) / 1.4 here,
+       so 86% of the panel is 76% of this box. Worth writing down: 94% looks
+       like the right edge and is actually 111% — off the panel entirely.
+    */
+    --glass-x: 76%;
+    --glass-y: 56%;
+
+    /*
+       Fixed radii, not percentages. As a percentage the core scaled with the
+       panel: 63px on a 348px card and 96px on a 530px one, which put the
+       saturated centre straight through the wider cards' body copy. The
+       light is a physical size; it should not grow because the panel did.
+    */
+    --glass-core-r: 62px;
+    --glass-halo-r: 150px;
+
+    /*
+       The halo's alpha, capped by measurement rather than taste.
+
+       At the campaign's 0.58 the body copy on a card measured 3.92:1 —
+       under the 4.5:1 floor for normal text. Solving for the alpha that
+       clears it gives 0.422. That is the number, so that is the value.
+    */
+    --glass-halo-a: 0.42;
+  }
   .site .glassy::before {
     content: "";
     position: absolute;
-    inset: -25%;
+    inset: -20%;
     z-index: -2;
     background:
-      radial-gradient(48% 74% at 1% 34%, rgba(95, 160, 255, 0.40) 0%, rgba(95, 160, 255, 0) 70%),
-      radial-gradient(40% 56% at 12% 88%, rgba(150, 140, 255, 0.30) 0%, rgba(150, 140, 255, 0) 74%),
-      radial-gradient(40% 58% at 96% 62%, rgba(25, 96, 235, 0.30) 0%, rgba(5, 60, 210, 0) 72%);
-    filter: blur(20px);
+      /* the halo */
+      radial-gradient(var(--glass-halo-r) var(--glass-halo-r) at var(--glass-x) var(--glass-y),
+        rgba(var(--glass-halo), var(--glass-halo-a)) 0%, rgba(var(--glass-halo), 0) 72%),
+      /* the core, tight and saturated */
+      radial-gradient(var(--glass-core-r) var(--glass-core-r) at var(--glass-x) var(--glass-y),
+        rgba(var(--glass-core), var(--glass-strength)) 0%, rgba(var(--glass-core), 0) 76%);
+    filter: blur(15px);
   }
 
   /* A faint diagonal sheen, and the thin blue line of light along the base. */
@@ -3228,8 +3290,8 @@
     z-index: -1;
     pointer-events: none;
     background:
-      linear-gradient(126deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.08) 100%),
-      linear-gradient(to top, rgba(70, 160, 255, 0.55) 0px, rgba(70, 160, 255, 0) 7px);
+      linear-gradient(126deg, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 44%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.20) 100%),
+      linear-gradient(to top, rgba(var(--glass-edge), 0.90) 0px, rgba(var(--glass-edge), 0) 6px);
   }
 
   /*
@@ -3241,7 +3303,9 @@
    */
   @media (prefers-color-scheme: dark) {
     .site .glassy {
-      background: rgba(255, 255, 255, 0.045);
+      background: linear-gradient(152deg,
+        rgba(190, 212, 255, 0.070) 0%,
+        rgba(150, 180, 240, 0.035) 100%);
       -webkit-backdrop-filter: blur(20px) saturate(125%);
       backdrop-filter: blur(20px) saturate(125%);
       box-shadow:
@@ -3251,17 +3315,36 @@
         0 18px 44px rgba(0, 0, 0, 0.45),
         0 8px 24px rgba(40, 110, 220, 0.20);
     }
+    /*
+       Same one-core structure as the light panel, but the core has to carry
+       the panel here rather than sit on top of a bright field, so it comes UP
+       while the halo comes down. A pale halo on a dark ground is just haze.
+    */
+    .site .glassy { /* --glass-dark-done */
+      /*
+         0.44, not 0.62. Dark runs the opposite way to light: the halo LIFTS a
+         dark panel towards the text rather than away from it, so the same
+         wash that was safe on paper took the card body to 3.89:1 here.
+         Solving against the real ground — rgb(14,16,19) from .site, not the
+         body element, which stays white in both schemes — gives 0.453.
+      */
+      --glass-strength: 0.62;
+    }
     .site .glassy::before {
       background:
-        radial-gradient(48% 74% at 1% 34%, rgba(95, 160, 255, 0.30) 0%, rgba(95, 160, 255, 0) 70%),
-        radial-gradient(40% 56% at 12% 88%, rgba(150, 140, 255, 0.24) 0%, rgba(150, 140, 255, 0) 74%),
-        radial-gradient(40% 58% at 96% 62%, rgba(25, 96, 235, 0.34) 0%, rgba(5, 60, 210, 0) 72%);
+        radial-gradient(var(--glass-halo-r) var(--glass-halo-r) at var(--glass-x) var(--glass-y),
+          rgba(var(--glass-halo), calc(var(--glass-halo-a) * 0.44)) 0%, rgba(var(--glass-halo), 0) 74%),
+        radial-gradient(var(--glass-core-r) var(--glass-core-r) at var(--glass-x) var(--glass-y),
+          rgba(var(--glass-core), var(--glass-strength)) 0%, rgba(var(--glass-core), 0) 78%);
     }
     .site .glassy::after {
       background:
-        linear-gradient(126deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.04) 100%),
-        linear-gradient(to top, rgba(70, 160, 255, 0.45) 0px, rgba(70, 160, 255, 0) 7px);
+        linear-gradient(126deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.05) 100%),
+        linear-gradient(to top, rgba(var(--glass-edge), 0.70) 0px, rgba(var(--glass-edge), 0) 6px);
     }
+    /* The instrument still turns its core down; 0.30 of a dimmer core is too
+       little to see, so it gets its own dark value rather than inheriting. */
+    .site .inst.glassy { --glass-strength: 0.34; }
     .site .inst .inst-top,
     .site .inst .inst-cell { border-color: rgba(150, 180, 240, 0.16); }
   }
@@ -3363,16 +3446,83 @@
      sale two sections up. A hairline above each is enough separation.
   */
   /*
-     Three, then one. auto-fit gave two columns in the middle of the range,
-     and five items in two columns leaves the last one sitting alone in its
-     own row. Three fills the first row and pairs the rest; one stacks them.
+     prin cards, three then two.
+
+     As hairline-ruled text these were fine in a 3-column grid with an empty
+     cell on the second row. As objects an empty cell reads as a missing
+     card, so the grid is six columns: the first three span two each and the
+     last two span three each. Both rows fill completely and the second row
+     being wider is deliberate rather than leftover.
   */
   .site .prins {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0 34px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
   }
-  .site .prin { padding: 22px 0 24px; border-top: 1px solid var(--rule); }
+  .site .prin { grid-column: span 2; }
+  .site .prin:nth-child(4),
+  .site .prin:nth-child(5) { grid-column: span 3; }
+
+  /* The glass comes from .glassy; this is only the box it needs. */
+  /*
+     prin-text-guard.
+
+     In the campaign posts the blob sits beside the words, never under them —
+     the type is huge and black and the light is off to one side. These cards
+     are a fraction of that size, so with the core at its default the deep
+     centre landed directly on 14px body copy. The light moves to the right
+     edge and the text stops short of it. Checked geometrically, not by eye.
+  */
+  .site .prin.glassy {
+    --glass-x: 74%;        /* 84% across the card */
+    --glass-y: 58%;
+    --glass-core-r: 52px;
+    --glass-halo-r: 128px;
+  }
+  .site .prin h3,
+  .site .prin p { max-width: 68%; }
+  .site .prins .prin {
+    padding: 22px 22px 24px;
+    border-radius: 14px;
+    border-top: 0;
+  }
+
+  /*
+     Five copies of one glow reads as a repeated texture rather than five
+     objects, so the light is flipped rather than redeclared. Mirroring the
+     pseudo-element costs nothing and moves the bright edge and the deep core
+     to the opposite corners.
+  */
+  /*
+     The hero instrument carries 11px mono over the glass, so its core comes
+     down and moves to the far edge, away from the columns. The cards keep
+     the campaign's full strength: their text is short and sits left, and
+     the core sits right.
+  */
+  /*
+     The instrument is the one glass surface that is also a data display.
+     Its four columns of times leave nowhere for the light to sit, so the
+     text is always over it and the light has to survive that rather than
+     dodge it. Measured: at --ink-faint the panel tolerated a 0.207 halo
+     and NO core at all. Two changes rather than one — the light comes
+     down, and the times move up from --ink-faint to --ink-mute, which is
+     a legibility gain on live data regardless of any glass behind it.
+  */
+  .site .inst.glassy {
+    /* 0.116 is where the times hit 4.5:1 over the core; 0.11 leaves a hair. */
+    --glass-strength: 0.11;
+    --glass-x: 78%;        /* 89% across the panel, past the last column */
+    --glass-y: 56%;
+    --glass-core-r: 74px;
+    --glass-halo-r: 200px;
+    --glass-halo-a: 0.22;
+  }
+  .site .inst-cell span,
+  .site .inst-foot { color: var(--ink-mute); }
+
+  .site .prin:nth-child(even)::before { transform: scaleX(-1); }
+  .site .prin:nth-child(3)::before { transform: scaleY(-1); }
+  .site .prin:nth-child(5)::before { transform: scale(-1, -1); }
   .site .prin h3 {
     margin: 0 0 8px;
     font-size: 17px;
@@ -3413,6 +3563,10 @@
 
   @media (max-width: 900px) {
     .site .prins { grid-template-columns: 1fr; }
+    /* Without this the spans survive and every card collapses to nothing. */
+    .site .prin,
+    .site .prin:nth-child(4),
+    .site .prin:nth-child(5) { grid-column: 1 / -1; }
   }
 
   .site .nots { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; }
