@@ -16,7 +16,16 @@ export default function SiteNav({ onLanding = false }: { onLanding?: boolean }) 
   return (
     <nav className="nav">
       <div className="nav-in">
-        <Wordmark className="mark" href="/" />
+        {/*
+          The mark sits on glass, the same material as the hero instrument —
+          same sheet, same rim, same tint, all from the same tokens.
+
+          A lozenge and not the disc from the artwork: that disc holds the
+          wordmark AND "financial expert" stacked inside it, and at the 32px
+          a nav bar allows, the second line is roughly two pixels tall. The
+          disc belongs somewhere it can be read at its own size.
+        */}
+        <Wordmark className="mark mark-badge glassy" href="/" />
         <div className="nav-mid">
           <Link href="/experts">Find an expert</Link>
           <a href={to("#audit")}>Audit my portfolio</a>
