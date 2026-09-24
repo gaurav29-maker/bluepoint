@@ -3036,9 +3036,23 @@
     --accent-ink: #3159C9;
     --on-accent:  #FFFFFF;
     --lift: 0 8px 16px rgba(0, 0, 0, 0.16);
-    --nav-bg: rgba(255, 255, 255, 0.88);
     --notice-bg: #F1F5FD;
     --err:        #C0392B;
+
+    /*
+     * The floating nav. Three tokens because the material is three things:
+     * what it is made of, the light caught on its edges, and what it throws
+     * on the page underneath.
+     *
+     * 0.72 rather than the 0.88 the flat bar used. The bar only had to sit
+     * still; this one has the page moving under it and has to look like it.
+     */
+    --nav-bg: rgba(252, 253, 255, 0.72);
+    --nav-rim:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(120, 132, 155, 0.16);
+    --nav-lift: 0 10px 30px rgba(24, 34, 68, 0.10), 0 2px 8px rgba(24, 34, 68, 0.06);
 
     /*
        Every light/dark difference on the public site is a token, and they
@@ -3098,7 +3112,12 @@
       --accent-ink: #8AA5F0;
       --err:        #F2B8B5;
       --lift: 0 8px 16px rgba(0, 0, 0, 0.5);
-      --nav-bg: rgba(14, 16, 19, 0.88);
+      --nav-bg: rgba(26, 30, 38, 0.66);
+      --nav-rim:
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+      --nav-lift: 0 12px 34px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.32);
       --notice-bg: #111621;
 
       /* The panel is barely tinted here; the depth comes from the core. */
@@ -3129,7 +3148,12 @@
     --accent-ink: #8AA5F0;
     --err:        #F2B8B5;
     --lift: 0 8px 16px rgba(0, 0, 0, 0.5);
-    --nav-bg: rgba(14, 16, 19, 0.88);
+    --nav-bg: rgba(26, 30, 38, 0.66);
+    --nav-rim:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+    --nav-lift: 0 12px 34px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.32);
     --notice-bg: #111621;
 
     /* The panel is barely tinted here; the depth comes from the core. */
@@ -3194,14 +3218,49 @@
 
   /* ---- nav ---- */
   .site .nav {
-    position: sticky; top: 0; z-index: 50; height: 56px;
-    background: var(--nav-bg);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--hairline);
+    /* No height. The capsule sets it; a fixed 56 here would clip the lift. */
+    position: sticky; top: 0; z-index: 50;
+    background: transparent;
+    border-bottom: 0;
+    padding: 10px 16px 0;
   }
+  /*
+     The nav as a floating pane of glass rather than a bar.
+
+     The bar ran the full width, was opaque enough to be a surface, and was
+     separated from the page by a hairline. This is an object lying ON the
+     page: edges on all four sides, light along the top, a shadow underneath,
+     and the page sliding beneath it in full view.
+
+     .nav is now only the sticky frame and shows nothing — transparent, no
+     border, padding to lift the capsule off the top edge. Everything visible
+     is .nav-in.
+
+     The material is three things:
+
+       backdrop-filter   what it does to the page behind. saturate(180%) is
+                         the half people notice without being able to name it
+                         — blur alone reads as frosting; blur with saturation
+                         reads as something with substance in it.
+       --nav-rim         light caught on the edges: brightest along the top, a
+                         faint line all the way round, a dark underside so the
+                         capsule has thickness instead of being a sticker.
+       --nav-lift        what it throws on the page below.
+  */
   .site .nav-in {
-    max-width: 1140px; margin: 0 auto; padding: 0 24px; height: 56px;
-    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 12px 0 22px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-radius: 999px;
+    background: var(--nav-bg);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    box-shadow: var(--nav-rim), var(--nav-lift);
   }
   .site .mark { font-family: var(--font-mark); font-size: 15px; font-weight: 800; letter-spacing: 0; color: var(--ink); text-decoration: none; }
   .site .mark span { color: var(--accent); }
@@ -3221,7 +3280,10 @@
     border: 0;
     border-radius: 999px;
     background: transparent;
-    color: var(--ink-mute);
+    /* --ink-body, not --ink-mute: the nav is translucent now, and over an
+       avatar disc scrolling underneath the muted grey measured 3.86:1 — past
+       the 3:1 floor an icon has to clear, but thin for a 15px glyph. */
+    color: var(--ink-body);
     cursor: pointer;
     transition: color 120ms ease, background-color 120ms ease;
   }
