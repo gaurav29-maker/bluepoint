@@ -235,11 +235,29 @@ export default async function Home() {
       <div className="strip">
         <div className="strip-in">
           <span className="eyebrow">Built for investors using</span>
-          <ul>
-            {BROKERS.map((b) => (
-              <li key={b}>{b}</li>
-            ))}
-          </ul>
+          {/*
+            The list twice, and the second copy hidden from assistive tech.
+
+            A marquee loops seamlessly by animating two identical tracks and
+            resetting when the second lands exactly where the first began —
+            which means the names really are in the DOM twice. A screen reader
+            that read them twice would sound broken, so the duplicate is
+            aria-hidden and the first copy is the one that is announced.
+          */}
+          <div className="ticker">
+            <div className="ticker-track">
+              <ul>
+                {BROKERS.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+              <ul aria-hidden>
+                {BROKERS.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
