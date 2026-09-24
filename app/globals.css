@@ -3395,6 +3395,31 @@
   .site .nav-mid a:hover { color: var(--ink); }
   .site .nav-end { display: flex; align-items: center; gap: 10px; }
 
+  /*
+     One height for the three controls in this group.
+
+     They were not: the pill buttons came out at 36px from their padding and
+     the theme button at 32px from its own, so three things in one row sat on
+     two different sizes and left 9px of capsule above the pills and 11px
+     above the icon. 34 gives all three the same 10px, which is the gap that
+     makes a control look placed in the capsule rather than crammed into it.
+
+     Scoped to .nav-end because .b-sm is also the footer's "Apply now" and the
+     intake page's back link, where it is a button on a page, not a control in
+     a bar, and 36 is right for it.
+
+     Height, not min-height, so the phone rule further down — which puts these
+     back to 44 for a fingertip — still wins.
+  */
+  .site .nav-end .b-sm {
+    height: 34px;
+    padding: 0 16px;
+  }
+  .site .nav-end .theme-btn {
+    width: 34px;
+    height: 34px;
+  }
+
   /* ---- controls ---- */
   .site .b {
     display: inline-flex; align-items: center; justify-content: center;
@@ -3886,7 +3911,13 @@
     */
     .site .b { min-height: 44px; }
     .site .b-sm { min-height: 44px; }
-    .site .theme-btn { width: 44px; height: 44px; }
+    /* .nav-end .theme-btn is three classes and this is two, and a media
+       query adds no specificity — so without matching it here the desktop
+       34px wins inside the phone layout and the tap target silently goes
+       back under 44. The pill beside it survived only because min-height
+       clamps whatever height says. */
+    .site .theme-btn,
+    .site .nav-end .theme-btn { width: 44px; height: 44px; }
     .site .mark { display: inline-flex; align-items: center; min-height: 44px; }
     .site .xmore {
       display: block;
