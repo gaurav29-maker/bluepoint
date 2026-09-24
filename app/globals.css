@@ -3294,7 +3294,22 @@
     position: sticky; top: 0; z-index: 50;
     background: transparent;
     border-bottom: 0;
-    padding: 10px 16px 0;
+    padding: 12px 16px 0;
+    display: flex;
+    justify-content: center;
+  }
+  /*
+     Absolute, so the capsule is centred on the PAGE rather than on what is
+     left after this. In flow it would push the capsule left by half the
+     button's width, and the amount it shifted would change with the label.
+  */
+  .site .nav-aside {
+    position: absolute;
+    right: 16px;
+    top: 12px;
+    display: flex;
+    align-items: center;
+    height: 46px;
   }
   /*
      The nav as a floating pane of glass rather than a bar.
@@ -3319,19 +3334,33 @@
                          capsule has thickness instead of being a sticker.
        --nav-lift        what it throws on the page below.
   */
+  /*
+     Measured off the reference rather than approximated: its capsule is a
+     fixed 675 centred in a full-width bar, 6px of padding, a 23px radius —
+     a soft rectangle, not a pill — and blur(40px).
+
+     Two of those are copied exactly (the radius and the blur). Two are not:
+
+       width   theirs is a hard 675px, which works because their label set is
+               fixed. Ours holds a wordmark whose file is still coming and
+               four links whose words may change, so it sizes to content and
+               stays centred. Same result, one less thing to break.
+
+       ends    6px all round put their logo hard against the edge. The logo
+               side gets 14 here, because ours is type rather than a 28px
+               image and type needs the room its own sidebearing does not
+               give it.
+  */
   .site .nav-in {
-    max-width: 1100px;
     margin: 0 auto;
-    padding: 0 12px 0 22px;
-    height: 54px;
-    display: flex;
+    padding: 6px 6px 6px 14px;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    border-radius: 999px;
+    gap: 6px;
+    border-radius: 23px;
     background: var(--nav-bg);
-    -webkit-backdrop-filter: blur(22px) saturate(180%);
-    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(40px) saturate(180%);
     box-shadow: var(--nav-rim), var(--nav-lift);
   }
   .site .mark { font-family: var(--font-mark); font-size: 15px; font-weight: 800; letter-spacing: 0; color: var(--ink); text-decoration: none; }
@@ -3390,10 +3419,29 @@
     letter-spacing: 0;
     color: currentColor;
   }
-  .site .nav-mid { display: flex; gap: 28px; }
-  .site .nav-mid a { font-size: 14px; font-weight: 500; color: var(--ink-body); text-decoration: none; }
-  .site .nav-mid a:hover { color: var(--ink); }
-  .site .nav-end { display: flex; align-items: center; gap: 10px; }
+  /*
+     Links as pills, not bare text — the reference's 6px/8px inset and 20px
+     radius, so hover lands on a shape instead of on the words. The 28px gap
+     goes with it: the padding now does the separating, and keeping both put
+     44px between labels inside a capsule that is trying to be compact.
+
+     Their muted 55% white is NOT copied. On this capsule it measured under
+     the floor; --ink-body is the site's token for exactly this job and is
+     theme-aware, which a hard rgba is not.
+  */
+  .site .nav-mid { display: flex; align-items: center; gap: 2px; }
+  .site .nav-mid a {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-body);
+    text-decoration: none;
+    padding: 7px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    transition: color 120ms ease, background-color 120ms ease;
+  }
+  .site .nav-mid a:hover { color: var(--ink); background: var(--hairline); }
+  .site .nav-end { display: flex; align-items: center; gap: 6px; }
 
   /*
      One height for the three controls in this group.
@@ -3936,6 +3984,32 @@
       margin-bottom: 0;
     }
   }
+
+  /*
+     The aside comes out of absolute positioning below 1000px.
+
+     Centring the capsule on the PAGE only works while there is room either
+     side of it for the sign-in button — and the button is out of flow, so
+     nothing stops the two meeting. They did. At 375 the button sat 5px over
+     the capsule's right edge; at 885, where the links still show and the
+     capsule is at its full 714, the overlap measured 38px and the two labels
+     ran into one another.
+
+     1000 is that arithmetic rather than a round number: capsule 714, plus the
+     button's 108 twice because centring needs the same room on both sides,
+     plus margins — 994. Below it the two share the row, capsule left and
+     button right, and flex keeps them apart at every width instead of at the
+     ones I happened to check.
+
+     Its own query, not folded into the 860 above: that one is about a finger
+     and this one is about whether a 714px object fits between two buttons.
+  */
+  @media (max-width: 1000px) {
+    .site .nav { justify-content: space-between; align-items: center; }
+    .site .nav-in { margin: 0; }
+    .site .nav-aside { position: static; height: auto; }
+  }
+
   @media (max-width: 460px) {
     .site .b { min-width: 0; width: 100%; }
     .site .b-sm { width: auto; }

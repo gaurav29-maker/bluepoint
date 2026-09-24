@@ -24,15 +24,26 @@ export default function SiteNav({ onLanding = false }: { onLanding?: boolean }) 
           <a href={to("#how")}>How it works</a>
         </div>
         <div className="nav-end">
-          {/* Before the two buttons: it is a setting, not a call to action. */}
+          {/* Before the button: it is a setting, not a call to action. */}
           <ThemeToggle />
-          <Link className="b b-line b-sm" href="/member/login">
-            Landline OS
-          </Link>
           <Link className="b b-fill b-sm" href="/experts">
             Find an expert
           </Link>
         </div>
+      </div>
+
+      {/*
+        Sign-in sits outside the capsule, not in it.
+
+        The capsule is what the site is — where to go and what to do. Getting
+        into your own console is a different kind of errand and belongs beside
+        that object rather than inside it, which is also how the reference
+        separates its account link from its navigation.
+      */}
+      <div className="nav-aside">
+        <Link className="b b-line b-sm" href="/member/login">
+          Landline OS
+        </Link>
       </div>
     </nav>
   );
